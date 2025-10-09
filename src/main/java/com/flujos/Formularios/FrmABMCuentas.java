@@ -37,7 +37,8 @@ public class FrmABMCuentas extends javax.swing.JFrame {
             comboMovimiento.setModel(modeloComboMovimiento);
             inicializar();
         } catch (SQLException ex) {
-            Logger.getLogger(FrmABMCuentas.class.getName()).log(Level.SEVERE, null, ex);
+            Utilidades.msg(null, "error al inicializar la ventana");
+            this.dispose();
         }
         
     }

@@ -5,12 +5,15 @@
 package com.flujos.DAOs;
 
 import com.flujos.Entidades.Cheque;
+import com.flujos.Entidades.ClienteProveedor;
+import com.flujos.Entidades.Movimiento;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import javax.swing.DefaultComboBoxModel;
 
 /**
  *
@@ -30,13 +33,40 @@ public class DAOCheque {
             
             ps.setInt(1, cheque.getNumCheque());
             ps.setBigDecimal(2, cheque.getImporteCheque());
-            ps.setDate(3, (Date) cheque.getFechaCobroCheque());
+            if (cheque.getFechaCobroCheque()!= null){
+                java.sql.Date sqlDate = new java.sql.Date(cheque.getFechaCobroCheque().getTime());
+                ps.setDate(3, sqlDate);
+
+            }else {
+                ps.setNull(3, java.sql.Types.DATE);
+
+            }
+
+            
             ps.setString(4, cheque.getTipoCheque());
             ps.setInt(5, cheque.getEstadoCheque());
             ps.setString(6, cheque.getObservacionCheque());
-            ps.setDate(7, (Date) cheque.getFechaEntregaCheque());
-            ps.setLong(8, cheque.getTitularCheque());
-            ps.setLong(9, cheque.getTitularDestino());
+            if (cheque.getFechaEntregaCheque() != null){
+                java.sql.Date sqlDateEntrega = new java.sql.Date(cheque.getFechaEntregaCheque().getTime());
+                ps.setDate(7, sqlDateEntrega);
+
+            }else {
+                ps.setNull(7, java.sql.Types.DATE);
+            }
+
+            if (cheque.getTitularCheque() != null){
+                ps.setLong(8, cheque.getTitularCheque());
+
+            }else {
+                ps.setNull(8, 0);  
+            }
+            
+            if (cheque.getTitularDestino() != null){
+                ps.setLong(9, cheque.getTitularDestino());
+                
+            }else{
+                ps.setLong(9,0);
+            }
             ps.setString(10, cheque.getUsoCheque());
             ps.executeUpdate();
         } finally {
@@ -147,5 +177,89 @@ public class DAOCheque {
 
     }
 
+public void llenarComboClienteProveedor(DefaultComboBoxModel<String> modeloComboClienteProveedor, Connection con) throws SQLException {
+        String consulta = "SELECT nom_razon_social FROM cliente_proveedores";
+        Statement st = null;
+        ResultSet rs = null;
+        try {
+            st = con.createStatement();
+            rs = st.executeQuery(consulta);
+
+            modeloComboClienteProveedor.removeAllElements();
+            modeloComboClienteProveedor.addElement("--");
+
+            while (rs.next()) {
+                String clienteProveedor = rs.getString("nom_razon_social");
+                modeloComboClienteProveedor.addElement(clienteProveedor);
+
+            }
+        } finally {
+            if (rs != null) {
+                rs.close();
+            }
+            if (st != null) {
+                st.close();
+            }
+        }
+    }
+
+    public void llenarComboClienteProveedorDestino(DefaultComboBoxModel<String> modeloComboclienteProveedorDestino, Connection con) throws SQLException {
+        String consulta = "SELECT nom_razon_social FROM cliente_proveedores";
+        Statement st = null;
+        ResultSet rs = null;
+        try {
+            st = con.createStatement();
+            rs = st.executeQuery(consulta);
+
+            modeloComboclienteProveedorDestino.removeAllElements();
+            modeloComboclienteProveedorDestino.addElement("--");
+
+            while (rs.next()) {
+                String clienteProveedor = rs.getString("nom_razon_social");
+                modeloComboclienteProveedorDestino.addElement(clienteProveedor);
+
+            }
+        } finally {
+            if (rs != null) {
+                rs.close();
+            }
+            if (st != null) {
+                st.close();
+            }
+        }
+    }
+
+    public ClienteProveedor obtenerDatosClienteProveedor(String nomClienteProveedor, Connection con) {
+        ClienteProveedor clienteProveedor = new ClienteProveedor();
+        String consulta = "SELECT id_cliente_proveedor FROM cliente_proveedores WHERE nom_razon_social = '" + nomClienteProveedor + "'";
+        Statement st = null;
+        ResultSet rs = null;
+        try {
+            st = con.createStatement();
+            rs = st.executeQuery(consulta);
+            if (rs.next()) {
+                clienteProveedor.setIdClienteProveedor(rs.getLong("id_cliente_proveedor"));
+            } else {
+                clienteProveedor = null;
+            }
+        } catch (Exception e) {
+            clienteProveedor = null;
+        } finally {
+            try {
+
+                if (rs != null) {
+                    rs.close();
+                }
+                if (st != null) {
+
+                    st.close();
+                }
+            } catch (SQLException ex) {
+                clienteProveedor = null;
+            }
+        }
+        return clienteProveedor;
+
+    }
     
 }

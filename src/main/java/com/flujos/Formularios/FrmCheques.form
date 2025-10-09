@@ -92,14 +92,14 @@
                               <EmptySpace min="-2" pref="71" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" max="-2" attributes="0">
                                   <Component id="jDateFechaEntrega" pref="178" max="32767" attributes="0"/>
-                                  <Component id="jComboTitularCheque" max="32767" attributes="0"/>
+                                  <Component id="comboTitularCheque" max="32767" attributes="0"/>
                               </Group>
                           </Group>
                           <Group type="102" alignment="0" attributes="0">
                               <EmptySpace min="127" pref="127" max="-2" attributes="0"/>
                               <Component id="lblTitularDestino" min="-2" pref="130" max="-2" attributes="0"/>
                               <EmptySpace min="71" pref="71" max="-2" attributes="0"/>
-                              <Component id="jComboTitularDestino" min="-2" pref="178" max="-2" attributes="0"/>
+                              <Component id="comboTitularDestino" min="-2" pref="178" max="-2" attributes="0"/>
                           </Group>
                       </Group>
                       <EmptySpace min="-2" pref="26" max="-2" attributes="0"/>
@@ -171,7 +171,7 @@
               </Group>
               <EmptySpace type="unrelated" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
-                  <Component id="jComboTitularCheque" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="comboTitularCheque" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="lblTitularCheque" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="TxtIdTitularCheque" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
@@ -179,7 +179,7 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Component id="lblTitularDestino" min="-2" max="-2" attributes="0"/>
                   <Group type="103" alignment="0" groupAlignment="3" attributes="0">
-                      <Component id="jComboTitularDestino" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="comboTitularDestino" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="TxtIdTitularDestinoCheque" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
               </Group>
@@ -323,22 +323,28 @@
         <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
       </AuxValues>
     </Component>
-    <Component class="javax.swing.JComboBox" name="jComboTitularDestino">
+    <Component class="javax.swing.JComboBox" name="comboTitularDestino">
       <Properties>
         <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
           <StringArray count="0"/>
         </Property>
       </Properties>
+      <Events>
+        <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="comboTitularDestinoItemStateChanged"/>
+      </Events>
       <AuxValues>
         <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
       </AuxValues>
     </Component>
-    <Component class="javax.swing.JComboBox" name="jComboTitularCheque">
+    <Component class="javax.swing.JComboBox" name="comboTitularCheque">
       <Properties>
         <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
           <StringArray count="0"/>
         </Property>
       </Properties>
+      <Events>
+        <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="comboTitularChequeItemStateChanged"/>
+      </Events>
       <AuxValues>
         <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
       </AuxValues>

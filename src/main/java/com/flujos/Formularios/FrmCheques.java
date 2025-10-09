@@ -6,11 +6,16 @@ package com.flujos.Formularios;
 
 import com.flujos.DAOs.DAOCheque;
 import com.flujos.Entidades.Cheque;
+import com.flujos.Entidades.ClienteProveedor;
+import com.flujos.Entidades.Movimiento;
 import com.flujos.Utilidades.Conexion;
 import com.flujos.Utilidades.Utilidades;
 import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.DefaultComboBoxModel;
 
 /**
  *
@@ -20,16 +25,27 @@ public class FrmCheques extends javax.swing.JFrame {
 
     private Conexion con;
     private DAOCheque daoCheque;
+    
+    DefaultComboBoxModel<String> modeloComboclienteProveedor = new DefaultComboBoxModel<>();
+    DefaultComboBoxModel<String> modeloComboclienteProveedorDestino = new DefaultComboBoxModel<>();
 
     /**
      * Creates new form FrmCheques
      */
     public FrmCheques() {
-        initComponents();
-        inicializar();
+        try {
+            initComponents();
+            comboTitularCheque.setModel(modeloComboclienteProveedor);
+            comboTitularDestino.setModel(modeloComboclienteProveedorDestino);
+
+            inicializar();
+        } catch (SQLException ex) {
+            Utilidades.msg(null, "error al inicializar la ventana");
+            this.dispose();
+        }
     }
 
-    private void inicializar() {
+    private void inicializar() throws SQLException {
 
         TxtNumero.setText("");
         TxtImporteCheque.setText("");
@@ -37,15 +53,25 @@ public class FrmCheques extends javax.swing.JFrame {
         jComboTipoCheque.setSelectedIndex(0);
         jComboEstadoCheque.setSelectedIndex(0);
         TxtObservacionCheque.setText("");
+        daoCheque = new DAOCheque();
+        TxtIdCheque.setText("");
+        TxtIdCheque.setVisible(false);
+        TxtIdTitularCheque.setText("");
+        TxtIdTitularCheque.setVisible(false);
+        TxtIdTitularDestinoCheque.setText("");
+        TxtIdTitularDestinoCheque.setVisible(false);
+        con = new Conexion();
+
         jDateFechaEntrega.setDate(null);
-        jComboTitularCheque.setSelectedIndex(0);
-        jComboTitularDestino.setSelectedIndex(0);
         TxtUsoCheque.setText("");
         btnAgregarCheque.setEnabled(true);
         btnModificarCheque.setEnabled(false);
         btnEliminarCheque.setEnabled(false);
         btnLimpiarCheque.setEnabled(true);
-
+        daoCheque.llenarComboClienteProveedor(modeloComboclienteProveedor,con.getConexion());
+        daoCheque.llenarComboClienteProveedorDestino(modeloComboclienteProveedorDestino,con.getConexion());
+        comboTitularCheque.setSelectedIndex(0);
+        comboTitularDestino.setSelectedIndex(0);
     }
 
     /**
@@ -81,8 +107,8 @@ public class FrmCheques extends javax.swing.JFrame {
         TxtIdCheque = new javax.swing.JTextField();
         jComboEstadoCheque = new javax.swing.JComboBox<>();
         jComboTipoCheque = new javax.swing.JComboBox<>();
-        jComboTitularDestino = new javax.swing.JComboBox<>();
-        jComboTitularCheque = new javax.swing.JComboBox<>();
+        comboTitularDestino = new javax.swing.JComboBox<>();
+        comboTitularCheque = new javax.swing.JComboBox<>();
         TxtIdTitularCheque = new javax.swing.JTextField();
         TxtIdTitularDestinoCheque = new javax.swing.JTextField();
 
@@ -128,6 +154,18 @@ public class FrmCheques extends javax.swing.JFrame {
         jComboEstadoCheque.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "--", "Cobrado", "Por cobrar" }));
 
         jComboTipoCheque.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "--", "Propio", "Terceros" }));
+
+        comboTitularDestino.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                comboTitularDestinoItemStateChanged(evt);
+            }
+        });
+
+        comboTitularCheque.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                comboTitularChequeItemStateChanged(evt);
+            }
+        });
 
         TxtIdTitularCheque.setEnabled(false);
 
@@ -196,12 +234,12 @@ public class FrmCheques extends javax.swing.JFrame {
                                 .addGap(71, 71, 71)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                     .addComponent(jDateFechaEntrega, javax.swing.GroupLayout.DEFAULT_SIZE, 178, Short.MAX_VALUE)
-                                    .addComponent(jComboTitularCheque, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                                    .addComponent(comboTitularCheque, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                             .addGroup(layout.createSequentialGroup()
                                 .addGap(127, 127, 127)
                                 .addComponent(lblTitularDestino, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(71, 71, 71)
-                                .addComponent(jComboTitularDestino, javax.swing.GroupLayout.PREFERRED_SIZE, 178, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addComponent(comboTitularDestino, javax.swing.GroupLayout.PREFERRED_SIZE, 178, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addGap(26, 26, 26)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(TxtIdTitularDestinoCheque, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -254,14 +292,14 @@ public class FrmCheques extends javax.swing.JFrame {
                     .addComponent(jDateFechaEntrega, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jComboTitularCheque, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(comboTitularCheque, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(lblTitularCheque)
                     .addComponent(TxtIdTitularCheque, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(lblTitularDestino)
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jComboTitularDestino, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(comboTitularDestino, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(TxtIdTitularDestinoCheque, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(9, 9, 9)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -330,12 +368,15 @@ public class FrmCheques extends javax.swing.JFrame {
             Utilidades.msg(null, "No se puede ingresar porque el numero de cheque ya existe");
             TxtNumero.setText("");
             TxtIdCheque.setText("");
+            TxtIdTitularCheque.setText("");
+            TxtIdTitularDestinoCheque.setText("");
+
             TxtImporteCheque.setText("");
             jComboTipoCheque.setSelectedIndex(0);
             jComboEstadoCheque.setSelectedIndex(0);
             TxtObservacionCheque.setText("");
-            jComboTitularCheque.setSelectedIndex(0);
-            jComboTitularDestino.setSelectedIndex(0);
+            comboTitularCheque.setSelectedIndex(0);
+            comboTitularDestino.setSelectedIndex(0);
             TxtUsoCheque.setText("");
             jDateFechaCobro.setDate(null);
             jDateFechaEntrega.setDate(null);
@@ -350,8 +391,11 @@ public class FrmCheques extends javax.swing.JFrame {
                 cheque.setImporteCheque(new BigDecimal(TxtImporteCheque.getText()));
                 cheque.setNumCheque(Integer.parseInt(TxtNumero.getText()));
                 cheque.setObservacionCheque(TxtObservacionCheque.getText());
-                //cheque.setTitularCheque(Long.parseLong(TxtTitularCheque.getText()));
-                //cheque.setTitularDestino(Long.parseLong(TxtTitularDestino.getText()));
+                
+                //validar que no sea nulo o ""
+                cheque.setTitularCheque((TxtIdTitularCheque.getText() != null &&  !TxtIdTitularCheque.getText().equals("")) ? Long.parseLong(TxtIdTitularCheque.getText()): null);
+                //validar que no sea nulo o ""
+                cheque.setTitularDestino((TxtIdTitularDestinoCheque.getText() != null && !TxtIdTitularDestinoCheque.getText().equals("")) ? Long.parseLong(TxtIdTitularDestinoCheque.getText()): null);
                 cheque.setUsoCheque(TxtUsoCheque.getText());
 
                 daoCheque.ingresarCheque(cheque, con.getConexion());
@@ -363,8 +407,8 @@ public class FrmCheques extends javax.swing.JFrame {
                 jComboEstadoCheque.setSelectedIndex(0);
                 TxtObservacionCheque.setText("");
                 jDateFechaEntrega.setDate(null);
-                jComboTitularCheque.setSelectedIndex(0);
-                jComboTitularDestino.setSelectedIndex(0);
+                comboTitularCheque.setSelectedIndex(0);
+                comboTitularDestino.setSelectedIndex(0);
                 TxtUsoCheque.setText("");
 
             } catch (SQLException ex) {
@@ -373,6 +417,48 @@ public class FrmCheques extends javax.swing.JFrame {
             }
         }
     }//GEN-LAST:event_btnAgregarChequeActionPerformed
+
+    private void comboTitularChequeItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_comboTitularChequeItemStateChanged
+        TxtIdTitularCheque.setText("");
+        try {
+            String clienteProveedor = comboTitularCheque.getSelectedItem() != null ? comboTitularCheque.getSelectedItem().toString():null;
+            if (clienteProveedor == null || clienteProveedor.equals("--")){
+                TxtIdTitularCheque.setText("");
+            } else {
+                ClienteProveedor clienteProveedorSeleccionado = daoCheque.obtenerDatosClienteProveedor(clienteProveedor,con.getConexion());
+                if (clienteProveedorSeleccionado != null){
+                    TxtIdTitularCheque.setText(String.valueOf(clienteProveedorSeleccionado.getIdClienteProveedor()));
+                } else {
+                    TxtIdTitularCheque.setText("");
+                }
+            }
+
+        } catch (Exception e) {
+            Utilidades.msg(null,"Se produjo un error en la seleccion del combo Titular Cheque, ingrese nuevamente");
+            this.dispose();
+        }  
+    }//GEN-LAST:event_comboTitularChequeItemStateChanged
+
+    private void comboTitularDestinoItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_comboTitularDestinoItemStateChanged
+      TxtIdTitularDestinoCheque.setText("");
+        try {
+            String clienteProveedor = comboTitularDestino.getSelectedItem() != null ? comboTitularDestino.getSelectedItem().toString():null;
+            if (clienteProveedor == null || clienteProveedor.equals("--")){
+                TxtIdTitularDestinoCheque.setText("");
+            } else {
+                ClienteProveedor clienteProveedorSeleccionado = daoCheque.obtenerDatosClienteProveedor(clienteProveedor,con.getConexion());
+                if (clienteProveedorSeleccionado != null){
+                    TxtIdTitularDestinoCheque.setText(String.valueOf(clienteProveedorSeleccionado.getIdClienteProveedor()));
+                } else {
+                    TxtIdTitularDestinoCheque.setText("");
+                }
+            }
+
+        } catch (Exception e) {
+            Utilidades.msg(null,"Se produjo un error en la seleccion del combo Titular Destino Cheque, ingrese nuevamente");
+            this.dispose();
+        }  
+    }//GEN-LAST:event_comboTitularDestinoItemStateChanged
 
     /**
      * @param args the command line arguments
@@ -421,11 +507,11 @@ public class FrmCheques extends javax.swing.JFrame {
     private javax.swing.JButton btnEliminarCheque;
     private javax.swing.JButton btnLimpiarCheque;
     private javax.swing.JButton btnModificarCheque;
+    private javax.swing.JComboBox<String> comboTitularCheque;
+    private javax.swing.JComboBox<String> comboTitularDestino;
     private javax.swing.JButton jButton1;
     private javax.swing.JComboBox<String> jComboEstadoCheque;
     private javax.swing.JComboBox<String> jComboTipoCheque;
-    private javax.swing.JComboBox<String> jComboTitularCheque;
-    private javax.swing.JComboBox<String> jComboTitularDestino;
     private com.toedter.calendar.JDateChooser jDateFechaCobro;
     private com.toedter.calendar.JDateChooser jDateFechaEntrega;
     private javax.swing.JLabel lblEstadoDeCheque;
