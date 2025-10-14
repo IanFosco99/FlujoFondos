@@ -267,7 +267,7 @@ public class DAOCheque {
             if (rs.next()) {
                 nombreClienteProveedor = rs.getString("nom_razon_social");
             }
-        } catch (Exception e) {
+        } catch (SQLException e) {
             nombreClienteProveedor = null;
         } finally {
             try {
