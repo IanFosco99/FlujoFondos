@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 12-08-2025 a las 00:27:22
+-- Tiempo de generación: 14-10-2025 a las 02:27:18
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -18,7 +18,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Base de datos: `flujofondos`
+-- Base de datos: `flujo_fondos`
 --
 
 -- --------------------------------------------------------
@@ -29,17 +29,25 @@ SET time_zone = "+00:00";
 
 CREATE TABLE `cheque` (
   `id_cheque` bigint(20) NOT NULL,
-  `nro_cheque` int(14) NOT NULL,
+  `nro_cheque` bigint(14) NOT NULL,
   `importe_cheque` decimal(16,2) NOT NULL,
   `fecha_cobro_cheque` date NOT NULL,
   `tipo_cheque` varchar(10) NOT NULL,
   `estado_cheque` int(1) NOT NULL DEFAULT 0 COMMENT 'cobrado 1 / por cobrar 0',
   `observacion_cheque` varchar(150) DEFAULT NULL,
-  `fecha_entrega_cheque` date NOT NULL,
-  `titular_cheque` bigint(20) DEFAULT NULL COMMENT 'de donde viene(id_cliente_proveedor)',
+  `fecha_entrega_cheque` date DEFAULT NULL,
+  `titular_cheque` bigint(20) NOT NULL COMMENT 'de donde viene(id_cliente_proveedor)',
   `titular_destino` bigint(20) DEFAULT NULL COMMENT 'hacia donde va(id_cliente_proveedor)',
   `uso_cheque` varchar(10) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+
+--
+-- Volcado de datos para la tabla `cheque`
+--
+
+INSERT INTO `cheque` (`id_cheque`, `nro_cheque`, `importe_cheque`, `fecha_cobro_cheque`, `tipo_cheque`, `estado_cheque`, `observacion_cheque`, `fecha_entrega_cheque`, `titular_cheque`, `titular_destino`, `uso_cheque`) VALUES
+(1, 123123, 120000.00, '2025-10-22', 'Terceros', 0, '', NULL, 3, 0, ''),
+(2, 1234, 28000000.00, '2025-10-30', 'Terceros', 0, '', NULL, 4, 0, '');
 
 -- --------------------------------------------------------
 
@@ -53,8 +61,18 @@ CREATE TABLE `cliente_proveedores` (
   `dni_cuit` int(11) DEFAULT NULL,
   `telefono` varchar(50) DEFAULT NULL,
   `email` varchar(100) DEFAULT NULL,
-  `tipo_cliente_proveedor` varchar(1) DEFAULT NULL
+  `tipo_cliente_proveedor` varchar(10) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+
+--
+-- Volcado de datos para la tabla `cliente_proveedores`
+--
+
+INSERT INTO `cliente_proveedores` (`id_cliente_proveedor`, `nom_razon_social`, `dni_cuit`, `telefono`, `email`, `tipo_cliente_proveedor`) VALUES
+(1, 'asdasdasd', 1234565432, '123132133', 'momn@gmail.com', 'Proveedor'),
+(2, 'asdasda', 123123213, '2131231231', 'sadad@sada.com', 'Cliente'),
+(3, 'HoodS Burguer', 46042631, '03476600093', 'Augusto11805@gmail.com', 'Cliente'),
+(4, 'SolNails', 44178222, '3476355560', 'solramirez835@gmail.com', 'Proveedor');
 
 -- --------------------------------------------------------
 
@@ -103,6 +121,12 @@ CREATE TABLE `movimiento` (
 --
 
 --
+-- Indices de la tabla `cheque`
+--
+ALTER TABLE `cheque`
+  ADD PRIMARY KEY (`id_cheque`);
+
+--
 -- Indices de la tabla `cliente_proveedores`
 --
 ALTER TABLE `cliente_proveedores`
@@ -135,10 +159,16 @@ ALTER TABLE `movimiento`
 --
 
 --
+-- AUTO_INCREMENT de la tabla `cheque`
+--
+ALTER TABLE `cheque`
+  MODIFY `id_cheque` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
 -- AUTO_INCREMENT de la tabla `cliente_proveedores`
 --
 ALTER TABLE `cliente_proveedores`
-  MODIFY `id_cliente_proveedor` bigint(20) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_cliente_proveedor` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT de la tabla `cuentas`
