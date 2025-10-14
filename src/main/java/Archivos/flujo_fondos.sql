@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 14-10-2025 a las 02:27:18
+-- Tiempo de generación: 14-10-2025 a las 02:47:09
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -38,16 +38,18 @@ CREATE TABLE `cheque` (
   `fecha_entrega_cheque` date DEFAULT NULL,
   `titular_cheque` bigint(20) NOT NULL COMMENT 'de donde viene(id_cliente_proveedor)',
   `titular_destino` bigint(20) DEFAULT NULL COMMENT 'hacia donde va(id_cliente_proveedor)',
-  `uso_cheque` varchar(10) DEFAULT NULL
+  `uso_cheque` varchar(10) DEFAULT NULL,
+  `id_cuenta_entrada` bigint(20) NOT NULL,
+  `id_cuenta_salida` bigint(20) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 --
 -- Volcado de datos para la tabla `cheque`
 --
 
-INSERT INTO `cheque` (`id_cheque`, `nro_cheque`, `importe_cheque`, `fecha_cobro_cheque`, `tipo_cheque`, `estado_cheque`, `observacion_cheque`, `fecha_entrega_cheque`, `titular_cheque`, `titular_destino`, `uso_cheque`) VALUES
-(1, 123123, 120000.00, '2025-10-22', 'Terceros', 0, '', NULL, 3, 0, ''),
-(2, 1234, 28000000.00, '2025-10-30', 'Terceros', 0, '', NULL, 4, 0, '');
+INSERT INTO `cheque` (`id_cheque`, `nro_cheque`, `importe_cheque`, `fecha_cobro_cheque`, `tipo_cheque`, `estado_cheque`, `observacion_cheque`, `fecha_entrega_cheque`, `titular_cheque`, `titular_destino`, `uso_cheque`, `id_cuenta_entrada`, `id_cuenta_salida`) VALUES
+(1, 123123, 120000.00, '2025-10-22', 'Terceros', 0, '', NULL, 3, 0, '', 0, 0),
+(2, 1234, 28000000.00, '2025-10-30', 'Terceros', 0, '', NULL, 4, 0, '', 0, 0);
 
 -- --------------------------------------------------------
 
