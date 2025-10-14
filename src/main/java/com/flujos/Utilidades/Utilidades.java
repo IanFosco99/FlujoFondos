@@ -37,22 +37,32 @@ public class Utilidades {
             return false;
         }
     }
-    public static boolean isNunInt(String cadena){
-        try{
+
+    public static boolean isNunInt(String cadena) {
+        try {
             Integer.valueOf(cadena);
             return true;
-        } catch (NumberFormatException nfe){
+        } catch (NumberFormatException nfe) {
             return false;
         }
     }
-    
-    public static boolean isValidBigDecimal(String cadena) {
-    try {
-        new BigDecimal(cadena);  // Trata de convertir la cadena a BigDecimal
-        return true;
-    } catch (NumberFormatException nfe) {
-        return false;  // Si ocurre una excepción, la cadena no es válida
+
+    public static boolean isNumLong(String cadena) {
+        try {
+            Long.valueOf(cadena);
+            return true;
+        } catch (NumberFormatException nfe) {
+            return false;
+        }
     }
-}
+
+    public static boolean isValidBigDecimal(String cadena) {
+        try {
+            new BigDecimal(cadena);  // Trata de convertir la cadena a BigDecimal
+            return true;
+        } catch (NumberFormatException nfe) {
+            return false;  // Si ocurre una excepción, la cadena no es válida
+        }
+    }
 
 }

@@ -13,7 +13,7 @@ import java.util.Date;
  */
 public class Cheque {
  private Long idCheque;
- private Integer numCheque;
+ private Long numCheque;
  private BigDecimal importeCheque;
  private Date fechaCobroCheque;
  private String tipoCheque;
@@ -24,7 +24,7 @@ public class Cheque {
  private Long titularDestino;
  private String usoCheque;
 
-    public Cheque(Long idCheque, Integer numCheque, BigDecimal importeCheque, Date fechaCobroCheque, String tipoCheque, Integer estadoCheque, String observacionCheque, Date fechaEntregaCheque, Long titularCheque, Long titularDestino, String usoCheque) {
+    public Cheque(Long idCheque, Long numCheque, BigDecimal importeCheque, Date fechaCobroCheque, String tipoCheque, Integer estadoCheque, String observacionCheque, Date fechaEntregaCheque, Long titularCheque, Long titularDestino, String usoCheque) {
         this.idCheque = idCheque;
         this.numCheque = numCheque;
         this.importeCheque = importeCheque;
@@ -49,11 +49,11 @@ public class Cheque {
         this.idCheque = idCheque;
     }
 
-    public Integer getNumCheque() {
+    public Long getNumCheque() {
         return numCheque;
     }
 
-    public void setNumCheque(Integer numCheque) {
+    public void setNumCheque(Long numCheque) {
         this.numCheque = numCheque;
     }
 
