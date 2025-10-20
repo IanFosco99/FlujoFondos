@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 14-10-2025 a las 02:47:09
+-- Tiempo de generación: 19-10-2025 a las 21:31:00
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -24,10 +24,37 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `cheque`
+-- Estructura de tabla para la tabla `cheque_propio`
 --
 
-CREATE TABLE `cheque` (
+CREATE TABLE `cheque_propio` (
+  `id_cheque` bigint(20) NOT NULL,
+  `nro_cheque` bigint(14) NOT NULL,
+  `importe_cheque` decimal(16,2) NOT NULL,
+  `fecha_cobro_cheque` date NOT NULL,
+  `estado_cheque` int(1) NOT NULL DEFAULT 0 COMMENT 'cobrado 1 / por cobrar 0',
+  `observacion_cheque` varchar(150) DEFAULT NULL,
+  `titular_destino` bigint(20) DEFAULT NULL COMMENT 'hacia donde va(id_cliente_proveedor)',
+  `uso_cheque` varchar(10) DEFAULT NULL,
+  `id_cuenta_salida` bigint(20) NOT NULL,
+  `fecha_entrega_cheque` date DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+
+--
+-- Volcado de datos para la tabla `cheque_propio`
+--
+
+INSERT INTO `cheque_propio` (`id_cheque`, `nro_cheque`, `importe_cheque`, `fecha_cobro_cheque`, `estado_cheque`, `observacion_cheque`, `titular_destino`, `uso_cheque`, `id_cuenta_salida`, `fecha_entrega_cheque`) VALUES
+(1, 123123, 120000.00, '2025-10-22', 0, '', 0, '', 0, NULL),
+(2, 1234, 28000000.00, '2025-10-30', 0, '', 0, '', 0, NULL);
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `cheque_tercero`
+--
+
+CREATE TABLE `cheque_tercero` (
   `id_cheque` bigint(20) NOT NULL,
   `nro_cheque` bigint(14) NOT NULL,
   `importe_cheque` decimal(16,2) NOT NULL,
@@ -42,14 +69,6 @@ CREATE TABLE `cheque` (
   `id_cuenta_entrada` bigint(20) NOT NULL,
   `id_cuenta_salida` bigint(20) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
-
---
--- Volcado de datos para la tabla `cheque`
---
-
-INSERT INTO `cheque` (`id_cheque`, `nro_cheque`, `importe_cheque`, `fecha_cobro_cheque`, `tipo_cheque`, `estado_cheque`, `observacion_cheque`, `fecha_entrega_cheque`, `titular_cheque`, `titular_destino`, `uso_cheque`, `id_cuenta_entrada`, `id_cuenta_salida`) VALUES
-(1, 123123, 120000.00, '2025-10-22', 'Terceros', 0, '', NULL, 3, 0, '', 0, 0),
-(2, 1234, 28000000.00, '2025-10-30', 'Terceros', 0, '', NULL, 4, 0, '', 0, 0);
 
 -- --------------------------------------------------------
 
@@ -91,6 +110,13 @@ CREATE TABLE `cuentas` (
   `ingreso` varchar(1) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
+--
+-- Volcado de datos para la tabla `cuentas`
+--
+
+INSERT INTO `cuentas` (`id_cuenta`, `cod_concepto`, `nom_concepto`, `clas_concepto`, `id_movimiento`, `ingreso`) VALUES
+(1, '1.01', 'Venta Contado', 'Operativo', 1, 'I');
+
 -- --------------------------------------------------------
 
 --
@@ -107,6 +133,13 @@ CREATE TABLE `flujos_mov` (
   `id_cheque` bigint(20) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
+--
+-- Volcado de datos para la tabla `flujos_mov`
+--
+
+INSERT INTO `flujos_mov` (`id_flujo_mov`, `fecha_mov`, `id_movimiento`, `id_cuenta`, `importe`, `observaciones_mov`, `id_cheque`) VALUES
+(1, '2025-10-16', 1, 1, 400000.00, '0', 0);
+
 -- --------------------------------------------------------
 
 --
@@ -119,13 +152,29 @@ CREATE TABLE `movimiento` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 --
+-- Volcado de datos para la tabla `movimiento`
+--
+
+INSERT INTO `movimiento` (`id_movimiento`, `desc_movimiento`) VALUES
+(1, 'Caja'),
+(2, 'Cheques a Cobrar'),
+(3, 'Cheques Emitidos'),
+(4, 'Banco El Tornillo Cta.Cte.');
+
+--
 -- Índices para tablas volcadas
 --
 
 --
--- Indices de la tabla `cheque`
+-- Indices de la tabla `cheque_propio`
 --
-ALTER TABLE `cheque`
+ALTER TABLE `cheque_propio`
+  ADD PRIMARY KEY (`id_cheque`);
+
+--
+-- Indices de la tabla `cheque_tercero`
+--
+ALTER TABLE `cheque_tercero`
   ADD PRIMARY KEY (`id_cheque`);
 
 --
@@ -161,10 +210,16 @@ ALTER TABLE `movimiento`
 --
 
 --
--- AUTO_INCREMENT de la tabla `cheque`
+-- AUTO_INCREMENT de la tabla `cheque_propio`
 --
-ALTER TABLE `cheque`
+ALTER TABLE `cheque_propio`
   MODIFY `id_cheque` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
+-- AUTO_INCREMENT de la tabla `cheque_tercero`
+--
+ALTER TABLE `cheque_tercero`
+  MODIFY `id_cheque` bigint(20) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT de la tabla `cliente_proveedores`
@@ -176,19 +231,19 @@ ALTER TABLE `cliente_proveedores`
 -- AUTO_INCREMENT de la tabla `cuentas`
 --
 ALTER TABLE `cuentas`
-  MODIFY `id_cuenta` bigint(20) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_cuenta` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT de la tabla `flujos_mov`
 --
 ALTER TABLE `flujos_mov`
-  MODIFY `id_flujo_mov` bigint(20) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_flujo_mov` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT de la tabla `movimiento`
 --
 ALTER TABLE `movimiento`
-  MODIFY `id_movimiento` bigint(20) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_movimiento` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
