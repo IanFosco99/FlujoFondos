@@ -89,6 +89,11 @@ public class FrmABMChequeTerceros extends javax.swing.JFrame {
         });
 
         btnModificar.setText("Modificar");
+        btnModificar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnModificarActionPerformed(evt);
+            }
+        });
 
         btnEliminar.setText("Eliminar");
         btnEliminar.addActionListener(new java.awt.event.ActionListener() {
@@ -345,6 +350,66 @@ public class FrmABMChequeTerceros extends javax.swing.JFrame {
         }
 
     }//GEN-LAST:event_btnEliminarActionPerformed
+
+    private void btnModificarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnModificarActionPerformed
+        
+        if(TxtNumero.getText().equals("")){
+            Utilidades.msg(null, "Ingrese el número del cheque a modificar");
+            TxtNumero.requestFocus();
+            return;
+        }
+        
+        if (!Utilidades.existe(con.getConexion(), "SELECT 1 FROM cheque_tercero WHERE nro_cheque = " + TxtNumero.getText())) {
+            Utilidades.msg(null, "El cheque no existe");
+            return;
+        }
+        
+        //Validacion de campos a modificar
+        if (TxtImporteCheque.getText().equals("") || !Utilidades.isValidBigDecimal(TxtImporteCheque.getText())) {
+            Utilidades.msg(null, "Ingrese un importe válido");
+            TxtImporteCheque.requestFocus();
+            return;
+        }
+        
+        if(jDateFechaCobro.getDate() == null){
+            Utilidades.msg(null, "Ingrese una fecha de cobro");
+            jDateFechaCobro.requestFocus();
+            return;
+        }
+        
+        if(comboTitularCheque.getSelectedItem().equals("--")){
+            Utilidades.msg(null, "Seleccione un titular para el cheque");
+            comboTitularCheque.requestFocus();
+            return;
+        }
+        
+        try{
+        
+            String sql = "UPDATE cheque_tercero SET id_titular = ?, importe = ?, fecha_cobro = ?, observacion = ?" + "WHERE nro_cheque = ?";
+            
+            PreparedStatement ps = con.getConexion().prepareStatement(sql);
+            
+            ps.setInt(1, Integer.parseInt(TxtImporteCheque.getText()));
+            ps.setBigDecimal(2, new BigDecimal(TxtImporteCheque.getText()));
+            //ps.setDate(3, new java.sql.Date.Date(jDateFechaCobro.getDate().getTime()));
+            ps.setString(4, TxtObservacionCheque.getText());
+            ps.setLong(5, Long.parseLong(TxtNumero.getText()));
+            
+            ps.executeUpdate();
+            
+            //LIMPIAR CAMPOS
+            TxtNumero.setText("");
+            TxtIdTitularCheque.setText("");
+            TxtImporteCheque.setText("");
+            TxtObservacionCheque.setText("");
+            comboTitularCheque.setSelectedIndex(0);
+            jDateFechaCobro.setDate(null);
+        } catch(SQLException e){
+            e.printStackTrace();
+            Utilidades.msg(null, "Error al modificar el cheque: " + e.getMessage());
+        }
+        
+    }//GEN-LAST:event_btnModificarActionPerformed
 
     /**
      * @param args the command line arguments
