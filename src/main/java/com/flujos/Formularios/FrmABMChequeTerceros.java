@@ -6,31 +6,34 @@ package com.flujos.Formularios;
 
 import com.flujos.Utilidades.Conexion;
 import com.flujos.Utilidades.Utilidades;
+import java.math.BigDecimal;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import javax.swing.JOptionPane;
+
 /**
  *
  * @author monse
  */
 public class FrmABMChequeTerceros extends javax.swing.JFrame {
 
-        private Conexion con;
-    
+    private Conexion con;
+
     /**
      * Creates new form FrmABMChequeTerceros
      */
     public FrmABMChequeTerceros() {
-            try {
-                initComponents();
-                
-                inicializar();
-            } catch (SQLException ex) {
+        try {
+            initComponents();
 
-                Utilidades.msg(null, "Error al inicializar la ventana");
-                this.dispose();
-            }
+            inicializar();
+        } catch (SQLException ex) {
+
+            Utilidades.msg(null, "Error al inicializar la ventana");
+            this.dispose();
+        }
     }
-    
-    
+
     private void inicializar() throws SQLException {
 
         con = new Conexion();
@@ -88,10 +91,25 @@ public class FrmABMChequeTerceros extends javax.swing.JFrame {
         btnModificar.setText("Modificar");
 
         btnEliminar.setText("Eliminar");
+        btnEliminar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnEliminarActionPerformed(evt);
+            }
+        });
 
         btnLimpiar.setText("Limpiar");
+        btnLimpiar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnLimpiarActionPerformed(evt);
+            }
+        });
 
         btnSalir.setText("Salir");
+        btnSalir.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSalirActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -185,7 +203,6 @@ public class FrmABMChequeTerceros extends javax.swing.JFrame {
 
     private void btnAgregarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAgregarActionPerformed
 
-        
         if (TxtNumero.getText().equals("")) {
             Utilidades.msg(null, "El numero del cheque no puede estar vacio");
             TxtNumero.requestFocus();
@@ -198,7 +215,7 @@ public class FrmABMChequeTerceros extends javax.swing.JFrame {
             TxtNumero.requestFocus();
             return;
         }
-        
+
         if (TxtImporteCheque.getText().equals("")) {
             Utilidades.msg(null, "El importe no puede estar vacio");
             TxtImporteCheque.requestFocus();
@@ -211,21 +228,21 @@ public class FrmABMChequeTerceros extends javax.swing.JFrame {
             TxtImporteCheque.requestFocus();
             return;
         }
-        
+
         if (jDateFechaCobro.getDate() == null) {
             Utilidades.msg(null, "Ingrese una fecha de cobro");
             jDateFechaCobro.setDate(null);
             jDateFechaCobro.requestFocus();
             return;
         }
-        
-        if(comboTitularCheque.getSelectedItem().equals("--")){
+
+        if (comboTitularCheque.getSelectedItem().equals("--")) {
             Utilidades.msg(null, "Debe seleccionar un titular para el cheque");
             comboTitularCheque.requestFocus();
             return;
         }
-        
-         if (Utilidades.existe(con.getConexion(), "SELECT (1) FROM cheque_tercero WHERE nro_cheque = " + Long.parseLong(TxtNumero.getText()) + " ")) {
+
+        if (Utilidades.existe(con.getConexion(), "SELECT (1) FROM cheque_tercero WHERE nro_cheque = " + Long.parseLong(TxtNumero.getText()) + " ")) {
             Utilidades.msg(null, "No se puede ingresar porque el numero de cheque ya existe");
             TxtNumero.setText("");
             TxtIdTitularCheque.setText("");
@@ -235,12 +252,99 @@ public class FrmABMChequeTerceros extends javax.swing.JFrame {
             jDateFechaCobro.setDate(null);
             TxtIdChequeTercero.setText("");
         } else {
-         
-             
-             
-         }
-        
+            try {
+
+                String sql = "INSERT INTO cheque_tercero (nro_cheque, id_titular, importe, fecha_cobro, observacion) "
+                        + "VALUES (?, ?, ?, ?, ?)";
+                PreparedStatement ps = con.getConexion().prepareStatement(sql);
+
+                // Setear valores
+                ps.setLong(1, Long.parseLong(TxtNumero.getText()));
+                ps.setInt(2, Integer.parseInt(TxtIdTitularCheque.getText()));
+                ps.setBigDecimal(3, new BigDecimal(TxtImporteCheque.getText()));
+                ps.setDate(4, new java.sql.Date(jDateFechaCobro.getDate().getTime()));
+                ps.setString(5, TxtObservacionCheque.getText());
+
+                // Ejecutar
+                ps.executeUpdate();
+
+                // Confirmación
+                Utilidades.msg(null, "Cheque agregado correctamente");
+
+                // Limpiar campos
+                TxtNumero.setText("");
+                TxtIdTitularCheque.setText("");
+                TxtImporteCheque.setText("");
+                TxtObservacionCheque.setText("");
+                comboTitularCheque.setSelectedIndex(0);
+                jDateFechaCobro.setDate(null);
+            } catch (SQLException e) {
+                Utilidades.msg(null, "Error al guardar el cheque: " + e.getMessage());
+            }
+
+        }
     }//GEN-LAST:event_btnAgregarActionPerformed
+
+    private void btnLimpiarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLimpiarActionPerformed
+
+        //aca limpio
+        TxtNumero.setText("");
+        TxtIdTitularCheque.setText("");
+        TxtImporteCheque.setText("");
+        TxtObservacionCheque.setText("");
+        comboTitularCheque.setSelectedIndex(0);
+        jDateFechaCobro.setDate(null);
+
+    }//GEN-LAST:event_btnLimpiarActionPerformed
+
+    private void btnSalirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalirActionPerformed
+        this.dispose();
+    }//GEN-LAST:event_btnSalirActionPerformed
+
+    private void btnEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarActionPerformed
+
+        if (TxtNumero.getText().equals("")) {
+            Utilidades.msg(null, "Ingrese el número del cheque a eliminar");
+            return;
+        }
+
+        try {
+
+            //corfirmar
+            if (!Utilidades.existe(con.getConexion(), "SELECT 1 FROM cheque_tercero WHERE nro_cheque = " + TxtNumero.getText())){
+                Utilidades.msg(null, "El cheque no existe:");
+                return;
+            }
+            
+            //confirmacion
+            int opcion = JOptionPane.showConfirmDialog(this, "¿Está seguro que desea eliminar este cheque?", "Confirmar eliminación", JOptionPane.YES_NO_OPTION
+            );
+            
+            
+            if(opcion == JOptionPane.YES_OPTION){
+                String sql = "DELETE FROM cheque_tercero WHERE nro_cheque = ?";
+                PreparedStatement ps = con.getConexion().prepareStatement(sql);
+                ps.setLong(1, Long.parseLong(TxtNumero.getText()));
+                ps.executeUpdate();
+                
+                Utilidades.msg(null, "cheque eliminado correctamente");
+                
+                
+                //limpiar campos
+                TxtNumero.setText("");
+                TxtIdTitularCheque.setText("");
+                TxtImporteCheque.setText("");
+                TxtObservacionCheque.setText("");
+                comboTitularCheque.setSelectedIndex(0);
+                jDateFechaCobro.setDate(null);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            Utilidades.msg(null, "Error al eliminar el cheque: " + e.getMessage());
+        }
+
+    }//GEN-LAST:event_btnEliminarActionPerformed
 
     /**
      * @param args the command line arguments
