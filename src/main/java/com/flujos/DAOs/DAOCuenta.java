@@ -112,4 +112,37 @@ public class DAOCuenta {
         return mov;
 
     }
+
+
+    public String obtenerCuenta(Long idCuenta, Connection con) {
+            String conceptoCuenta = null;
+            String consulta = "SELECT nom_concepto FROM cuentas WHERE id_cuenta = " + idCuenta + "";
+            Statement st = null;
+            ResultSet rs = null;
+            try {
+                st = con.createStatement();
+                rs = st.executeQuery(consulta);
+                if (rs.next()) {
+                    conceptoCuenta = rs.getString("nom_concepto");
+                }
+            } catch (SQLException e) {
+                conceptoCuenta = null;
+            } finally {
+                try {
+
+                    if (rs != null) {
+                        rs.close();
+                    }
+                    if (st != null) {
+
+                        st.close();
+                    }
+                } catch (SQLException ex) {
+                    conceptoCuenta = null;
+                }
+            }
+            return conceptoCuenta;
+
+        }
 }
+
