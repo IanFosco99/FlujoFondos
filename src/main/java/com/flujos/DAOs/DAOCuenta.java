@@ -144,5 +144,35 @@ public class DAOCuenta {
             return conceptoCuenta;
 
         }
+    
+    
+        public void llenarComboCuentaSalida(DefaultComboBoxModel<String> modeloCuentaSalida, Connection con) throws SQLException {
+        String consulta = "SELECT nom_concepto FROM cuenta";
+        Statement st = null;
+        ResultSet rs = null;
+        try {
+            st = con.createStatement();
+            rs = st.executeQuery(consulta);
+
+            modeloCuentaSalida.removeAllElements();
+            modeloCuentaSalida.addElement("--");
+
+            while (rs.next()) {
+                String cuenta = rs.getString("nom_concepto");
+                modeloCuentaSalida.addElement(cuenta);
+
+            }
+        } finally {
+            if (rs != null) {
+                rs.close();
+            }
+            if (st != null) {
+                st.close();
+            }
+        }
+    }
+    
+    
+    
 }
 

@@ -26,7 +26,7 @@ import javax.swing.JOptionPane;
  */
 public class FrmABMChequePropio extends javax.swing.JFrame {
     private Conexion con;
-    DefaultComboBoxModel<String> modeloComboclienteProveedor = new DefaultComboBoxModel<>();
+    DefaultComboBoxModel<String> modeloCuentaSalida = new DefaultComboBoxModel<>();
     DefaultComboBoxModel<String> modeloComboclienteProveedorDestino = new DefaultComboBoxModel<>();
     
     private DAOCheque daoCheque;
@@ -39,8 +39,8 @@ public class FrmABMChequePropio extends javax.swing.JFrame {
     public FrmABMChequePropio() {
         try {
             initComponents();
-            comboCuentaSalida.setModel(modeloComboclienteProveedor);
-            comboCuentaSalida.setModel(modeloComboclienteProveedorDestino);
+            comboCuentaSalida.setModel(modeloCuentaSalida);
+            comboTitularDestino.setModel(modeloComboclienteProveedorDestino);
 
             inicializar();
         } catch (SQLException ex) {
@@ -66,10 +66,10 @@ public class FrmABMChequePropio extends javax.swing.JFrame {
         daoChequePropio = new DAOChequePropio();
         daoCheque = new DAOCheque();
         daoCuenta = new DAOCuenta();
-        daoCheque.llenarComboClienteProveedor(modeloComboclienteProveedor, con.getConexion());
         daoCheque.llenarComboClienteProveedorDestino(modeloComboclienteProveedorDestino, con.getConexion());
         con = new Conexion();
-        comboCuentaSalida.setSelectedIndex(0);
+        daoCuenta.llenarComboCuentaSalida(modeloCuentaSalida, con.getConexion());
+
      }  
        
     
