@@ -138,9 +138,9 @@ public class FrmFlujoFondos extends javax.swing.JFrame {
 
     private void menuItemCargaChequePropioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemCargaChequePropioActionPerformed
         
-        FrmABMChequePropio ventanaPropios = new FrmABMChequePropio();
-        ventanaPropios.setVisible(true);
-        ventanaPropios.setLocationRelativeTo(null);  
+        //FrmABMChequePropio ventanaPropios = new FrmABMChequePropio();
+        //ventanaPropios.setVisible(true);
+        //ventanaPropios.setLocationRelativeTo(null);  
     }//GEN-LAST:event_menuItemCargaChequePropioActionPerformed
 
     private void menuItemCargaChequeTercerosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemCargaChequeTercerosActionPerformed

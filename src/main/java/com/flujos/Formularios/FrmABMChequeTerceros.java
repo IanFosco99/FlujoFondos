@@ -4,11 +4,15 @@
  */
 package com.flujos.Formularios;
 
+import com.flujos.DAOs.DAOCheque;
+import com.flujos.Entidades.ClienteProveedor;
 import com.flujos.Utilidades.Conexion;
 import com.flujos.Utilidades.Utilidades;
 import java.math.BigDecimal;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JOptionPane;
 
 /**
@@ -19,13 +23,15 @@ public class FrmABMChequeTerceros extends javax.swing.JFrame {
 
     private Conexion con;
 
+    DefaultComboBoxModel<String> modeloComboChequeTercero = new DefaultComboBoxModel<>();
+
     /**
      * Creates new form FrmABMChequeTerceros
      */
     public FrmABMChequeTerceros() {
         try {
             initComponents();
-
+            //ARREGLAR ESTO TxtIdTitularCheque.setModel(modeloComboChequeTercero);
             inicializar();
         } catch (SQLException ex) {
 
@@ -80,6 +86,12 @@ public class FrmABMChequeTerceros extends javax.swing.JFrame {
         lblObservacionCheque.setText("Observacion Cheque:");
 
         lblTitularCheque.setText("Titular Cheque:");
+
+        comboTitularCheque.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                comboTitularChequeItemStateChanged(evt);
+            }
+        });
 
         btnAgregar.setText("Agregar");
         btnAgregar.addActionListener(new java.awt.event.ActionListener() {
@@ -316,25 +328,23 @@ public class FrmABMChequeTerceros extends javax.swing.JFrame {
         try {
 
             //corfirmar
-            if (!Utilidades.existe(con.getConexion(), "SELECT 1 FROM cheque_tercero WHERE nro_cheque = " + TxtNumero.getText())){
+            if (!Utilidades.existe(con.getConexion(), "SELECT 1 FROM cheque_tercero WHERE nro_cheque = " + TxtNumero.getText())) {
                 Utilidades.msg(null, "El cheque no existe:");
                 return;
             }
-            
+
             //confirmacion
             int opcion = JOptionPane.showConfirmDialog(this, "¿Está seguro que desea eliminar este cheque?", "Confirmar eliminación", JOptionPane.YES_NO_OPTION
             );
-            
-            
-            if(opcion == JOptionPane.YES_OPTION){
+
+            if (opcion == JOptionPane.YES_OPTION) {
                 String sql = "DELETE FROM cheque_tercero WHERE nro_cheque = ?";
                 PreparedStatement ps = con.getConexion().prepareStatement(sql);
                 ps.setLong(1, Long.parseLong(TxtNumero.getText()));
                 ps.executeUpdate();
-                
+
                 Utilidades.msg(null, "cheque eliminado correctamente");
-                
-                
+
                 //limpiar campos
                 TxtNumero.setText("");
                 TxtIdTitularCheque.setText("");
@@ -352,51 +362,51 @@ public class FrmABMChequeTerceros extends javax.swing.JFrame {
     }//GEN-LAST:event_btnEliminarActionPerformed
 
     private void btnModificarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnModificarActionPerformed
-        
-        if(TxtNumero.getText().equals("")){
+
+        if (TxtNumero.getText().equals("")) {
             Utilidades.msg(null, "Ingrese el número del cheque a modificar");
             TxtNumero.requestFocus();
             return;
         }
-        
+
         if (!Utilidades.existe(con.getConexion(), "SELECT 1 FROM cheque_tercero WHERE nro_cheque = " + TxtNumero.getText())) {
             Utilidades.msg(null, "El cheque no existe");
             return;
         }
-        
+
         //Validacion de campos a modificar
         if (TxtImporteCheque.getText().equals("") || !Utilidades.isValidBigDecimal(TxtImporteCheque.getText())) {
             Utilidades.msg(null, "Ingrese un importe válido");
             TxtImporteCheque.requestFocus();
             return;
         }
-        
-        if(jDateFechaCobro.getDate() == null){
+
+        if (jDateFechaCobro.getDate() == null) {
             Utilidades.msg(null, "Ingrese una fecha de cobro");
             jDateFechaCobro.requestFocus();
             return;
         }
-        
-        if(comboTitularCheque.getSelectedItem().equals("--")){
+
+        if (comboTitularCheque.getSelectedItem().equals("--")) {
             Utilidades.msg(null, "Seleccione un titular para el cheque");
             comboTitularCheque.requestFocus();
             return;
         }
-        
-        try{
-        
+
+        try {
+
             String sql = "UPDATE cheque_tercero SET id_titular = ?, importe = ?, fecha_cobro = ?, observacion = ?" + "WHERE nro_cheque = ?";
-            
+
             PreparedStatement ps = con.getConexion().prepareStatement(sql);
-            
+
             ps.setInt(1, Integer.parseInt(TxtImporteCheque.getText()));
             ps.setBigDecimal(2, new BigDecimal(TxtImporteCheque.getText()));
             //ps.setDate(3, new java.sql.Date.Date(jDateFechaCobro.getDate().getTime()));
             ps.setString(4, TxtObservacionCheque.getText());
             ps.setLong(5, Long.parseLong(TxtNumero.getText()));
-            
+
             ps.executeUpdate();
-            
+
             //LIMPIAR CAMPOS
             TxtNumero.setText("");
             TxtIdTitularCheque.setText("");
@@ -404,12 +414,47 @@ public class FrmABMChequeTerceros extends javax.swing.JFrame {
             TxtObservacionCheque.setText("");
             comboTitularCheque.setSelectedIndex(0);
             jDateFechaCobro.setDate(null);
-        } catch(SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
             Utilidades.msg(null, "Error al modificar el cheque: " + e.getMessage());
         }
-        
+
     }//GEN-LAST:event_btnModificarActionPerformed
+
+    private void comboTitularChequeItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_comboTitularChequeItemStateChanged
+
+        TxtIdChequeTercero.setText("");
+
+        try {
+            Object seleccionado = comboTitularCheque.getSelectedItem();
+
+            if (seleccionado == null || "--".equals(seleccionado.toString())) {
+                TxtIdChequeTercero.setText("");
+                return;
+            }
+
+            // Buscar el id_titular directamente desde la base
+            String sql = "SELECT id_cliente_proveedor FROM cliente_proveedor WHERE nombre = ?";
+            PreparedStatement ps = con.getConexion().prepareStatement(sql);
+            ps.setString(1, seleccionado.toString());
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                TxtIdChequeTercero.setText(String.valueOf(rs.getInt("id_cliente_proveedor")));
+            } else {
+                TxtIdChequeTercero.setText("");
+                Utilidades.msg(null, "No se encontró el titular seleccionado");
+            }
+
+            rs.close();
+            ps.close();
+
+        } catch (Exception e) {
+            Utilidades.msg(null, "Error al seleccionar el titular del cheque de tercero. Intente nuevamente.");
+            e.printStackTrace();
+        }
+
+    }//GEN-LAST:event_comboTitularChequeItemStateChanged
 
     /**
      * @param args the command line arguments
