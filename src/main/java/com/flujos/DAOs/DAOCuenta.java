@@ -29,24 +29,55 @@ public class DAOCuenta {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
-    public Cuenta obtenerDatos(String dato, Connection conexion) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    public Cuenta obtenerDatos(String dato, Connection con) {
+
+    Cuenta cuenta = new Cuenta();
+        String consulta = "SELECT id_cuenta FROM cuentas WHERE nom_concepto = '" + dato + "'";
+        Statement st = null;
+        ResultSet rs = null;
+    
+        try {
+            st = con.createStatement();
+            rs = st.executeQuery(consulta);
+            if (rs.next()) {
+                cuenta.setIdCuenta(rs.getLong("id_cuenta"));
+            } else {
+                cuenta = null;
+            }
+        } catch (Exception e) {
+            cuenta = null;
+        } finally {
+            try {
+
+                if (rs != null) {
+                    rs.close();
+                }
+                if (st != null) {
+
+                    st.close();
+                }
+            } catch (SQLException ex) {
+                cuenta = null;
+            }
+        }
+        return cuenta;
+
     }
 
-    public void llenarComboCuenta(DefaultComboBoxModel<String> modeloComboMovimiento, Connection con) throws SQLException {
-        String consulta = "SELECT desc_movimiento FROM movimiento";
+    public void llenarComboCuenta(DefaultComboBoxModel<String> modeloComboConcepto, Connection con) throws SQLException {
+        String consulta = "SELECT nom_concepto FROM cuentas";
         Statement st = null;
         ResultSet rs = null;
         try {
             st = con.createStatement();
             rs = st.executeQuery(consulta);
 
-            modeloComboMovimiento.removeAllElements();
-            modeloComboMovimiento.addElement("--");
+            modeloComboConcepto.removeAllElements();
+            modeloComboConcepto.addElement("--");
 
             while (rs.next()) {
-                String movimiento = rs.getString("desc_movimiento");
-                modeloComboMovimiento.addElement(movimiento);
+                String cuenta = rs.getString("nom_concepto");
+                modeloComboConcepto.addElement(cuenta);
 
             }
         } finally {

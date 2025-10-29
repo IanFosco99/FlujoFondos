@@ -4,19 +4,82 @@
  */
 package com.flujos.Formularios;
 
+import com.flujos.DAOs.DAOClienteProveedor;
+import com.flujos.DAOs.DAOCuenta;
+import com.flujos.DAOs.DAOFlujosMov;
+import com.flujos.DAOs.DAOMovimiento;
+import com.flujos.Entidades.Cuenta;
+import com.flujos.Entidades.FlujosMov;
+import com.flujos.Entidades.Movimiento;
+import com.flujos.Utilidades.Conexion;
+import com.flujos.Utilidades.Utilidades;
+import java.math.BigDecimal;
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JOptionPane;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import javax.swing.DefaultComboBoxModel;
+
+
 /**
  *
  * @author monse
  */
 public class FrmFlujosMov extends javax.swing.JFrame {
 
+    
+    private Conexion con;
+    
+    DefaultComboBoxModel<String> modeloComboMovimiento = new DefaultComboBoxModel<>();
+
+    DefaultComboBoxModel<String> modeloComboConcepto = new DefaultComboBoxModel<>();
+
+    private DAOFlujosMov daoFlujosMov;
+    
+    private DAOCuenta daoCuenta;
+
+        
+
     /**
      * Creates new form FrmABMFlujosMov
      */
     public FrmFlujosMov() {
-        initComponents();
+        
+        try {
+            initComponents();
+            comboMovimiento.setModel(modeloComboMovimiento);
+            comboConcepto.setModel(modeloComboConcepto);
+            inicializar();
+        } catch (SQLException ex) {
+            Utilidades.msg(null, "error al inicializar la ventana");
+            this.dispose();
+        }
     }
 
+    private void inicializar() throws SQLException {
+        con = new Conexion();
+        daoCuenta = new DAOCuenta();
+        daoFlujosMov = new DAOFlujosMov();
+        dateFecha.setDate(null);
+        daoCuenta.llenarComboCuenta(modeloComboConcepto, con.getConexion());
+        comboConcepto.setSelectedIndex(0);
+        daoFlujosMov.llenarComboMovimiento(modeloComboMovimiento, con.getConexion());
+        comboMovimiento.setSelectedIndex(0);
+        txtImporte.setText("");
+        txtObservaciones.setText("");
+        txtIdConcepto.setVisible(false);
+        txtIdMovimiento.setVisible(false);
+
+        
+
+    }
+    
+    
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -26,21 +89,266 @@ public class FrmFlujosMov extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        dateFecha = new com.toedter.calendar.JDateChooser();
+        lblFechaFlujosMov = new javax.swing.JLabel();
+        lblMovimientoFlujosMov = new javax.swing.JLabel();
+        comboMovimiento = new javax.swing.JComboBox<>();
+        lblConceptoFlujosMov = new javax.swing.JLabel();
+        comboConcepto = new javax.swing.JComboBox<>();
+        lblImporteFlujosMov = new javax.swing.JLabel();
+        txtImporte = new javax.swing.JTextField();
+        txtObservaciones = new javax.swing.JTextField();
+        lblObservacionesFlujosMov = new javax.swing.JLabel();
+        btnAgregar = new javax.swing.JButton();
+        btnLimpiar = new javax.swing.JButton();
+        btnSalir = new javax.swing.JButton();
+        txtIdMovimiento = new javax.swing.JTextField();
+        txtIdConcepto = new javax.swing.JTextField();
+
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+
+        lblFechaFlujosMov.setText("Fecha");
+
+        lblMovimientoFlujosMov.setText("Movimiento");
+
+        comboMovimiento.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                comboMovimientoItemStateChanged(evt);
+            }
+        });
+
+        lblConceptoFlujosMov.setText("Concepto");
+
+        comboConcepto.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                comboConceptoItemStateChanged(evt);
+            }
+        });
+
+        lblImporteFlujosMov.setText("Importe");
+
+        lblObservacionesFlujosMov.setText("Observaciones");
+
+        btnAgregar.setText("Agregar");
+        btnAgregar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAgregarActionPerformed(evt);
+            }
+        });
+
+        btnLimpiar.setText("Limpiar");
+        btnLimpiar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnLimpiarActionPerformed(evt);
+            }
+        });
+
+        btnSalir.setText("Salir");
+        btnSalir.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSalirActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(117, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(lblFechaFlujosMov, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lblMovimientoFlujosMov, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lblConceptoFlujosMov, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lblImporteFlujosMov, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lblObservacionesFlujosMov, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(67, 67, 67)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(dateFecha, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(comboMovimiento, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(txtObservaciones, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(txtImporte, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(comboConcepto, javax.swing.GroupLayout.Alignment.TRAILING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(txtIdMovimiento, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtIdConcepto, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(156, 156, 156))
+            .addGroup(layout.createSequentialGroup()
+                .addGap(66, 66, 66)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(btnSalir, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(btnAgregar)
+                        .addGap(190, 190, 190)
+                        .addComponent(btnLimpiar)))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 300, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(45, 45, 45)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(lblFechaFlujosMov)
+                    .addComponent(dateFecha, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(lblMovimientoFlujosMov)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(comboMovimiento, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(txtIdMovimiento, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(lblConceptoFlujosMov)
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(comboConcepto, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(txtIdConcepto, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(lblImporteFlujosMov)
+                    .addComponent(txtImporte, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(22, 22, 22)
+                        .addComponent(txtObservaciones, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(18, 18, 18)
+                        .addComponent(lblObservacionesFlujosMov)))
+                .addGap(49, 49, 49)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnAgregar)
+                    .addComponent(btnLimpiar))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnSalir)
+                .addContainerGap(43, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void btnAgregarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAgregarActionPerformed
+        if (dateFecha.getDate() == null){
+            Utilidades.msg(null, "La fecha no puede ser nula");
+            dateFecha.requestFocus();
+            return;
+        } 
+        if (comboMovimiento.getSelectedItem().equals("--")){
+            Utilidades.msg(null, "El movimiento no puede estar vacio");
+            comboMovimiento.requestFocus();
+            return;
+        }
+        if (comboConcepto.getSelectedItem().equals("--")){
+            Utilidades.msg(null, "El concepto no puede estar vacio");
+            comboConcepto.requestFocus();
+            return;
+        }
+    
+        if (txtImporte.getText().equals("")) {
+            Utilidades.msg(null, "El Importe no puede estar vacio");
+            txtImporte.requestFocus();
+            return;
+          
+        }
+        
+        if (!Utilidades.isValidBigDecimal(txtImporte.getText())) {
+            Utilidades.msg(null, "Importe incorrecto");
+            txtImporte.setText("");
+            txtImporte.requestFocus();
+            return;
+        }
+        
+        
+        
+        FlujosMov flujoMov = new FlujosMov();
+        flujoMov.setFechaMovimiento(dateFecha.getDate());
+        flujoMov.setIdMovimiento(Long.valueOf(txtIdMovimiento.getText()));
+        flujoMov.setIdCuenta(Long.valueOf(txtIdConcepto.getText()));
+        flujoMov.setImporte(new BigDecimal(txtImporte.getText()));
+        flujoMov.setObservacionesMovimiento(txtObservaciones.getText());
+        
+        
+        
+        try {
+                daoFlujosMov.ingresarFlujomov(flujoMov, con.getConexion());
+            } catch (SQLException ex) {
+                Utilidades.msg(null, "ocurrio un error");
+
+            }
+            
+            Utilidades.msg(null, "Concepto ingresado correctamente");
+            
+            
+            dateFecha.setDate(null);
+            comboConcepto.setSelectedIndex(0);
+            comboMovimiento.setSelectedIndex(0);
+            txtImporte.setText("");
+            txtObservaciones.setText("");
+            txtIdConcepto.setVisible(false);
+            txtIdMovimiento.setVisible(false);
+            
+    }//GEN-LAST:event_btnAgregarActionPerformed
+    
+    private void btnLimpiarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLimpiarActionPerformed
+        dateFecha.setDate(null);
+        comboMovimiento.setSelectedIndex(0);
+        comboConcepto.setSelectedIndex(0);
+        txtImporte.setText("");
+        txtObservaciones.setText("");
+    }//GEN-LAST:event_btnLimpiarActionPerformed
+
+    private void btnSalirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalirActionPerformed
+        try {
+            con.cerrarConexion();
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(null, "Error al salir de la ventana, intente de nuevo.");
+            this.dispose();
+        }
+        this.dispose();          
+    }//GEN-LAST:event_btnSalirActionPerformed
+
+    private void comboMovimientoItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_comboMovimientoItemStateChanged
+        txtIdMovimiento.setText("");
+        try {
+            String movimiento = comboMovimiento.getSelectedItem() != null ? comboMovimiento.getSelectedItem().toString():null;
+            if (movimiento == null || movimiento.equals("--")){
+                txtIdMovimiento.setText("");
+            } else {
+                Movimiento movimientoSeleccionado = daoFlujosMov.obtenerDatosMovimieto(movimiento,con.getConexion());
+                if (movimientoSeleccionado != null){
+                    txtIdMovimiento.setText(String.valueOf(movimientoSeleccionado.getIdMovimiento()));
+                } else {
+                    txtIdMovimiento.setText("");
+                }
+            }
+
+        } catch (Exception e) {
+            Utilidades.msg(null,"se produjo un error en la seleccion del combo movimiento, ingrese nuevamente");
+            this.dispose();
+        }
+    }//GEN-LAST:event_comboMovimientoItemStateChanged
+
+    private void comboConceptoItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_comboConceptoItemStateChanged
+        txtIdConcepto.setText("");
+        try {
+            String concepto = comboConcepto.getSelectedItem() != null ? comboConcepto.getSelectedItem().toString():null;
+            if (concepto == null || concepto.equals("--")){
+                txtIdConcepto.setText("");
+            } else {
+                Cuenta conceptoSeleccionado = daoCuenta.obtenerDatos(concepto,con.getConexion());
+                if (conceptoSeleccionado != null){
+                    txtIdConcepto.setText(String.valueOf(conceptoSeleccionado.getIdCuenta()));
+                } else {
+                    txtIdConcepto.setText("");
+                }
+            }
+
+        } catch (Exception e) {
+            Utilidades.msg(null,"se produjo un error en la seleccion del combo concepto, ingrese nuevamente");
+            this.dispose();
+        }
+        
+        
+    }//GEN-LAST:event_comboConceptoItemStateChanged
 
     /**
      * @param args the command line arguments
@@ -79,5 +387,20 @@ public class FrmFlujosMov extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnAgregar;
+    private javax.swing.JButton btnLimpiar;
+    private javax.swing.JButton btnSalir;
+    private javax.swing.JComboBox<String> comboConcepto;
+    private javax.swing.JComboBox<String> comboMovimiento;
+    private com.toedter.calendar.JDateChooser dateFecha;
+    private javax.swing.JLabel lblConceptoFlujosMov;
+    private javax.swing.JLabel lblFechaFlujosMov;
+    private javax.swing.JLabel lblImporteFlujosMov;
+    private javax.swing.JLabel lblMovimientoFlujosMov;
+    private javax.swing.JLabel lblObservacionesFlujosMov;
+    private javax.swing.JTextField txtIdConcepto;
+    private javax.swing.JTextField txtIdMovimiento;
+    private javax.swing.JTextField txtImporte;
+    private javax.swing.JTextField txtObservaciones;
     // End of variables declaration//GEN-END:variables
 }
