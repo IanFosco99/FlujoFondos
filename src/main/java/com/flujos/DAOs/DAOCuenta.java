@@ -178,7 +178,7 @@ public class DAOCuenta {
     
     
         public void llenarComboCuentaSalida(DefaultComboBoxModel<String> modeloCuentaSalida, Connection con) throws SQLException {
-        String consulta = "SELECT nom_concepto FROM cuenta";
+        String consulta = "SELECT nom_concepto FROM cuentas";
         Statement st = null;
         ResultSet rs = null;
         try {
