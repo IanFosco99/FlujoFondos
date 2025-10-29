@@ -51,24 +51,25 @@ public class FrmABMChequePropio extends javax.swing.JFrame {
 
     private void inicializar() throws SQLException {
         
+        con = new Conexion();
+        daoCheque = new DAOCheque();
+        daoCuenta = new DAOCuenta();
+        daoChequePropio = new DAOChequePropio();
         TxtNumero.setText("");
         TxtImporteCheque.setText("");
         jDateFechaCobro.setDate(null);     
         TxtIdTitularCheque.setVisible(false);
         TxtIdCuenta.setVisible(false);
         TxtObservacionCheque.setText("");
+        daoCheque.llenarComboClienteProveedorDestino(modeloComboclienteProveedorDestino, con.getConexion());
         comboTitularDestino.setSelectedIndex(0);
+        daoCuenta.llenarComboCuentaSalida(modeloCuentaSalida, con.getConexion()); 
         comboCuentaSalida.setSelectedIndex(0);
         btnAgregar.setEnabled(true);
         btnModificar.setEnabled(false);
         btnEliminar.setEnabled(false);
         btnLimpiar.setEnabled(true);
-        daoChequePropio = new DAOChequePropio();
-        daoCheque = new DAOCheque();
-        daoCuenta = new DAOCuenta();
-        daoCheque.llenarComboClienteProveedorDestino(modeloComboclienteProveedorDestino, con.getConexion());
-        con = new Conexion();
-        daoCuenta.llenarComboCuentaSalida(modeloCuentaSalida, con.getConexion());
+        
 
      }  
        
@@ -333,39 +334,31 @@ public class FrmABMChequePropio extends javax.swing.JFrame {
             comboCuentaSalida.setSelectedIndex(0);
             jDateFechaCobro.setDate(null);
             TxtIdChequePropio.setText("");
+            
         } else {
             try {
+                ChequePropio chequePropio = new ChequePropio();
+                
+                chequePropio.setFechaEntregaCheque(jDateFechaCobro.getDate());
+                chequePropio.setImporteCheque(new BigDecimal(TxtImporteCheque.getText()));
+                chequePropio.setNumCheque(Long.parseLong(TxtNumero.getText()));
+                chequePropio.setObservacionCheque(TxtObservacionCheque.getText());
+                //validar que no sea nulo o ""
+                chequePropio.setTitularDestino((TxtIdTitularCheque.getText() != null && !TxtIdTitularCheque.getText().equals("")) ? Long.parseLong(TxtIdTitularCheque.getText()) : null);
 
-                String sql = "INSERT INTO cheque_propio (nro_cheque, id_titular, importe, fecha_cobro, observacion) "
-                        + "VALUES (?, ?, ?, ?, ?)";
-                PreparedStatement ps = con.getConexion().prepareStatement(sql);
-
-                // Setear valores
-                ps.setLong(1, Long.parseLong(TxtNumero.getText()));
-                ps.setInt(2, Integer.parseInt(TxtIdTitularCheque.getText()));
-                ps.setBigDecimal(3, new BigDecimal(TxtImporteCheque.getText()));
-                ps.setDate(4, new java.sql.Date(jDateFechaCobro.getDate().getTime()));
-                ps.setString(5, TxtObservacionCheque.getText());
-
-                // Ejecutar
-                ps.executeUpdate();
-
-                // Confirmación
-                Utilidades.msg(null, "Cheque agregado correctamente");
-
-                // Limpiar campos
+                daoChequePropio.ingresarChequePropio(chequePropio, con.getConexion());
+                Utilidades.msg(null, "Cheque ingresado correctamente");
                 TxtNumero.setText("");
-                TxtIdTitularCheque.setText("");
                 TxtImporteCheque.setText("");
-                TxtObservacionCheque.setText("");
-                comboCuentaSalida.setSelectedIndex(0);
                 jDateFechaCobro.setDate(null);
-            } catch (SQLException e) {
-                Utilidades.msg(null, "Error al guardar el cheque: " + e.getMessage());
-            }
+                TxtObservacionCheque.setText("");
+                comboTitularDestino.setSelectedIndex(0);
 
+            } catch (SQLException ex) {
+                Utilidades.msg(null, "Error al ingresar el Cheque");
+                this.dispose();
+            }
         }
-        
     }//GEN-LAST:event_btnAgregarActionPerformed
     
     
@@ -380,8 +373,9 @@ public class FrmABMChequePropio extends javax.swing.JFrame {
         btnModificar.setEnabled(false);
         btnEliminar.setEnabled(false);
         btnLimpiar.setEnabled(true);
-        comboCuentaSalida.setSelectedIndex(0);
         comboTitularDestino.setSelectedIndex(0);
+        comboCuentaSalida.setSelectedIndex(0);
+
     }//GEN-LAST:event_btnLimpiarActionPerformed
 
     private void btnSalirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalirActionPerformed
