@@ -1,10 +1,9 @@
+package com.flujos.DAOs;
+
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package com.flujos.DAOs;
-
-import com.flujos.Entidades.Cheque;
 import com.flujos.Entidades.ChequePropio;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -40,17 +39,13 @@ public class DAOChequePropio {
                 chequePropio.setTitularDestino(rs.getLong("titular_destino"));
                 chequePropio.setIdCuentaSalida(rs.getLong("id_cuenta_salida"));
                 
-
             } else {
-
                 chequePropio = null;
-
             }
 
         } catch (SQLException ex) {
-
             chequePropio = null;
-
+            
         } finally {
             try {
 
@@ -64,14 +59,11 @@ public class DAOChequePropio {
             } catch (SQLException ex) {
                 chequePropio = null;
             }
-
         }
-
         return chequePropio;
-
     }
-    
-    
+
+     
     
     public void ingresarChequePropio(ChequePropio chequePropio, Connection conn) throws SQLException {
         String sqlInsert = "INSERT INTO cheque_propio (nro_cheque, importe_cheque, fecha_cobro_cheque, titular_destino, observacion_cheque, id_cuenta_salida ) "
@@ -81,9 +73,9 @@ public class DAOChequePropio {
 
         try {
             ps = conn.prepareStatement(sqlInsert);
-
             ps.setLong(1, chequePropio.getNumCheque());
             ps.setBigDecimal(2, chequePropio.getImporteCheque());
+
             if (chequePropio.getFechaCobroCheque() != null) {
                 java.sql.Date sqlDate = new java.sql.Date(chequePropio.getFechaCobroCheque().getTime());
                 ps.setDate(3, sqlDate);
@@ -109,6 +101,49 @@ public class DAOChequePropio {
         }
     }    
     
+
+
+
+public void modificarChequePropio(ChequePropio chequePropio, Connection con) throws SQLException {
+
+    PreparedStatement ps = null;
+
+    try {
+        String sqlUpdate = "UPDATE cheque_propio SET "
+                + "nro_cheque = ?, "
+                + "importe_cheque = ?, "
+                + "fecha_cobro_cheque = ?, "
+                + "observacion_cheque = ?"
+                + "titular_destino = ?"
+                + "uso_cheque = ?"
+                + "id_cuenta_salida = ?"
+                + "WHERE id_cheque = ?";
+
+        ps = con.prepareStatement(sqlUpdate);
+        ps.setLong(1, chequePropio.getNumCheque());
+        ps.setBigDecimal(2, chequePropio.getImporteCheque());
+        
+         if (chequePropio.getFechaCobroCheque()!= null) {
+                java.sql.Date sqlDate = new java.sql.Date(chequePropio.getFechaCobroCheque().getTime());
+                ps.setDate(3, sqlDate);
+
+            } else {
+                ps.setNull(3, java.sql.Types.DATE);
+
+            }       
+ 
+        ps.setString(4, chequePropio.getObservacionCheque());
+        ps.setLong(5, chequePropio.getTitularDestino());
+        ps.setLong(6, chequePropio.getIdCuentaSalida());
+        ps.executeUpdate();
+    } finally {
+
+        if (ps != null) {
+            ps.close();
+        }
+    }
+}
+
 }
 
 
