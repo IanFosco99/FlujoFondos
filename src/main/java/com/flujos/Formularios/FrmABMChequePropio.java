@@ -596,6 +596,7 @@ public class FrmABMChequePropio extends javax.swing.JFrame {
             chequePropio.setTitularDestino(Long.parseLong(TxtIdTitularCheque.getText()));
             chequePropio.setObservacionCheque(TxtObservacionCheque.getText());
             chequePropio.setIdCuentaSalida(Long.parseLong(TxtIdCuenta.getText()));
+            chequePropio.setIdCheque(Long.parseLong(TxtIdChequePropio.getText()));
             
             daoChequePropio.modificarChequePropio(chequePropio, con.getConexion());
             

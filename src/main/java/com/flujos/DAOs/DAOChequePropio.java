@@ -39,6 +39,7 @@ public class DAOChequePropio {
                 chequePropio.setTitularDestino(rs.getLong("titular_destino"));
                 chequePropio.setIdCuentaSalida(rs.getLong("id_cuenta_salida"));
                 
+                
             } else {
                 chequePropio = null;
             }
@@ -63,7 +64,6 @@ public class DAOChequePropio {
         return chequePropio;
     }
 
-     
     
     public void ingresarChequePropio(ChequePropio chequePropio, Connection conn) throws SQLException {
         String sqlInsert = "INSERT INTO cheque_propio (nro_cheque, importe_cheque, fecha_cobro_cheque, titular_destino, observacion_cheque, id_cuenta_salida ) "
@@ -82,17 +82,20 @@ public class DAOChequePropio {
 
             }
 
-            ps.setString(5, chequePropio.getObservacionCheque());
-
             if (chequePropio.getTitularDestino() != null) {
                 ps.setLong(4, chequePropio.getTitularDestino());
 
             }
             
+            ps.setString(5, chequePropio.getObservacionCheque());
+            
             if (chequePropio.getIdCuentaSalida() != null){
                 ps.setLong(6, chequePropio.getIdCuentaSalida());
             }
                 
+            ps.executeUpdate();
+
+            
         } finally {
             if (ps != null) {
                 ps.close();
@@ -113,28 +116,28 @@ public void modificarChequePropio(ChequePropio chequePropio, Connection con) thr
                 + "nro_cheque = ?, "
                 + "importe_cheque = ?, "
                 + "fecha_cobro_cheque = ?, "
-                + "observacion_cheque = ?"
-                + "titular_destino = ?"
-                + "uso_cheque = ?"
-                + "id_cuenta_salida = ?"
+                + "observacion_cheque = ?, "
+                + "titular_destino = ?, "
+                + "id_cuenta_salida = ? "
                 + "WHERE id_cheque = ?";
 
         ps = con.prepareStatement(sqlUpdate);
         ps.setLong(1, chequePropio.getNumCheque());
         ps.setBigDecimal(2, chequePropio.getImporteCheque());
         
-         if (chequePropio.getFechaCobroCheque()!= null) {
-                java.sql.Date sqlDate = new java.sql.Date(chequePropio.getFechaCobroCheque().getTime());
-                ps.setDate(3, sqlDate);
+        if (chequePropio.getFechaCobroCheque()!= null) {
+            java.sql.Date sqlDate = new java.sql.Date(chequePropio.getFechaCobroCheque().getTime());
+            ps.setDate(3, sqlDate);
 
-            } else {
-                ps.setNull(3, java.sql.Types.DATE);
-
-            }       
+        } else {
+            ps.setNull(3, java.sql.Types.DATE);
+        }       
  
         ps.setString(4, chequePropio.getObservacionCheque());
         ps.setLong(5, chequePropio.getTitularDestino());
         ps.setLong(6, chequePropio.getIdCuentaSalida());
+        ps.setLong(7, chequePropio.getIdCheque());
+        
         ps.executeUpdate();
     } finally {
 
