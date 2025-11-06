@@ -5,21 +5,16 @@
 package com.flujos.Formularios;
 
 import com.flujos.Utilidades.Utilidades;
-import java.sql.Connection;
 import java.sql.SQLException;
 import com.flujos.DAOs.DAOCheque;
 import com.flujos.DAOs.DAOChequePropio;
-import com.flujos.DAOs.DAOClienteProveedor;
 import com.flujos.DAOs.DAOCuenta;
-import com.flujos.Entidades.Cheque;
 import com.flujos.Entidades.ChequePropio;
 import com.flujos.Entidades.ClienteProveedor;
 import com.flujos.Entidades.Cuenta;
 import com.flujos.Utilidades.Conexion;
 import java.math.BigDecimal;
 import java.sql.PreparedStatement;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JOptionPane;
 

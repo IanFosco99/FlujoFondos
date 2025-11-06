@@ -5,6 +5,9 @@
 package com.flujos.Formularios;
 
 import com.flujos.DAOs.DAOCheque;
+import com.flujos.DAOs.DAOChequePropio;
+import com.flujos.DAOs.DAOChequeTercero;
+import com.flujos.DAOs.DAOCuenta;
 import com.flujos.Entidades.ClienteProveedor;
 import com.flujos.Utilidades.Conexion;
 import com.flujos.Utilidades.Utilidades;
@@ -25,16 +28,19 @@ public class FrmABMChequeTerceros extends javax.swing.JFrame {
 
     DefaultComboBoxModel<String> modeloComboChequeTercero = new DefaultComboBoxModel<>();
 
+    private DAOCheque daoCheque;
+    private DAOChequeTercero daoChequeTercero;
+    private DAOCuenta daoCuenta;
     /**
      * Creates new form FrmABMChequeTerceros
      */
     public FrmABMChequeTerceros() {
         try {
             initComponents();
-            //ARREGLAR ESTO TxtIdTitularCheque.setModel(modeloComboChequeTercero);
+            comboTitularCheque.setModel(modeloComboChequeTercero);
+            
             inicializar();
         } catch (SQLException ex) {
-
             Utilidades.msg(null, "Error al inicializar la ventana");
             this.dispose();
         }
@@ -43,6 +49,22 @@ public class FrmABMChequeTerceros extends javax.swing.JFrame {
     private void inicializar() throws SQLException {
 
         con = new Conexion();
+        daoCheque = new DAOCheque();
+        daoCuenta = new DAOCuenta();
+        daoChequeTercero = new DAOChequeTercero();
+        TxtNumero.setText("");
+        TxtImporteCheque.setText("");
+        jDateFechaCobro.setDate(null);
+        TxtIdChequeTercero.setVisible(false);
+        TxtIdTitularCheque.setVisible(false);
+        TxtObservacionCheque.setText("");
+        daoCheque.llenarComboClienteProveedorDestino(modeloComboChequeTercero, con.getConexion());
+        comboTitularCheque.setSelectedIndex(0);
+
+        btnAgregar.setEnabled(true);
+        btnModificar.setEnabled(false);
+        btnEliminar.setEnabled(false);
+        btnLimpiar.setEnabled(true);
     }
 
     /**
@@ -270,7 +292,7 @@ public class FrmABMChequeTerceros extends javax.swing.JFrame {
             TxtIdChequeTercero.setText("");
         } else {
             try {
-
+                //PASAR EL INSERT INTO AL DAO
                 String sql = "INSERT INTO cheque_tercero (nro_cheque, id_titular, importe, fecha_cobro, observacion) "
                         + "VALUES (?, ?, ?, ?, ?)";
                 PreparedStatement ps = con.getConexion().prepareStatement(sql);
@@ -311,10 +333,24 @@ public class FrmABMChequeTerceros extends javax.swing.JFrame {
         TxtObservacionCheque.setText("");
         comboTitularCheque.setSelectedIndex(0);
         jDateFechaCobro.setDate(null);
+        
+        btnAgregar.setEnabled(true);
+        btnModificar.setEnabled(false);
+        btnEliminar.setEnabled(false);
+        btnLimpiar.setEnabled(true);
+        comboTitularCheque.setSelectedIndex(0);
 
     }//GEN-LAST:event_btnLimpiarActionPerformed
 
     private void btnSalirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalirActionPerformed
+        
+        try {
+            con.cerrarConexion();
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(null, "Error al salir de la ventana, intente de nuevo.");
+            this.dispose();
+        }
+        
         this.dispose();
     }//GEN-LAST:event_btnSalirActionPerformed
 
@@ -352,6 +388,12 @@ public class FrmABMChequeTerceros extends javax.swing.JFrame {
                 TxtObservacionCheque.setText("");
                 comboTitularCheque.setSelectedIndex(0);
                 jDateFechaCobro.setDate(null);
+                
+                btnAgregar.setEnabled(true);
+                btnModificar.setEnabled(false);
+                btnEliminar.setEnabled(false);
+                btnLimpiar.setEnabled(true);
+                comboTitularCheque.setSelectedIndex(0);
             }
 
         } catch (SQLException e) {
@@ -394,7 +436,7 @@ public class FrmABMChequeTerceros extends javax.swing.JFrame {
         }
 
         try {
-
+        //PASAR EL UPDATE AL DAO
             String sql = "UPDATE cheque_tercero SET id_titular = ?, importe = ?, fecha_cobro = ?, observacion = ?" + "WHERE nro_cheque = ?";
 
             PreparedStatement ps = con.getConexion().prepareStatement(sql);
