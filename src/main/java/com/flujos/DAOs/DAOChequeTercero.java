@@ -32,7 +32,7 @@ public class DAOChequeTercero {
 
     //MODIFICAR 
     public void modificarChequeTercero(ChequeTerceros chequeTerceros, Connection con) throws SQLException {
-        String sql = "UPDATE cheque_tercero SET id_titular = ?, importe = ?, fecha_cobro = ?, observacion = ? WHERE nro_cheque = ?";
+        String sql = "UPDATE cheque_tercero SET  id_titular = ?, importe_cheque = ?, fecha_cobro_cheque = ?, observacion_cheque, nro_cheque = ? WHERE id_cheque = ?";
 
         try (PreparedStatement ps = con.prepareStatement(sql)) {
 
@@ -41,6 +41,9 @@ public class DAOChequeTercero {
             ps.setDate(3, new java.sql.Date(chequeTerceros.getFechaCobroCheque().getTime()));
             ps.setString(4, chequeTerceros.getObservacionCheque());
             ps.setLong(5, chequeTerceros.getNroCheque());
+            ps.setLong(6, chequeTerceros.getIdCheque());
+
+            
             ps.executeUpdate();
         }
     }

@@ -439,7 +439,7 @@ public class FrmABMChequePropio extends javax.swing.JFrame {
                 }
 
             } else {
-                Utilidades.msg(null, "No existe el Cliente/Proveedor o se produjo un error");
+                Utilidades.msg(null, "No existe el número de cheque o se produjo un error");
                 btnAgregar.setEnabled(true);
                 btnModificar.setEnabled(false);
                 btnEliminar.setEnabled(false);
