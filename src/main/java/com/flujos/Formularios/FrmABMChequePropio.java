@@ -104,7 +104,7 @@ public class FrmABMChequePropio extends javax.swing.JFrame {
         TxtIdChequePropio = new javax.swing.JTextField();
         TxtIdCuenta = new javax.swing.JTextField();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
         btnAgregar.setText("Agregar");
         btnAgregar.addActionListener(new java.awt.event.ActionListener() {

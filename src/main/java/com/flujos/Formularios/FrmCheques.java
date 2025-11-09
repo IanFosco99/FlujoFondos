@@ -113,7 +113,7 @@ public class FrmCheques extends javax.swing.JFrame {
         TxtIdTitularCheque = new javax.swing.JTextField();
         TxtIdTitularDestinoCheque = new javax.swing.JTextField();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
         lblNumCheque.setText("Numero de cheque:");
 

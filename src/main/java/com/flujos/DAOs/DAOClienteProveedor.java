@@ -5,14 +5,11 @@
 package com.flujos.DAOs;
 
 import com.flujos.Entidades.ClienteProveedor;
-import com.flujos.Utilidades.Conexion;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *

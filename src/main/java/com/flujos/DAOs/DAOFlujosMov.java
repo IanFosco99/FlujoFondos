@@ -119,5 +119,30 @@ public void llenarComboMovimiento(DefaultComboBoxModel<String> modeloComboMovimi
         }
     }
 
+    public void eliminarFlujoMov(Long idFlujoMov, Connection con) throws SQLException {
+        
+        String consultaElim = " DELETE FROM flujos_mov WHERE id_flujo_mov = ? ";
 
+        PreparedStatement psElim = null;
+        
+        try {
+            
+            psElim = con.prepareStatement(consultaElim);
+            
+            psElim.setLong(1, idFlujoMov);
+                        
+            psElim.executeUpdate();
+            
+        } finally {
+            
+            if (psElim != null) {
+               
+                psElim.close();
+               
+            }
+            
+        }
+        
+    }
+    
 }

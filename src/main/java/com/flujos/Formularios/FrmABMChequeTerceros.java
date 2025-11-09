@@ -8,6 +8,7 @@ import com.flujos.DAOs.DAOCheque;
 import com.flujos.DAOs.DAOChequeTercero;
 import com.flujos.DAOs.DAOCuenta;
 import com.flujos.Entidades.ChequeTerceros;
+import com.flujos.Entidades.Cuenta;
 import com.flujos.Utilidades.Conexion;
 import com.flujos.Utilidades.Utilidades;
 import java.math.BigDecimal;
@@ -97,7 +98,7 @@ public class FrmABMChequeTerceros extends javax.swing.JFrame {
         comboCuentaSalida = new javax.swing.JComboBox<>();
         TxtIdCuenta = new javax.swing.JTextField();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
         btnBuscar.setText("Buscar");
 

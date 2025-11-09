@@ -27,20 +27,23 @@ public class FrmFlujoFondos extends javax.swing.JFrame {
     private void initComponents() {
 
         menuBarPrincipal = new javax.swing.JMenuBar();
-        jMenu2 = new javax.swing.JMenu();
+        menuABMs = new javax.swing.JMenu();
         menuItemABMClienteProveedor = new javax.swing.JMenuItem();
         menuItemABMCuenta = new javax.swing.JMenuItem();
         menuItemABMMovimiento = new javax.swing.JMenuItem();
         menuCheque = new javax.swing.JMenu();
         menuItemCargaChequePropio = new javax.swing.JMenuItem();
         menuItemCargaChequeTerceros = new javax.swing.JMenuItem();
-        jMenu1 = new javax.swing.JMenu();
+        menuFlujos = new javax.swing.JMenu();
         menuItemFlujosMov = new javax.swing.JMenuItem();
+        menuItemEliminarFlujoMov = new javax.swing.JMenuItem();
+        menuReportes = new javax.swing.JMenu();
+        menuItemFFnMensual = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setTitle("Sistema flujo de fondos");
+        setTitle("Sistema Flujo de Fondos");
 
-        jMenu2.setText("ABMs");
+        menuABMs.setText("ABMs");
 
         menuItemABMClienteProveedor.setText("Cliente/Proveedor");
         menuItemABMClienteProveedor.addActionListener(new java.awt.event.ActionListener() {
@@ -48,7 +51,7 @@ public class FrmFlujoFondos extends javax.swing.JFrame {
                 menuItemABMClienteProveedorActionPerformed(evt);
             }
         });
-        jMenu2.add(menuItemABMClienteProveedor);
+        menuABMs.add(menuItemABMClienteProveedor);
 
         menuItemABMCuenta.setText("Cuenta");
         menuItemABMCuenta.addActionListener(new java.awt.event.ActionListener() {
@@ -56,7 +59,7 @@ public class FrmFlujoFondos extends javax.swing.JFrame {
                 menuItemABMCuentaActionPerformed(evt);
             }
         });
-        jMenu2.add(menuItemABMCuenta);
+        menuABMs.add(menuItemABMCuenta);
 
         menuItemABMMovimiento.setText("Movimiento");
         menuItemABMMovimiento.setActionCommand("");
@@ -65,9 +68,9 @@ public class FrmFlujoFondos extends javax.swing.JFrame {
                 menuItemABMMovimientoActionPerformed(evt);
             }
         });
-        jMenu2.add(menuItemABMMovimiento);
+        menuABMs.add(menuItemABMMovimiento);
 
-        menuBarPrincipal.add(jMenu2);
+        menuBarPrincipal.add(menuABMs);
 
         menuCheque.setText("Cheques");
 
@@ -89,7 +92,7 @@ public class FrmFlujoFondos extends javax.swing.JFrame {
 
         menuBarPrincipal.add(menuCheque);
 
-        jMenu1.setText("Flujos");
+        menuFlujos.setText("Flujos");
 
         menuItemFlujosMov.setText("Flujos mov");
         menuItemFlujosMov.addActionListener(new java.awt.event.ActionListener() {
@@ -97,9 +100,29 @@ public class FrmFlujoFondos extends javax.swing.JFrame {
                 menuItemFlujosMovActionPerformed(evt);
             }
         });
-        jMenu1.add(menuItemFlujosMov);
+        menuFlujos.add(menuItemFlujosMov);
 
-        menuBarPrincipal.add(jMenu1);
+        menuItemEliminarFlujoMov.setText("Eliminar Flujo Movimiento");
+        menuItemEliminarFlujoMov.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuItemEliminarFlujoMovActionPerformed(evt);
+            }
+        });
+        menuFlujos.add(menuItemEliminarFlujoMov);
+
+        menuBarPrincipal.add(menuFlujos);
+
+        menuReportes.setText("Reportes");
+        menuReportes.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuReportesActionPerformed(evt);
+            }
+        });
+
+        menuItemFFnMensual.setText("FFn Mensuales");
+        menuReportes.add(menuItemFFnMensual);
+
+        menuBarPrincipal.add(menuReportes);
 
         setJMenuBar(menuBarPrincipal);
 
@@ -159,6 +182,22 @@ public class FrmFlujoFondos extends javax.swing.JFrame {
         
     }//GEN-LAST:event_menuItemFlujosMovActionPerformed
 
+    private void menuItemEliminarFlujoMovActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemEliminarFlujoMovActionPerformed
+        
+        FrmBajaFlujosMov ventanaBajaFlujosMov = new FrmBajaFlujosMov();
+        ventanaBajaFlujosMov.setVisible(true);
+        ventanaBajaFlujosMov.setLocationRelativeTo(null);
+        
+    }//GEN-LAST:event_menuItemEliminarFlujoMovActionPerformed
+
+    private void menuReportesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuReportesActionPerformed
+        
+        FrmReporteFFnMensuales ventanaFFnMensuales = new FrmReporteFFnMensuales();
+        ventanaFFnMensuales.setVisible(true);
+        ventanaFFnMensuales.setLocationRelativeTo(null);
+        
+    }//GEN-LAST:event_menuReportesActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -195,15 +234,18 @@ public class FrmFlujoFondos extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JMenu jMenu1;
-    private javax.swing.JMenu jMenu2;
+    private javax.swing.JMenu menuABMs;
     private javax.swing.JMenuBar menuBarPrincipal;
     private javax.swing.JMenu menuCheque;
+    private javax.swing.JMenu menuFlujos;
     private javax.swing.JMenuItem menuItemABMClienteProveedor;
     private javax.swing.JMenuItem menuItemABMCuenta;
     private javax.swing.JMenuItem menuItemABMMovimiento;
     private javax.swing.JMenuItem menuItemCargaChequePropio;
     private javax.swing.JMenuItem menuItemCargaChequeTerceros;
+    private javax.swing.JMenuItem menuItemEliminarFlujoMov;
+    private javax.swing.JMenuItem menuItemFFnMensual;
     private javax.swing.JMenuItem menuItemFlujosMov;
+    private javax.swing.JMenu menuReportes;
     // End of variables declaration//GEN-END:variables
 }

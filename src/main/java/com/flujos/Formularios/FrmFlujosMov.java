@@ -105,7 +105,7 @@ public class FrmFlujosMov extends javax.swing.JFrame {
         txtIdMovimiento = new javax.swing.JTextField();
         txtIdConcepto = new javax.swing.JTextField();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
         lblFechaFlujosMov.setText("Fecha");
 

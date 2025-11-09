@@ -92,7 +92,7 @@ public class FrmABMCuentas extends javax.swing.JFrame {
         comboMovimiento = new javax.swing.JComboBox<>();
         txtIdMovimiento = new javax.swing.JTextField();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
         lblCodigo.setText("Codigo");
 
