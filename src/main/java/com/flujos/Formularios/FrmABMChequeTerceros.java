@@ -500,7 +500,7 @@ public class FrmABMChequeTerceros extends javax.swing.JFrame {
             
             
             daoChequeTercero.modificarChequeTercero(chequeTerceros, con.getConexion());
-            Utilidades.msg(null, "Cheque agregado correctamente");
+            Utilidades.msg(null, "Cheque modificado correctamente");
 
             //LIMPIAR CAMPOS
             TxtNumero.setText("");
