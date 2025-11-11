@@ -15,9 +15,9 @@ public class Cuenta {
     private String nombreConcepto;
     private String claseConcepto;
     private Long idMovimiento;
-    private String Ingreso;
+    private int Ingreso;
 
-    public Cuenta(Long idCuenta, String codConcepto, String nombreConcepto, String claseConcepto, Long idMovimiento, String Ingreso) {
+    public Cuenta(Long idCuenta, String codConcepto, String nombreConcepto, String claseConcepto, Long idMovimiento, int Ingreso) {
         this.idCuenta = idCuenta;
         this.codConcepto = codConcepto;
         this.nombreConcepto = nombreConcepto;
@@ -69,11 +69,11 @@ public class Cuenta {
         this.idMovimiento = idMovimiento;
     }
 
-    public String getIngreso() {
+    public int getIngreso() {
         return Ingreso;
     }
 
-    public void setIngreso(String Ingreso) {
+    public void setIngreso(int Ingreso) {
         this.Ingreso = Ingreso;
     }
     

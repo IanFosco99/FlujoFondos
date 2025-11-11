@@ -5,6 +5,7 @@
 package com.flujos.Formularios;
 
 import com.flujos.DAOs.DAOCuenta;
+import com.flujos.DAOs.DAOFlujosMov;
 import com.flujos.Entidades.Cuenta;
 import com.flujos.Entidades.Movimiento;
 import com.flujos.Utilidades.Conexion;
@@ -28,6 +29,7 @@ public class FrmABMCuentas extends javax.swing.JFrame {
     DefaultComboBoxModel<String> modeloComboMovimiento = new DefaultComboBoxModel<>();
 
     private DAOCuenta daoCuenta;
+    private DAOFlujosMov daoFlujosMov;
     /**
      * Creates new form FrmABMCuentas
      */
@@ -58,8 +60,9 @@ public class FrmABMCuentas extends javax.swing.JFrame {
         btnEliminar.setEnabled(false);
         btnLimpiar.setEnabled(true);
         daoCuenta = new DAOCuenta();
+        daoFlujosMov = new DAOFlujosMov();
         con = new Conexion();
-        daoCuenta.llenarComboCuenta(modeloComboMovimiento,con.getConexion());
+        daoFlujosMov.llenarComboMovimiento(modeloComboMovimiento,con.getConexion());
         comboMovimiento.setSelectedIndex(0);
         
     }
@@ -153,6 +156,11 @@ public class FrmABMCuentas extends javax.swing.JFrame {
         comboMovimiento.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
                 comboMovimientoItemStateChanged(evt);
+            }
+        });
+        comboMovimiento.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                comboMovimientoActionPerformed(evt);
             }
         });
 
@@ -274,7 +282,7 @@ public class FrmABMCuentas extends javax.swing.JFrame {
         cuenta.setCodConcepto(txtCodigo.getText());
         cuenta.setNombreConcepto(txtConcepto.getText());
         cuenta.setClaseConcepto(comboClasificacion.getSelectedItem().toString());
-        cuenta.setIngreso(comboIngresoegreso.getSelectedItem().toString());
+        cuenta.setIngreso(Integer.parseInt(comboIngresoegreso.getSelectedItem().toString()));
         daoCuenta.actualizar(cuenta, con.getConexion());
         Utilidades.msg(null, "Cuentas actualizado corrrectamente");
         txtCodigo.setText("");
@@ -363,8 +371,8 @@ public class FrmABMCuentas extends javax.swing.JFrame {
             cuenta.setCodConcepto(txtCodigo.getText());
             cuenta.setNombreConcepto(txtConcepto.getText());
             cuenta.setClaseConcepto(comboClasificacion.getSelectedItem().toString());
-            cuenta.setIngreso(comboIngresoegreso.getSelectedItem().toString().equals("Ingreso") ? "1" : "0");
-            cuenta.setIdMovimiento(Long.parseLong(txtIdMovimiento.getText()));
+            cuenta.setIngreso(comboIngresoegreso.getSelectedItem().toString().equals("Ingreso") ? 1 : 0);
+            cuenta.setIdMovimiento(Long.valueOf(txtIdMovimiento.getText()));
             try {
                 daoCuenta.ingresarCuenta(cuenta, con.getConexion());
             } catch (SQLException ex) {
@@ -431,6 +439,27 @@ public class FrmABMCuentas extends javax.swing.JFrame {
             this.dispose();
         }
     }//GEN-LAST:event_comboMovimientoItemStateChanged
+
+    private void comboMovimientoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboMovimientoActionPerformed
+    txtIdMovimiento.setText("");
+            try {
+                String movimiento = comboMovimiento.getSelectedItem() != null ? comboMovimiento.getSelectedItem().toString():null;
+                if (movimiento == null || movimiento.equals("--")){
+                    txtIdMovimiento.setText("");
+                } else {
+                    Movimiento movimientoSeleccionado = daoFlujosMov.obtenerDatosMovimieto(movimiento,con.getConexion());
+                    if (movimientoSeleccionado != null){
+                        txtIdMovimiento.setText(String.valueOf(movimientoSeleccionado.getIdMovimiento()));
+                    } else {
+                        txtIdMovimiento.setText("");
+                    }
+                }
+
+            } catch (Exception e) {
+                Utilidades.msg(null,"se produjo un error en la seleccion del combo movimiento, ingrese nuevamente");
+                this.dispose();
+            }        // TODO add your handling code here:
+    }//GEN-LAST:event_comboMovimientoActionPerformed
 
     /**
      * @param args the command line arguments

@@ -102,7 +102,7 @@ public class DAOCuenta {
             ps.setString(2, cuenta.getNombreConcepto());
             ps.setString(3, cuenta.getClaseConcepto());
             ps.setLong(4, cuenta.getIdMovimiento());
-            ps.setString(5, cuenta.getIngreso());
+            ps.setInt(5, cuenta.getIngreso());
             ps.executeUpdate();
 
         } finally {
