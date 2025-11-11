@@ -107,7 +107,7 @@ CREATE TABLE `cuentas` (
   `nom_concepto` varchar(100) DEFAULT NULL,
   `clas_concepto` varchar(50) DEFAULT NULL,
   `id_movimiento` bigint(20) DEFAULT NULL,
-  `ingreso` varchar(1) DEFAULT NULL
+  `ingreso` int(1) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 --
@@ -115,7 +115,7 @@ CREATE TABLE `cuentas` (
 --
 
 INSERT INTO `cuentas` (`id_cuenta`, `cod_concepto`, `nom_concepto`, `clas_concepto`, `id_movimiento`, `ingreso`) VALUES
-(1, '1.01', 'Venta Contado', 'Operativo', 1, 'I');
+(1, '1.01', 'Venta Contado', 'Operativo', 1 , 1);
 
 -- --------------------------------------------------------
 
