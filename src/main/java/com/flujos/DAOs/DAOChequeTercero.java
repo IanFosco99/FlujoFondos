@@ -60,7 +60,7 @@ public class DAOChequeTercero {
 
     //MODIFICAR 
     public void modificarChequeTercero(ChequeTerceros chequeTerceros, Connection con) throws SQLException {
-        String sql = "UPDATE cheque_tercero SET  titular_cheque = ?, importe_cheque = ?, fecha_cobro_cheque = ?, observacion_cheque, nro_cheque = ?, id_cuenta_entrada WHERE id_cheque = ?";
+        String sql = "UPDATE cheque_tercero SET  titular_cheque = ?, importe_cheque = ?, fecha_cobro_cheque = ?, observacion_cheque = ?, nro_cheque = ?, id_cuenta_entrada = ? WHERE id_cheque = ?";
 
         try (PreparedStatement ps = con.prepareStatement(sql)) {
 
@@ -88,25 +88,48 @@ public class DAOChequeTercero {
     }
 
     //OBTENER CHEQUE POR NUMERO
-    public ChequeTerceros obtenerChequePorNumero(long numero, Connection con) throws SQLException {
-        String sql = "SELECT * FROM cheque_tercero WHERE nro_cheque = ?";
-        ChequeTerceros chequeTerceros = null;
+    public ChequeTerceros obtenerChequePorNumero(long numero, Connection con) {
+        Statement st = null;
+        ResultSet rs = null;
+        ChequeTerceros chequeTerceros = new ChequeTerceros();
 
-        try (PreparedStatement ps = con.prepareStatement(sql)) {
-            ps.setLong(1, numero);
-            ResultSet rs = ps.executeQuery();
+        try {
+            String consulta = "SELECT * FROM cheque_tercero WHERE nro_cheque = " + numero;
+
+            st = con.createStatement();
+            rs = st.executeQuery(consulta);
 
             if (rs.next()) {
 
-                chequeTerceros = new ChequeTerceros();
+                chequeTerceros.setIdCheque(rs.getLong("id_cheque"));
                 chequeTerceros.setNroCheque(rs.getLong("nro_cheque"));
-                chequeTerceros.setTitularCheque(rs.getLong("id_titular"));
-                chequeTerceros.setImporteCheque(rs.getBigDecimal("importe"));
-                chequeTerceros.setFechaCobroCheque(rs.getDate("fecha_cobro"));
-                chequeTerceros.setObservacionCheque(rs.getString("observacion"));
+                chequeTerceros.setImporteCheque(rs.getBigDecimal("importe_cheque"));
+                chequeTerceros.setObservacionCheque(rs.getString("observacion_cheque"));
+                chequeTerceros.setFechaCobroCheque(rs.getDate("fecha_cobro_cheque"));
+                chequeTerceros.setTitularCheque(rs.getLong("titular_cheque"));
+                chequeTerceros.setIdCuentaEntrada(rs.getLong("id_cuenta_entrada"));
+                
+                
+            } else {
+                chequeTerceros = null;
             }
-            rs.close();
 
+        } catch (SQLException ex) {
+            chequeTerceros = null;
+            
+        } finally {
+            try {
+
+                if (rs != null) {
+                    rs.close();
+                }
+                if (st != null) {
+                    st.close();
+                }
+
+            } catch (SQLException ex) {
+                chequeTerceros = null;
+            }
         }
         return chequeTerceros;
     }

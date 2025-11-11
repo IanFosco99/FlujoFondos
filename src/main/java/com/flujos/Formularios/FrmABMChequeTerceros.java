@@ -436,12 +436,14 @@ public class FrmABMChequeTerceros extends javax.swing.JFrame {
                 TxtObservacionCheque.setText("");
                 comboTitularCheque.setSelectedIndex(0);
                 jDateFechaCobro.setDate(null);
+                comboCuentaEntrada.setSelectedIndex(0);
+
 
                 btnAgregar.setEnabled(true);
                 btnModificar.setEnabled(false);
                 btnEliminar.setEnabled(false);
                 btnLimpiar.setEnabled(true);
-                comboTitularCheque.setSelectedIndex(0);
+                
             }
 
         } catch (SQLException e) {
@@ -492,10 +494,12 @@ public class FrmABMChequeTerceros extends javax.swing.JFrame {
             chequeTerceros.setNroCheque(Long.parseLong(TxtNumero.getText()));
             chequeTerceros.setObservacionCheque(TxtObservacionCheque.getText());
             //validar que no sea nulo o ""
-            chequeTerceros.setTitularDestino((TxtIdTitularCheque.getText() != null && !TxtIdTitularCheque.getText().equals("")) ? Long.parseLong(TxtIdTitularCheque.getText()) : null);
-            chequeTerceros.setIdCuentaSalida((TxtIdCuenta.getText() != null && !TxtIdCuenta.getText().equals("")) ? Long.parseLong(TxtIdCuenta.getText()) : null);
-
-            daoChequeTercero.agregarChequeTercero(chequeTerceros, con.getConexion());
+            chequeTerceros.setTitularCheque((TxtIdTitularCheque.getText() != null && !TxtIdTitularCheque.getText().equals("")) ? Long.parseLong(TxtIdTitularCheque.getText()) : null);
+            chequeTerceros.setIdCuentaEntrada((TxtIdCuenta.getText() != null && !TxtIdCuenta.getText().equals("")) ? Long.parseLong(TxtIdCuenta.getText()) : null);
+            chequeTerceros.setIdCheque(Long.parseLong(TxtIdChequeTercero.getText()));
+            
+            
+            daoChequeTercero.modificarChequeTercero(chequeTerceros, con.getConexion());
             Utilidades.msg(null, "Cheque agregado correctamente");
 
             //LIMPIAR CAMPOS
@@ -505,6 +509,9 @@ public class FrmABMChequeTerceros extends javax.swing.JFrame {
             TxtObservacionCheque.setText("");
             comboTitularCheque.setSelectedIndex(0);
             jDateFechaCobro.setDate(null);
+            comboCuentaEntrada.setSelectedIndex(0);
+            
+            
         } catch (SQLException e) {
             e.printStackTrace();
             Utilidades.msg(null, "Error al modificar el cheque: " + e.getMessage());
@@ -570,14 +577,14 @@ public class FrmABMChequeTerceros extends javax.swing.JFrame {
 
         if (dato != null && !dato.equals("") && Utilidades.isNumLong(dato) && Long.parseLong(dato) > 0) {
             Long datoLong = Long.valueOf(dato);
-            ChequeTerceros chequeTerceros = daoChequeTercero.obtenerDatos(datoLong, con.getConexion());
+            ChequeTerceros chequeTerceros = daoChequeTercero.obtenerChequePorNumero(datoLong, con.getConexion());
 
             if (chequeTerceros != null) {
 
                 TxtIdChequeTercero.setText(chequeTerceros.getIdCheque().toString());
                 TxtNumero.setText(chequeTerceros.getNroCheque().toString());
                 TxtImporteCheque.setText(chequeTerceros.getImporteCheque().toString());
-                TxtIdTitularCheque.setText(chequeTerceros.getTitularDestino().toString());
+                TxtIdTitularCheque.setText(chequeTerceros.getTitularCheque().toString());
                 TxtObservacionCheque.setText(chequeTerceros.getObservacionCheque());
                 jDateFechaCobro.setDate(chequeTerceros.getFechaCobroCheque());
                 comboTitularCheque.setSelectedItem(daoCheque.obtenerNombreRazonSocial(Long.parseLong(TxtIdTitularCheque.getText()), con.getConexion()));
