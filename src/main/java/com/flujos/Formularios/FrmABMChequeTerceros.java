@@ -7,13 +7,14 @@ package com.flujos.Formularios;
 import com.flujos.DAOs.DAOCheque;
 import com.flujos.DAOs.DAOChequeTercero;
 import com.flujos.DAOs.DAOCuenta;
+import com.flujos.Entidades.ChequePropio;
 import com.flujos.Entidades.ChequeTerceros;
+import com.flujos.Entidades.ClienteProveedor;
 import com.flujos.Entidades.Cuenta;
 import com.flujos.Utilidades.Conexion;
 import com.flujos.Utilidades.Utilidades;
 import java.math.BigDecimal;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JOptionPane;
@@ -25,20 +26,22 @@ import javax.swing.JOptionPane;
 public class FrmABMChequeTerceros extends javax.swing.JFrame {
 
     private Conexion con;
-
-    DefaultComboBoxModel<String> modeloComboChequeTercero = new DefaultComboBoxModel<>();
+    DefaultComboBoxModel<String> modeloCuentaEntrada = new DefaultComboBoxModel<>();
+    DefaultComboBoxModel<String> modeloCombotitularCheque = new DefaultComboBoxModel<>();
 
     private DAOCheque daoCheque;
     private DAOChequeTercero daoChequeTercero;
     private DAOCuenta daoCuenta;
+
     /**
      * Creates new form FrmABMChequeTerceros
      */
     public FrmABMChequeTerceros() {
         try {
             initComponents();
-            comboTitularCheque.setModel(modeloComboChequeTercero);
-            
+            comboTitularCheque.setModel(modeloCombotitularCheque);
+            comboCuentaEntrada.setModel(modeloCuentaEntrada);
+
             inicializar();
         } catch (SQLException ex) {
             Utilidades.msg(null, "Error al inicializar la ventana");
@@ -57,9 +60,12 @@ public class FrmABMChequeTerceros extends javax.swing.JFrame {
         jDateFechaCobro.setDate(null);
         TxtIdChequeTercero.setVisible(false);
         TxtIdTitularCheque.setVisible(false);
+        TxtIdCuenta.setVisible(false);
         TxtObservacionCheque.setText("");
-        daoCheque.llenarComboClienteProveedorDestino(modeloComboChequeTercero, con.getConexion());
+        daoCheque.llenarComboClienteProveedorDestino(modeloCombotitularCheque, con.getConexion());
         comboTitularCheque.setSelectedIndex(0);
+        daoCuenta.llenarComboCuenta(modeloCuentaEntrada, con.getConexion());
+        comboCuentaEntrada.setSelectedIndex(0);
 
         btnAgregar.setEnabled(true);
         btnModificar.setEnabled(false);
@@ -95,12 +101,17 @@ public class FrmABMChequeTerceros extends javax.swing.JFrame {
         btnLimpiar = new javax.swing.JToggleButton();
         btnSalir = new javax.swing.JToggleButton();
         lblCuentaSalida = new javax.swing.JLabel();
-        comboCuentaSalida = new javax.swing.JComboBox<>();
+        comboCuentaEntrada = new javax.swing.JComboBox<>();
         TxtIdCuenta = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
         btnBuscar.setText("Buscar");
+        btnBuscar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnBuscarActionPerformed(evt);
+            }
+        });
 
         lblNumCheque.setText("Numero de Cheque:");
 
@@ -153,16 +164,16 @@ public class FrmABMChequeTerceros extends javax.swing.JFrame {
             }
         });
 
-        lblCuentaSalida.setText("Cuenta emtrada:");
+        lblCuentaSalida.setText("Cuenta entrada:");
 
-        comboCuentaSalida.addItemListener(new java.awt.event.ItemListener() {
+        comboCuentaEntrada.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
-                comboCuentaSalidaItemStateChanged(evt);
+                comboCuentaEntradaItemStateChanged(evt);
             }
         });
-        comboCuentaSalida.addActionListener(new java.awt.event.ActionListener() {
+        comboCuentaEntrada.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                comboCuentaSalidaActionPerformed(evt);
+                comboCuentaEntradaActionPerformed(evt);
             }
         });
 
@@ -205,7 +216,7 @@ public class FrmABMChequeTerceros extends javax.swing.JFrame {
                                     .addGroup(layout.createSequentialGroup()
                                         .addComponent(lblCuentaSalida, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addGap(18, 18, 18)
-                                        .addComponent(comboCuentaSalida, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addComponent(comboCuentaEntrada, javax.swing.GroupLayout.PREFERRED_SIZE, 131, javax.swing.GroupLayout.PREFERRED_SIZE))
                                     .addGroup(layout.createSequentialGroup()
                                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                             .addComponent(lblImporteCheque, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -254,7 +265,7 @@ public class FrmABMChequeTerceros extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblCuentaSalida)
-                    .addComponent(comboCuentaSalida, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(comboCuentaEntrada, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(TxtIdCuenta, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(7, 7, 7)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -311,6 +322,12 @@ public class FrmABMChequeTerceros extends javax.swing.JFrame {
             return;
         }
 
+        if (comboCuentaEntrada.getSelectedItem().equals("--")) {
+            Utilidades.msg(null, "Debe seleccionar una cuenta de salida");
+            comboCuentaEntrada.requestFocus();
+            return;
+        }
+
         if (Utilidades.existe(con.getConexion(), "SELECT (1) FROM cheque_tercero WHERE nro_cheque = " + Long.parseLong(TxtNumero.getText()) + " ")) {
             Utilidades.msg(null, "No se puede ingresar porque el numero de cheque ya existe");
             TxtNumero.setText("");
@@ -320,18 +337,20 @@ public class FrmABMChequeTerceros extends javax.swing.JFrame {
             comboTitularCheque.setSelectedIndex(0);
             jDateFechaCobro.setDate(null);
             TxtIdChequeTercero.setText("");
+            comboCuentaEntrada.setSelectedIndex(0);
+
         } else {
             try {
                 ChequeTerceros chequeTerceros = new ChequeTerceros();
-                
+
                 chequeTerceros.setFechaCobroCheque(jDateFechaCobro.getDate());
                 chequeTerceros.setImporteCheque(new BigDecimal(TxtImporteCheque.getText()));
                 chequeTerceros.setNroCheque(Long.parseLong(TxtNumero.getText()));
                 chequeTerceros.setObservacionCheque(TxtObservacionCheque.getText());
                 //validar que no sea nulo o ""
-                chequeTerceros.setTitularDestino((TxtIdTitularCheque.getText() != null && !TxtIdTitularCheque.getText().equals("")) ? Long.parseLong(TxtIdTitularCheque.getText()) : null);
-                chequeTerceros.setIdCuentaSalida((TxtIdCuenta.getText() != null && !TxtIdCuenta.getText().equals("")) ? Long.parseLong(TxtIdCuenta.getText()) : null );
-                
+                chequeTerceros.setTitularCheque((TxtIdTitularCheque.getText() != null && !TxtIdTitularCheque.getText().equals("")) ? Long.parseLong(TxtIdTitularCheque.getText()) : null);
+                chequeTerceros.setIdCuentaEntrada((TxtIdCuenta.getText() != null && !TxtIdCuenta.getText().equals("")) ? Long.parseLong(TxtIdCuenta.getText()) : null);
+
                 daoChequeTercero.agregarChequeTercero(chequeTerceros, con.getConexion());
                 Utilidades.msg(null, "Cheque agregado correctamente");
 
@@ -342,6 +361,8 @@ public class FrmABMChequeTerceros extends javax.swing.JFrame {
                 TxtObservacionCheque.setText("");
                 comboTitularCheque.setSelectedIndex(0);
                 jDateFechaCobro.setDate(null);
+                comboCuentaEntrada.setSelectedIndex(0);
+
             } catch (SQLException e) {
                 Utilidades.msg(null, "Error al guardar el cheque: " + e.getMessage());
                 this.dispose();
@@ -359,7 +380,8 @@ public class FrmABMChequeTerceros extends javax.swing.JFrame {
         TxtObservacionCheque.setText("");
         comboTitularCheque.setSelectedIndex(0);
         jDateFechaCobro.setDate(null);
-        
+        comboCuentaEntrada.setSelectedIndex(0);
+
         btnAgregar.setEnabled(true);
         btnModificar.setEnabled(false);
         btnEliminar.setEnabled(false);
@@ -369,14 +391,14 @@ public class FrmABMChequeTerceros extends javax.swing.JFrame {
     }//GEN-LAST:event_btnLimpiarActionPerformed
 
     private void btnSalirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalirActionPerformed
-        
+
         try {
             con.cerrarConexion();
         } catch (SQLException ex) {
             JOptionPane.showMessageDialog(null, "Error al salir de la ventana, intente de nuevo.");
             this.dispose();
         }
-        
+
         this.dispose();
     }//GEN-LAST:event_btnSalirActionPerformed
 
@@ -414,7 +436,7 @@ public class FrmABMChequeTerceros extends javax.swing.JFrame {
                 TxtObservacionCheque.setText("");
                 comboTitularCheque.setSelectedIndex(0);
                 jDateFechaCobro.setDate(null);
-                
+
                 btnAgregar.setEnabled(true);
                 btnModificar.setEnabled(false);
                 btnEliminar.setEnabled(false);
@@ -462,21 +484,19 @@ public class FrmABMChequeTerceros extends javax.swing.JFrame {
         }
 
         try {
-            
+
             ChequeTerceros chequeTerceros = new ChequeTerceros();
-                
+
             chequeTerceros.setFechaCobroCheque(jDateFechaCobro.getDate());
             chequeTerceros.setImporteCheque(new BigDecimal(TxtImporteCheque.getText()));
             chequeTerceros.setNroCheque(Long.parseLong(TxtNumero.getText()));
             chequeTerceros.setObservacionCheque(TxtObservacionCheque.getText());
             //validar que no sea nulo o ""
             chequeTerceros.setTitularDestino((TxtIdTitularCheque.getText() != null && !TxtIdTitularCheque.getText().equals("")) ? Long.parseLong(TxtIdTitularCheque.getText()) : null);
-            chequeTerceros.setIdCuentaSalida((TxtIdCuenta.getText() != null && !TxtIdCuenta.getText().equals("")) ? Long.parseLong(TxtIdCuenta.getText()) : null );
+            chequeTerceros.setIdCuentaSalida((TxtIdCuenta.getText() != null && !TxtIdCuenta.getText().equals("")) ? Long.parseLong(TxtIdCuenta.getText()) : null);
 
             daoChequeTercero.agregarChequeTercero(chequeTerceros, con.getConexion());
             Utilidades.msg(null, "Cheque agregado correctamente");
-
-           
 
             //LIMPIAR CAMPOS
             TxtNumero.setText("");
@@ -494,50 +514,38 @@ public class FrmABMChequeTerceros extends javax.swing.JFrame {
 
     private void comboTitularChequeItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_comboTitularChequeItemStateChanged
 
-        TxtIdChequeTercero.setText("");
-
+        TxtIdTitularCheque.setText("");
         try {
-            Object seleccionado = comboTitularCheque.getSelectedItem();
-
-            if (seleccionado == null || "--".equals(seleccionado.toString())) {
-                TxtIdChequeTercero.setText("");
-                return;
-            }
-
-            // Buscar el id_titular directamente desde la base
-            String sql = "SELECT id_cliente_proveedor FROM cliente_proveedor WHERE nombre = ?";
-            PreparedStatement ps = con.getConexion().prepareStatement(sql);
-            ps.setString(1, seleccionado.toString());
-            ResultSet rs = ps.executeQuery();
-
-            if (rs.next()) {
-                TxtIdChequeTercero.setText(String.valueOf(rs.getInt("id_cliente_proveedor")));
+            String clienteProveedor = comboTitularCheque.getSelectedItem() != null ? comboTitularCheque.getSelectedItem().toString() : null;
+            if (clienteProveedor == null || clienteProveedor.equals("--")) {
+                TxtIdTitularCheque.setText("");
             } else {
-                TxtIdChequeTercero.setText("");
-                Utilidades.msg(null, "No se encontró el titular seleccionado");
+                ClienteProveedor clienteProveedorSeleccionado = daoCheque.obtenerDatosClienteProveedor(clienteProveedor, con.getConexion());
+                if (clienteProveedorSeleccionado != null) {
+                    TxtIdTitularCheque.setText(String.valueOf(clienteProveedorSeleccionado.getIdClienteProveedor()));
+                } else {
+                    TxtIdTitularCheque.setText("");
+                }
             }
-
-            rs.close();
-            ps.close();
 
         } catch (Exception e) {
-            Utilidades.msg(null, "Error al seleccionar el titular del cheque de tercero. Intente nuevamente.");
-            e.printStackTrace();
+            Utilidades.msg(null, "Se produjo un error en la seleccion del combo Titular Destino Cheque, ingrese nuevamente");
+            this.dispose();
         }
 
     }//GEN-LAST:event_comboTitularChequeItemStateChanged
 
-    private void comboCuentaSalidaItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_comboCuentaSalidaItemStateChanged
+    private void comboCuentaEntradaItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_comboCuentaEntradaItemStateChanged
 
         TxtIdCuenta.setText("");
         try {
-            String cuentaSalida = comboCuentaSalida.getSelectedItem() != null ? comboCuentaSalida.getSelectedItem().toString() : null;
-            if (cuentaSalida == null || cuentaSalida.equals("--")) {
+            String cuentaEntrada = comboCuentaEntrada.getSelectedItem() != null ? comboCuentaEntrada.getSelectedItem().toString() : null;
+            if (cuentaEntrada == null || cuentaEntrada.equals("--")) {
                 TxtIdCuenta.setText("");
             } else {
-                Cuenta cuentaSalidaSeleccionado = daoCuenta.obtenerDatos(cuentaSalida, con.getConexion());
-                if (cuentaSalidaSeleccionado != null) {
-                    TxtIdCuenta.setText(String.valueOf(cuentaSalidaSeleccionado.getIdCuenta()));
+                Cuenta cuentaEntradaSeleccionado = daoCuenta.obtenerDatos(cuentaEntrada, con.getConexion());
+                if (cuentaEntradaSeleccionado != null) {
+                    TxtIdCuenta.setText(String.valueOf(cuentaEntradaSeleccionado.getIdCuenta()));
                 } else {
                     TxtIdCuenta.setText("");
                 }
@@ -547,15 +555,61 @@ public class FrmABMChequeTerceros extends javax.swing.JFrame {
             Utilidades.msg(null, "Se produjo un error en la seleccion del combo Titular Cheque, ingrese nuevamente");
             this.dispose();
         }
-    }//GEN-LAST:event_comboCuentaSalidaItemStateChanged
+    }//GEN-LAST:event_comboCuentaEntradaItemStateChanged
 
-    private void comboCuentaSalidaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboCuentaSalidaActionPerformed
+    private void comboCuentaEntradaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboCuentaEntradaActionPerformed
         // COMBO CUENTA DE SALIDA
-    }//GEN-LAST:event_comboCuentaSalidaActionPerformed
+    }//GEN-LAST:event_comboCuentaEntradaActionPerformed
+
+    private void btnBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuscarActionPerformed
+        btnAgregar.setEnabled(false);
+        btnModificar.setEnabled(true);
+        btnEliminar.setEnabled(true);
+
+        String dato = JOptionPane.showInputDialog("Numero de cheque: ");
+
+        if (dato != null && !dato.equals("") && Utilidades.isNumLong(dato) && Long.parseLong(dato) > 0) {
+            Long datoLong = Long.valueOf(dato);
+            ChequeTerceros chequeTerceros = daoChequeTercero.obtenerDatos(datoLong, con.getConexion());
+
+            if (chequeTerceros != null) {
+
+                TxtIdChequeTercero.setText(chequeTerceros.getIdCheque().toString());
+                TxtNumero.setText(chequeTerceros.getNroCheque().toString());
+                TxtImporteCheque.setText(chequeTerceros.getImporteCheque().toString());
+                TxtIdTitularCheque.setText(chequeTerceros.getTitularDestino().toString());
+                TxtObservacionCheque.setText(chequeTerceros.getObservacionCheque());
+                jDateFechaCobro.setDate(chequeTerceros.getFechaCobroCheque());
+                comboTitularCheque.setSelectedItem(daoCheque.obtenerNombreRazonSocial(Long.parseLong(TxtIdTitularCheque.getText()), con.getConexion()));
+                comboCuentaEntrada.setSelectedItem(daoCuenta.obtenerCuenta(chequeTerceros.getIdCuentaEntrada(), con.getConexion()));
+
+                String nombreRazonSocial = daoCheque.obtenerNombreRazonSocial(chequeTerceros.getTitularCheque(), con.getConexion());
+
+                if (nombreRazonSocial != null) {
+                    comboTitularCheque.setSelectedItem(nombreRazonSocial);
+                } else {
+                    comboTitularCheque.setSelectedItem("--");
+                }
+
+            } else {
+                Utilidades.msg(null, "No existe el número de cheque o se produjo un error");
+                btnAgregar.setEnabled(true);
+                btnModificar.setEnabled(false);
+                btnEliminar.setEnabled(false);
+
+            }
+
+        } else {
+            Utilidades.msg(null, "Debe ingresar un número entero mayor a 0");
+            btnAgregar.setEnabled(true);
+            btnModificar.setEnabled(false);
+            btnEliminar.setEnabled(false);
+        }
+        }//GEN-LAST:event_btnBuscarActionPerformed
 
     /**
-     * @param args the command line arguments
-     */
+         * @param args the command line arguments
+    */
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
@@ -582,6 +636,7 @@ public class FrmABMChequeTerceros extends javax.swing.JFrame {
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
+            @Override
             public void run() {
                 new FrmABMChequeTerceros().setVisible(true);
             }
@@ -601,7 +656,7 @@ public class FrmABMChequeTerceros extends javax.swing.JFrame {
     private javax.swing.JToggleButton btnLimpiar;
     private javax.swing.JToggleButton btnModificar;
     private javax.swing.JToggleButton btnSalir;
-    private javax.swing.JComboBox<String> comboCuentaSalida;
+    private javax.swing.JComboBox<String> comboCuentaEntrada;
     private javax.swing.JComboBox<String> comboTitularCheque;
     private com.toedter.calendar.JDateChooser jDateFechaCobro;
     private javax.swing.JLabel lblCuentaSalida;

@@ -31,7 +31,7 @@ public class DAOCuenta {
 
     public Cuenta obtenerDatos(String dato, Connection con) {
 
-    Cuenta cuenta = new Cuenta();
+    Cuenta cuenta = null;
         String consulta = "SELECT id_cuenta FROM cuentas WHERE nom_concepto = '" + dato + "'";
         Statement st = null;
         ResultSet rs = null;
@@ -40,6 +40,7 @@ public class DAOCuenta {
             st = con.createStatement();
             rs = st.executeQuery(consulta);
             if (rs.next()) {
+                cuenta = new Cuenta();
                 cuenta.setIdCuenta(rs.getLong("id_cuenta"));
             } else {
                 cuenta = null;

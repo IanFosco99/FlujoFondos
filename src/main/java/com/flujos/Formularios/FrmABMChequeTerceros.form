@@ -65,7 +65,7 @@
                                   <Group type="102" attributes="0">
                                       <Component id="lblCuentaSalida" min="-2" pref="130" max="-2" attributes="0"/>
                                       <EmptySpace type="separate" max="-2" attributes="0"/>
-                                      <Component id="comboCuentaSalida" min="-2" pref="131" max="-2" attributes="0"/>
+                                      <Component id="comboCuentaEntrada" min="-2" pref="131" max="-2" attributes="0"/>
                                   </Group>
                                   <Group type="102" attributes="0">
                                       <Group type="103" groupAlignment="0" max="-2" attributes="0">
@@ -132,7 +132,7 @@
               <EmptySpace type="unrelated" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
                   <Component id="lblCuentaSalida" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="comboCuentaSalida" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="comboCuentaEntrada" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="TxtIdCuenta" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace min="-2" pref="7" max="-2" attributes="0"/>
@@ -154,6 +154,9 @@
       <Properties>
         <Property name="text" type="java.lang.String" value="Buscar"/>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnBuscarActionPerformed"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JTextField" name="TxtNumero">
     </Component>
@@ -247,18 +250,18 @@
     </Component>
     <Component class="javax.swing.JLabel" name="lblCuentaSalida">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Cuenta emtrada:"/>
+        <Property name="text" type="java.lang.String" value="Cuenta entrada:"/>
       </Properties>
     </Component>
-    <Component class="javax.swing.JComboBox" name="comboCuentaSalida">
+    <Component class="javax.swing.JComboBox" name="comboCuentaEntrada">
       <Properties>
         <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
           <StringArray count="0"/>
         </Property>
       </Properties>
       <Events>
-        <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="comboCuentaSalidaItemStateChanged"/>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="comboCuentaSalidaActionPerformed"/>
+        <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="comboCuentaEntradaItemStateChanged"/>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="comboCuentaEntradaActionPerformed"/>
       </Events>
       <AuxValues>
         <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
