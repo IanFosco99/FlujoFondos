@@ -4,18 +4,104 @@
  */
 package com.flujos.Formularios;
 
+import com.flujos.Utilidades.Conexion;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
+import java.sql.Statement;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+
 /**
  *
  * @author monse
  */
 public class FrmSalidaTerceros extends javax.swing.JFrame {
 
+    private Conexion con;
+    private DefaultTableModel modelTblSalidasTerceros = new DefaultTableModel();
+
     /**
      * Creates new form FrmSalidaTerceros
      */
     public FrmSalidaTerceros() {
         initComponents();
+
+        crearModeloTabla();
+        inicializar();
+
     }
+
+    private void crearModeloTabla() {
+
+        modelTblSalidasTerceros = (new DefaultTableModel() {
+
+            @Override
+            public boolean isCellEditable(int rowIndex, int colIndex) {
+                return false;
+            }
+
+        });
+    }
+
+    private void limpiarTabla() {
+
+        for (int i = 0; i < TblSalidasChequeTerceros.getRowCount(); i++) {
+            modelTblSalidasTerceros.removeRow(i);
+            i -= 1;
+        }
+    }
+
+    private void inicializar() {
+        con = Conexion();
+        TblSalidasChequeTerceros.setModel(modelTblSalidasTerceros);
+        TblSalidasChequeTerceros.getTableHeader().setReorderingAllowed(false);
+        cargarDatos(con.getConexion());
+    }
+
+    private void cargarDatos(Connection con) {
+
+        modelTblSalidasTerceros.setRowCount(0);
+        modelTblSalidasTerceros.setColumnCount(0);
+        
+        String query = """
+                       
+                       
+                       """;
+
+        try(
+                Statement st = con.createStatement(); 
+                ResultSet rs = st.executeQuery(query)) {
+
+            ResultSetMetaData meta = rs.getMetaData();
+            int columnas = meta.getColumnCount();
+
+            // Configurar nombres de columnas
+            for (int i = 1; i <= columnas; i++) {
+                modelTblSalidasTerceros.addColumn(meta.getColumnLabel(i));
+            }
+
+            // Cargar filas
+            while (rs.next()) {
+                Object[] fila = new Object[columnas];
+                for (int i = 0; i < columnas; i++) {
+                    fila[i] = rs.getObject(i + 1);
+                }
+                modelTblSalidasTerceros.addRow(fila);
+            }
+
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(null,
+                    "Error al cargar datos:\n, ingrese nuevamente");
+            this.dispose();
+
+        }
+
+    }
+    
+    
+    
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -26,21 +112,70 @@ public class FrmSalidaTerceros extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jScrollPane1 = new javax.swing.JScrollPane();
+        TblSalidasChequeTerceros = new javax.swing.JTable();
+        BtnSalir = new javax.swing.JButton();
+
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("SALIDA CHEQUES TERCEROS");
+
+        TblSalidasChequeTerceros.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        jScrollPane1.setViewportView(TblSalidasChequeTerceros);
+
+        BtnSalir.setText("SALIR");
+        BtnSalir.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BtnSalirActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(117, 117, 117)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(27, 27, 27)
+                .addComponent(BtnSalir)
+                .addContainerGap(36, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 300, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(38, 38, 38)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(38, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(BtnSalir)
+                .addGap(16, 16, 16))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void BtnSalirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnSalirActionPerformed
+
+        try {
+            con.cerrarConexion();
+        }catch(SQLException ex){
+            JOptionPane.showMessageDialog(null, "Error al salir de la ventana, intente de nuevo.");
+            this.dispose();
+        }
+        this.dispose();
+        
+    }//GEN-LAST:event_BtnSalirActionPerformed
 
     /**
      * @param args the command line arguments
@@ -78,5 +213,8 @@ public class FrmSalidaTerceros extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton BtnSalir;
+    private javax.swing.JTable TblSalidasChequeTerceros;
+    private javax.swing.JScrollPane jScrollPane1;
     // End of variables declaration//GEN-END:variables
 }
