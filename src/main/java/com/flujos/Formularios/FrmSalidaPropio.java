@@ -4,19 +4,98 @@
  */
 package com.flujos.Formularios;
 
+import com.flujos.Utilidades.Conexion;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
+import java.sql.Statement;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+
 /**
  *
  * @author monse
  */
 public class FrmSalidaPropio extends javax.swing.JFrame {
 
+        private Conexion con;
+        private DefaultTableModel modelTblSalidasChequePropio ;
+    
     /**
      * Creates new form FrmSalidaPropio
      */
     public FrmSalidaPropio() {
         initComponents();
+        crearModeloTabla();
+        inicializar();
+    }
+    
+    private void crearModeloTabla (){   
+        modelTblSalidasChequePropio = (new DefaultTableModel (){
+        
+            public void testMethod() {
+                
+            }
+        public boolean isCellEditable (int rowIndex, int colIndex ){
+            return false;
+        }
+    });
+ }
+
+    private void limpiarTabla () {
+        for (int i = 0; i < TblSalidasChequePropio.getRowCount (); i++){
+            modelTblSalidasChequePropio.removeRow (i);
+            i-= 1;
+        }
+ }
+
+    private void inicializar (){
+        con = new Conexion();
+        TblSalidasChequePropio.setModel(modelTblSalidasChequePropio);
+        TblSalidasChequePropio.getTableHeader().setReorderingAllowed(false);
+        cargarDatos(con.getConexion());
+    }
+    
+    private void cargarDatos (Connection con){
+        modelTblSalidasChequePropio.setRowCount(0);
+        modelTblSalidasChequePropio.setColumnCount(0);
+        
+String query = """
+
+               
+               """;
+
+    try (
+        Statement st = con.createStatement();
+        ResultSet rs = st.executeQuery(query)) {
+
+        ResultSetMetaData meta = rs.getMetaData();
+    int columnas = meta.getColumnCount();
+
+        // Configurar nombres de columnas
+    for (int i = 1; i <= columnas; i++) {
+        modelTblSalidasChequePropio.addColumn(meta.getColumnLabel(i));
     }
 
+        // Cargar filas
+    while (rs.next()) {
+        Object[] fila = new Object[columnas];
+        
+    for (int i = 0; i < columnas; i++) {
+        fila[i] = rs.getObject(i + 1);
+    }
+        modelTblSalidasChequePropio.addRow(fila);
+    }
+
+    }catch (SQLException ex) {
+        JOptionPane.showMessageDialog(null,
+            "Error al cargar datos:\n, ingrese nuevamente");
+        this.dispose();
+
+        }
+    }
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -26,21 +105,68 @@ public class FrmSalidaPropio extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jScrollPane1 = new javax.swing.JScrollPane();
+        TblSalidasChequePropio = new javax.swing.JTable();
+        BtnSalir = new javax.swing.JButton();
+
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("SALIDA DE CHEQUE PROPIO");
+
+        TblSalidasChequePropio.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        jScrollPane1.setViewportView(TblSalidasChequePropio);
+
+        BtnSalir.setText("SALIR");
+        BtnSalir.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BtnSalirActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(14, 14, 14)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(BtnSalir)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 670, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(20, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 300, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(54, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 223, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(BtnSalir)
+                .addGap(25, 25, 25))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void BtnSalirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnSalirActionPerformed
+    try {
+          con.cerrarConexion();
+          
+    } catch (SQLException ex) {
+        JOptionPane.showMessageDialog(null, "Error al salir de la ventana, intente de nuevo.");
+        this.dispose();
+        
+    }    
+    this.dispose(); 
+    }//GEN-LAST:event_BtnSalirActionPerformed
 
     /**
      * @param args the command line arguments
@@ -78,5 +204,8 @@ public class FrmSalidaPropio extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton BtnSalir;
+    private javax.swing.JTable TblSalidasChequePropio;
+    private javax.swing.JScrollPane jScrollPane1;
     // End of variables declaration//GEN-END:variables
 }
