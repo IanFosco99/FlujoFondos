@@ -34,6 +34,8 @@ public class FrmFlujoFondos extends javax.swing.JFrame {
         menuCheque = new javax.swing.JMenu();
         menuItemCargaChequePropio = new javax.swing.JMenuItem();
         menuItemCargaChequeTerceros = new javax.swing.JMenuItem();
+        menuItemSalidaPropio = new javax.swing.JMenuItem();
+        menuItemSalidaTerceros = new javax.swing.JMenuItem();
         menuFlujos = new javax.swing.JMenu();
         menuItemFlujosMov = new javax.swing.JMenuItem();
         menuItemEliminarFlujoMov = new javax.swing.JMenuItem();
@@ -90,6 +92,22 @@ public class FrmFlujoFondos extends javax.swing.JFrame {
         });
         menuCheque.add(menuItemCargaChequeTerceros);
 
+        menuItemSalidaPropio.setText("Salida Propios");
+        menuItemSalidaPropio.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuItemSalidaPropioActionPerformed(evt);
+            }
+        });
+        menuCheque.add(menuItemSalidaPropio);
+
+        menuItemSalidaTerceros.setText("Salida Terceros");
+        menuItemSalidaTerceros.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuItemSalidaTercerosActionPerformed(evt);
+            }
+        });
+        menuCheque.add(menuItemSalidaTerceros);
+
         menuBarPrincipal.add(menuCheque);
 
         menuFlujos.setText("Flujos");
@@ -144,7 +162,7 @@ public class FrmFlujoFondos extends javax.swing.JFrame {
         FrmABMClienteProveedor menuABMClienteProveedor = new FrmABMClienteProveedor();
         menuABMClienteProveedor.setVisible(true);
         menuABMClienteProveedor.setLocationRelativeTo(null);
-        
+
     }//GEN-LAST:event_menuItemABMClienteProveedorActionPerformed
 
     private void menuItemABMMovimientoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemABMMovimientoActionPerformed
@@ -160,18 +178,18 @@ public class FrmFlujoFondos extends javax.swing.JFrame {
     }//GEN-LAST:event_menuItemABMCuentaActionPerformed
 
     private void menuItemCargaChequePropioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemCargaChequePropioActionPerformed
-        
+
         FrmABMChequePropio ventanaPropios = new FrmABMChequePropio();
         ventanaPropios.setVisible(true);
-        ventanaPropios.setLocationRelativeTo(null);  
+        ventanaPropios.setLocationRelativeTo(null);
     }//GEN-LAST:event_menuItemCargaChequePropioActionPerformed
 
     private void menuItemCargaChequeTercerosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemCargaChequeTercerosActionPerformed
-        
+
         FrmABMChequeTerceros ventanaChequesTerceros = new FrmABMChequeTerceros();
         ventanaChequesTerceros.setVisible(true);
         ventanaChequesTerceros.setLocationRelativeTo(null);
-        
+
     }//GEN-LAST:event_menuItemCargaChequeTercerosActionPerformed
 
     private void menuItemFlujosMovActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemFlujosMovActionPerformed
@@ -179,24 +197,36 @@ public class FrmFlujoFondos extends javax.swing.JFrame {
         FrmFlujosMov ventanaFlujosMov = new FrmFlujosMov();
         ventanaFlujosMov.setVisible(true);
         ventanaFlujosMov.setLocationRelativeTo(null);
-        
+
     }//GEN-LAST:event_menuItemFlujosMovActionPerformed
 
     private void menuItemEliminarFlujoMovActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemEliminarFlujoMovActionPerformed
-        
+
         FrmBajaFlujosMov ventanaBajaFlujosMov = new FrmBajaFlujosMov();
         ventanaBajaFlujosMov.setVisible(true);
         ventanaBajaFlujosMov.setLocationRelativeTo(null);
-        
+
     }//GEN-LAST:event_menuItemEliminarFlujoMovActionPerformed
 
     private void menuReportesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuReportesActionPerformed
-        
+
         FrmReporteFFnMensuales ventanaFFnMensuales = new FrmReporteFFnMensuales();
         ventanaFFnMensuales.setVisible(true);
         ventanaFFnMensuales.setLocationRelativeTo(null);
-        
+
     }//GEN-LAST:event_menuReportesActionPerformed
+
+    private void menuItemSalidaPropioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemSalidaPropioActionPerformed
+        FrmSalidaPropio ventanaFrmSalidaPropio = new FrmSalidaPropio();
+        ventanaFrmSalidaPropio.setVisible(true);
+        ventanaFrmSalidaPropio.setLocationRelativeTo(null);
+    }//GEN-LAST:event_menuItemSalidaPropioActionPerformed
+
+    private void menuItemSalidaTercerosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemSalidaTercerosActionPerformed
+        FrmSalidaTerceros ventanaFrmSalidaTerceros = new FrmSalidaTerceros();
+        ventanaFrmSalidaTerceros.setVisible(true);
+        ventanaFrmSalidaTerceros.setLocationRelativeTo(null);
+    }//GEN-LAST:event_menuItemSalidaTercerosActionPerformed
 
     /**
      * @param args the command line arguments
@@ -246,6 +276,8 @@ public class FrmFlujoFondos extends javax.swing.JFrame {
     private javax.swing.JMenuItem menuItemEliminarFlujoMov;
     private javax.swing.JMenuItem menuItemFFnMensual;
     private javax.swing.JMenuItem menuItemFlujosMov;
+    private javax.swing.JMenuItem menuItemSalidaPropio;
+    private javax.swing.JMenuItem menuItemSalidaTerceros;
     private javax.swing.JMenu menuReportes;
     // End of variables declaration//GEN-END:variables
 }
