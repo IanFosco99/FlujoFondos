@@ -54,7 +54,7 @@ public class FrmSalidaTerceros extends javax.swing.JFrame {
     }
 
     private void inicializar() {
-        con = Conexion();
+        con = new Conexion();
         TblSalidasChequeTerceros.setModel(modelTblSalidasTerceros);
         TblSalidasChequeTerceros.getTableHeader().setReorderingAllowed(false);
         cargarDatos(con.getConexion());
