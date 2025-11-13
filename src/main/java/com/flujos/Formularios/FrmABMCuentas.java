@@ -350,6 +350,12 @@ public class FrmABMCuentas extends javax.swing.JFrame {
             comboClasificacion.requestFocus();
             return;
         }
+        if (comboMovimiento.getSelectedItem().equals("--")) {
+            Utilidades.msg(null, "El movimiento no puede estar vacio");
+            comboMovimiento.requestFocus();
+            return;
+        }  
+            
         if (comboIngresoegreso.getSelectedItem().equals("--")) {
             Utilidades.msg(null, "El ingreso/egreso no puede estar vacio");
             comboIngresoegreso.requestFocus();
