@@ -67,12 +67,12 @@ String query = """
                     ch.importe_cheque AS Importe,
                     ch.fecha_cobro_cheque AS Fecha,
                     ch.observacion_cheque AS Observacion,
-                    ti.nom_razon_social AS Titular,
+                    ti.nom_razon_social AS Destino,
                     cu.nom_concepto AS Cuenta
-                    FROM cheque_tercero ch
+                    FROM cheque_propio ch
                     JOIN cliente_proveedores ti ON
-                    ti.id_cliente_proveedor = ch.titular_cheque
-                    JOIN cuentas cu ON ch.id_cuenta_entrada = cu.id_cuenta 
+                    ti.id_cliente_proveedor = ch.titular_destino
+                    JOIN cuentas cu ON ch.id_cuenta_salida = cu.id_cuenta 
                     ORDER BY ch.nro_cheque DESC;               
                """;
 
