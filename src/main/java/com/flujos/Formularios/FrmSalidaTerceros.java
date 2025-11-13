@@ -64,15 +64,26 @@ public class FrmSalidaTerceros extends javax.swing.JFrame {
 
         modelTblSalidasTerceros.setRowCount(0);
         modelTblSalidasTerceros.setColumnCount(0);
-        
+
         String query = """
                        
+                       SELECT
+                            ch.nro_cheque AS Cheque,
+                            ch.importe_cheque AS Importe,
+                            ch.fecha_cobro_cheque AS Fecha,
+                            ch.observacion_cheque AS Observacion,
+                            ti.nom_razon_social AS Titular,
+                            cu.nom_concepto AS Cuenta
+                            FROM cheque_tercero ch
+                            JOIN cliente_proveedores ti ON
+                            ti.id_cliente_proveedor = ch.titular_cheque
+                            JOIN cuentas cu ON ch.id_cuenta_entrada = cu.id_cuenta 
+                            ORDER BY ch.nro_cheque DESC;
                        
                        """;
 
-        try(
-                Statement st = con.createStatement(); 
-                ResultSet rs = st.executeQuery(query)) {
+        try (
+                Statement st = con.createStatement(); ResultSet rs = st.executeQuery(query)) {
 
             ResultSetMetaData meta = rs.getMetaData();
             int columnas = meta.getColumnCount();
@@ -99,9 +110,6 @@ public class FrmSalidaTerceros extends javax.swing.JFrame {
         }
 
     }
-    
-    
-    
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -169,12 +177,12 @@ public class FrmSalidaTerceros extends javax.swing.JFrame {
 
         try {
             con.cerrarConexion();
-        }catch(SQLException ex){
+        } catch (SQLException ex) {
             JOptionPane.showMessageDialog(null, "Error al salir de la ventana, intente de nuevo.");
             this.dispose();
         }
         this.dispose();
-        
+
     }//GEN-LAST:event_BtnSalirActionPerformed
 
     /**
