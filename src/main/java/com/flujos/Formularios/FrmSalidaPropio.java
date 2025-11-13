@@ -62,8 +62,18 @@ public class FrmSalidaPropio extends javax.swing.JFrame {
         modelTblSalidasChequePropio.setColumnCount(0);
         
 String query = """
-
-               
+                SELECT
+                    ch.nro_cheque AS Cheque,
+                    ch.importe_cheque AS Importe,
+                    ch.fecha_cobro_cheque AS Fecha,
+                    ch.observacion_cheque AS Observacion,
+                    ti.nom_razon_social AS Titular,
+                    cu.nom_concepto AS Cuenta
+                    FROM cheque_tercero ch
+                    JOIN cliente_proveedores ti ON
+                    ti.id_cliente_proveedor = ch.titular_cheque
+                    JOIN cuentas cu ON ch.id_cuenta_entrada = cu.id_cuenta 
+                    ORDER BY ch.nro_cheque DESC;               
                """;
 
     try (
