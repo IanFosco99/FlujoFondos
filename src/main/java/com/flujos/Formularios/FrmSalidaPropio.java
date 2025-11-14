@@ -62,18 +62,19 @@ public class FrmSalidaPropio extends javax.swing.JFrame {
         modelTblSalidasChequePropio.setColumnCount(0);
         
 String query = """
-                SELECT
-                    ch.nro_cheque AS Cheque,
-                    ch.importe_cheque AS Importe,
-                    ch.fecha_cobro_cheque AS Fecha,
-                    ch.observacion_cheque AS Observacion,
-                    ti.nom_razon_social AS Destino,
-                    cu.nom_concepto AS Cuenta
-                    FROM cheque_propio ch
-                    JOIN cliente_proveedores ti ON
-                    ti.id_cliente_proveedor = ch.titular_destino
-                    JOIN cuentas cu ON ch.id_cuenta_salida = cu.id_cuenta 
-                    ORDER BY ch.nro_cheque DESC;               
+            SELECT
+                ch.nro_cheque AS Cheque,
+                ch.importe_cheque AS Importe,
+                ch.fecha_cobro_cheque AS Fecha,
+                ch.observacion_cheque AS Observacion,
+                ti.nom_razon_social AS Destino,
+                cu.nom_concepto AS Cuenta,
+                ch.id_cheque AS ID
+                FROM cheque_propio ch
+                JOIN cliente_proveedores ti ON
+                ti.id_cliente_proveedor = ch.titular_destino
+                JOIN cuentas cu ON ch.id_cuenta_salida = cu.id_cuenta 
+                ORDER BY ch.nro_cheque DESC;               
                """;
 
     try (
@@ -118,6 +119,7 @@ String query = """
         jScrollPane1 = new javax.swing.JScrollPane();
         TblSalidasChequePropio = new javax.swing.JTable();
         BtnSalir = new javax.swing.JButton();
+        BtnConfimar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("SALIDA DE CHEQUE PROPIO");
@@ -142,6 +144,8 @@ String query = """
             }
         });
 
+        BtnConfimar.setText("Confirmar");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -149,7 +153,10 @@ String query = """
             .addGroup(layout.createSequentialGroup()
                 .addGap(14, 14, 14)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(BtnSalir)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(BtnConfimar)
+                        .addGap(234, 234, 234)
+                        .addComponent(BtnSalir))
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 670, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(20, Short.MAX_VALUE))
         );
@@ -159,7 +166,9 @@ String query = """
                 .addContainerGap(54, Short.MAX_VALUE)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 223, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(BtnSalir)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(BtnSalir)
+                    .addComponent(BtnConfimar))
                 .addGap(25, 25, 25))
         );
 
@@ -214,6 +223,7 @@ String query = """
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton BtnConfimar;
     private javax.swing.JButton BtnSalir;
     private javax.swing.JTable TblSalidasChequePropio;
     private javax.swing.JScrollPane jScrollPane1;
