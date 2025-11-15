@@ -78,6 +78,7 @@ String query = """
                 JOIN cliente_proveedores ti ON
                 ti.id_cliente_proveedor = ch.titular_destino
                 JOIN cuentas cu ON ch.id_cuenta_salida = cu.id_cuenta 
+                WHERE ch.estado_cheque = 0
                 ORDER BY ch.nro_cheque DESC;               
                """;
 
