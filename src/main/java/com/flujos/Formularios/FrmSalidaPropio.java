@@ -5,6 +5,7 @@
 package com.flujos.Formularios;
 
 import com.flujos.Utilidades.Conexion;
+import com.flujos.Utilidades.Utilidades;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
@@ -50,11 +51,14 @@ public class FrmSalidaPropio extends javax.swing.JFrame {
         }
  }
 
+    
     private void inicializar (){
         con = new Conexion();
         TblSalidasChequePropio.setModel(modelTblSalidasChequePropio);
         TblSalidasChequePropio.getTableHeader().setReorderingAllowed(false);
         cargarDatos(con.getConexion());
+        TxtIdChequePropio.setText("");
+        TxtIdChequePropio.setVisible(false);
     }
     
     private void cargarDatos (Connection con){
@@ -120,6 +124,7 @@ String query = """
         TblSalidasChequePropio = new javax.swing.JTable();
         BtnSalir = new javax.swing.JButton();
         BtnConfimar = new javax.swing.JButton();
+        TxtIdChequePropio = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("SALIDA DE CHEQUE PROPIO");
@@ -135,6 +140,11 @@ String query = """
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
+        TblSalidasChequePropio.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                TblSalidasChequePropioMousePressed(evt);
+            }
+        });
         jScrollPane1.setViewportView(TblSalidasChequePropio);
 
         BtnSalir.setText("SALIR");
@@ -145,19 +155,28 @@ String query = """
         });
 
         BtnConfimar.setText("Confirmar");
+        BtnConfimar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                BtnConfimarActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(14, 14, 14)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                     .addGroup(layout.createSequentialGroup()
+                        .addGap(14, 14, 14)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 670, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(41, 41, 41)
+                        .addComponent(TxtIdChequePropio, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(BtnConfimar)
                         .addGap(234, 234, 234)
-                        .addComponent(BtnSalir))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 670, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(BtnSalir)))
                 .addContainerGap(20, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
@@ -168,7 +187,8 @@ String query = """
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(BtnSalir)
-                    .addComponent(BtnConfimar))
+                    .addComponent(BtnConfimar)
+                    .addComponent(TxtIdChequePropio, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(25, 25, 25))
         );
 
@@ -187,6 +207,37 @@ String query = """
     this.dispose(); 
     }//GEN-LAST:event_BtnSalirActionPerformed
 
+    private void TblSalidasChequePropioMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_TblSalidasChequePropioMousePressed
+    
+        TxtIdChequePropio.setText(" ");
+        seleccionarResultado();          
+            
+    }//GEN-LAST:event_TblSalidasChequePropioMousePressed
+
+    private void BtnConfimarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnConfimarActionPerformed
+
+        if (TxtIdChequePropio.getText().equals("")) {
+        Utilidades.msg(null, "OCURRIO UN ERROR, Seleccione nuevamente el cheque a confirmar");
+        TxtIdChequePropio.requestFocus();
+        return;
+        }
+
+        else{
+        
+        }
+    }//GEN-LAST:event_BtnConfimarActionPerformed
+
+     private void seleccionarResultado() {
+        
+        if (TblSalidasChequePropio.getSelectedRow() != -1) {
+            TxtIdChequePropio.setText(TblSalidasChequePropio.getValueAt(TblSalidasChequePropio.getSelectedRow(), 6).toString());
+        }
+    }
+     
+   
+     
+    
+     
     /**
      * @param args the command line arguments
      */
@@ -226,6 +277,7 @@ String query = """
     private javax.swing.JButton BtnConfimar;
     private javax.swing.JButton BtnSalir;
     private javax.swing.JTable TblSalidasChequePropio;
+    private javax.swing.JTextField TxtIdChequePropio;
     private javax.swing.JScrollPane jScrollPane1;
     // End of variables declaration//GEN-END:variables
 }
