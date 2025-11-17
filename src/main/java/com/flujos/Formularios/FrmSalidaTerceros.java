@@ -58,6 +58,7 @@ public class FrmSalidaTerceros extends javax.swing.JFrame {
         TblSalidasChequeTerceros.setModel(modelTblSalidasTerceros);
         TblSalidasChequeTerceros.getTableHeader().setReorderingAllowed(false);
         cargarDatos(con.getConexion());
+        TxtIdChequeTercero.setVisible(false);
     }
 
     private void cargarDatos(Connection con) {
@@ -73,11 +74,13 @@ public class FrmSalidaTerceros extends javax.swing.JFrame {
                             ch.fecha_cobro_cheque AS Fecha,
                             ch.observacion_cheque AS Observacion,
                             ti.nom_razon_social AS Titular,
-                            cu.nom_concepto AS Cuenta
+                            cu.nom_concepto AS Cuenta,
+                            ch.id_cheque AS ID
                             FROM cheque_tercero ch
                             JOIN cliente_proveedores ti ON
                             ti.id_cliente_proveedor = ch.titular_cheque
                             JOIN cuentas cu ON ch.id_cuenta_entrada = cu.id_cuenta 
+                            WHERE ch.fecha_entrega_cheque is null
                             ORDER BY ch.nro_cheque DESC;
                        
                        """;
@@ -120,9 +123,13 @@ public class FrmSalidaTerceros extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jButton1 = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         TblSalidasChequeTerceros = new javax.swing.JTable();
         BtnSalir = new javax.swing.JButton();
+        TxtIdChequeTercero = new javax.swing.JTextField();
+
+        jButton1.setText("jButton1");
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("SALIDA CHEQUES TERCEROS");
@@ -138,6 +145,11 @@ public class FrmSalidaTerceros extends javax.swing.JFrame {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
+        TblSalidasChequeTerceros.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                TblSalidasChequeTercerosMousePressed(evt);
+            }
+        });
         jScrollPane1.setViewportView(TblSalidasChequeTerceros);
 
         BtnSalir.setText("SALIR");
@@ -152,22 +164,26 @@ public class FrmSalidaTerceros extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(117, 117, 117)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(27, 27, 27)
+                .addGap(48, 48, 48)
+                .addComponent(TxtIdChequeTercero, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(BtnSalir)
-                .addContainerGap(36, Short.MAX_VALUE))
+                .addGap(32, 32, 32))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(68, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 578, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(84, 84, 84))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(38, 38, 38)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(38, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(BtnSalir)
-                .addGap(16, 16, 16))
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 407, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(26, 26, 26)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(TxtIdChequeTercero, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(BtnSalir))
+                .addContainerGap(9, Short.MAX_VALUE))
         );
 
         pack();
@@ -185,6 +201,28 @@ public class FrmSalidaTerceros extends javax.swing.JFrame {
 
     }//GEN-LAST:event_BtnSalirActionPerformed
 
+    private void TblSalidasChequeTercerosMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_TblSalidasChequeTercerosMousePressed
+        
+        TxtIdChequeTercero.setText(" ");
+        seleccionarResultado();
+        
+    }//GEN-LAST:event_TblSalidasChequeTercerosMousePressed
+    
+    private void seleccionarResultado() {
+        
+        if (TblSalidasChequeTerceros.getSelectedRow() != -1) {
+            TxtIdChequeTercero.setText(TblSalidasChequeTerceros.getValueAt(TblSalidasChequeTerceros.getSelectedRow(), 5).toString());
+        }
+        
+        if(!TxtIdChequeTercero.equals("")){
+            FrmConfirmacionSalidaChequeTercero ventanaFrmConfirmacionSalidaTerceros = new FrmConfirmacionSalidaChequeTercero(TxtIdChequeTercero.getText());
+            ventanaFrmConfirmacionSalidaTerceros.setVisible(true);
+            ventanaFrmConfirmacionSalidaTerceros.setLocationRelativeTo(null);
+        }
+        
+    }
+    
+    
     /**
      * @param args the command line arguments
      */
@@ -223,6 +261,8 @@ public class FrmSalidaTerceros extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton BtnSalir;
     private javax.swing.JTable TblSalidasChequeTerceros;
+    private javax.swing.JTextField TxtIdChequeTercero;
+    private javax.swing.JButton jButton1;
     private javax.swing.JScrollPane jScrollPane1;
     // End of variables declaration//GEN-END:variables
 }

@@ -228,6 +228,7 @@ public class FrmFlujoFondos extends javax.swing.JFrame {
         ventanaFrmSalidaTerceros.setLocationRelativeTo(null);
     }//GEN-LAST:event_menuItemSalidaTercerosActionPerformed
 
+   
     /**
      * @param args the command line arguments
      */
