@@ -283,6 +283,14 @@ public class FrmConfirmacionSalidaChequeTercero extends javax.swing.JFrame {
 
             if (filas > 0) {
                 JOptionPane.showMessageDialog(this, "Cheque confirmado correctamente.");
+
+                // LIMPIAR CAMPOS
+                TxtIdChequeTercero.setText("");
+
+                // CERRAMOS LA VENTANA
+                this.dispose();
+                
+
             } else {
                 JOptionPane.showMessageDialog(this, "No se pudo confirmar (ya enviado o ID inválido).");
             }
