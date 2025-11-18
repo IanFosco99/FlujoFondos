@@ -71,7 +71,7 @@ public class FrmSalidaTerceros extends javax.swing.JFrame {
                        SELECT
                             ch.nro_cheque AS Cheque,
                             ch.importe_cheque AS Importe,
-                            ch.fecha_cobro_cheque AS Fecha,
+                            ch.fecha_cobro_cheque AS FechaVto,
                             ch.observacion_cheque AS Observacion,
                             ti.nom_razon_social AS Titular,
                             cu.nom_concepto AS Cuenta,
@@ -134,6 +134,7 @@ public class FrmSalidaTerceros extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("SALIDA CHEQUES TERCEROS");
 
+        TblSalidasChequeTerceros.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         TblSalidasChequeTerceros.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
@@ -166,13 +167,13 @@ public class FrmSalidaTerceros extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGap(48, 48, 48)
                 .addComponent(TxtIdChequeTercero, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 507, Short.MAX_VALUE)
                 .addComponent(BtnSalir)
                 .addGap(32, 32, 32))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(68, Short.MAX_VALUE)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 578, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(84, 84, 84))
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane1)
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)

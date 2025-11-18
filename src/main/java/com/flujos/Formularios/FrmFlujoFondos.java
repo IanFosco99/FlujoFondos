@@ -37,6 +37,7 @@ public class FrmFlujoFondos extends javax.swing.JFrame {
         menuItemSalidaPropio = new javax.swing.JMenuItem();
         menuItemSalidaTerceros = new javax.swing.JMenuItem();
         menuItemEnviadosTerceros = new javax.swing.JMenuItem();
+        menuItemEnCartera = new javax.swing.JMenuItem();
         menuFlujos = new javax.swing.JMenu();
         menuItemFlujosMov = new javax.swing.JMenuItem();
         menuItemEliminarFlujoMov = new javax.swing.JMenuItem();
@@ -116,6 +117,14 @@ public class FrmFlujoFondos extends javax.swing.JFrame {
             }
         });
         menuCheque.add(menuItemEnviadosTerceros);
+
+        menuItemEnCartera.setText("Cheques terceros en cartera");
+        menuItemEnCartera.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuItemEnCarteraActionPerformed(evt);
+            }
+        });
+        menuCheque.add(menuItemEnCartera);
 
         menuBarPrincipal.add(menuCheque);
 
@@ -243,6 +252,14 @@ public class FrmFlujoFondos extends javax.swing.JFrame {
         ventanaFrmEnviadosTerceros.setLocationRelativeTo(null);
     }//GEN-LAST:event_menuItemEnviadosTercerosActionPerformed
 
+    private void menuItemEnCarteraActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemEnCarteraActionPerformed
+
+        FrmChequeTerceroCartera ventanaFrmTercerosCartera = new FrmChequeTerceroCartera();
+        ventanaFrmTercerosCartera.setVisible(true);
+        ventanaFrmTercerosCartera.setLocationRelativeTo(null);
+
+    }//GEN-LAST:event_menuItemEnCarteraActionPerformed
+
    
     /**
      * @param args the command line arguments
@@ -290,6 +307,7 @@ public class FrmFlujoFondos extends javax.swing.JFrame {
     private javax.swing.JMenuItem menuItemCargaChequePropio;
     private javax.swing.JMenuItem menuItemCargaChequeTerceros;
     private javax.swing.JMenuItem menuItemEliminarFlujoMov;
+    private javax.swing.JMenuItem menuItemEnCartera;
     private javax.swing.JMenuItem menuItemEnviadosTerceros;
     private javax.swing.JMenuItem menuItemFFnMensual;
     private javax.swing.JMenuItem menuItemFlujosMov;

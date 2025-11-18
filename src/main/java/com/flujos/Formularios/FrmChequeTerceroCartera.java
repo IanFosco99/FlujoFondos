@@ -17,25 +17,23 @@ import javax.swing.table.DefaultTableModel;
  *
  * @author monse
  */
-public class FrmChequesTerceroEnviados extends javax.swing.JFrame {
+public class FrmChequeTerceroCartera extends javax.swing.JFrame {
 
     private Conexion con;
-    private DefaultTableModel modelTblEnviadosTerceros = new DefaultTableModel();
+    private DefaultTableModel modelTblTercerosEnCartera = new DefaultTableModel();
 
     /**
-     * Creates new form FrmChequesEnviados
+     * Creates new form FrmChequeTerceroCartera
      */
-    public FrmChequesTerceroEnviados() {
+    public FrmChequeTerceroCartera() {
         initComponents();
-
         crearModeloTabla();
         inicializar();
-
     }
 
     private void crearModeloTabla() {
 
-        modelTblEnviadosTerceros = (new DefaultTableModel() {
+        modelTblTercerosEnCartera = (new DefaultTableModel() {
 
             @Override
             public boolean isCellEditable(int rowIndex, int colIndex) {
@@ -47,29 +45,34 @@ public class FrmChequesTerceroEnviados extends javax.swing.JFrame {
 
     private void inicializar() {
         con = new Conexion();
-        TblChequesTerceroEnviados.setModel(modelTblEnviadosTerceros);
-        TblChequesTerceroEnviados.getTableHeader().setReorderingAllowed(false);
+        TblChequesTerceroCartera.setModel(modelTblTercerosEnCartera);
+        TblChequesTerceroCartera.getTableHeader().setReorderingAllowed(false);
         cargarDatos(con.getConexion());
     }
 
     private void cargarDatos(Connection con) {
 
-        modelTblEnviadosTerceros.setRowCount(0);
-        modelTblEnviadosTerceros.setColumnCount(0);
+        modelTblTercerosEnCartera.setRowCount(0);
+        modelTblTercerosEnCartera.setColumnCount(0);
 
-        String query = "SELECT ch.nro_cheque AS Cheque, "
-                + "       ch.importe_cheque AS Importe, "
-                + "       ch.fecha_cobro_cheque AS FechaVto, "
-                + "       ch.observacion_cheque AS Observacion, "
-                + "       cp.nom_razon_social AS Titular, "
-                + "       cu.nom_concepto AS Cuenta, "
-                + "       ch.fecha_entrega_cheque AS FechaEntrega, "
-                + "       ch.id_cheque AS ID "
-                + "FROM cheque_tercero ch "
-                + "LEFT JOIN cliente_proveedores cp ON cp.id_cliente_proveedor = ch.titular_cheque "
-                + "LEFT JOIN cuentas cu ON cu.id_cuenta = ch.id_cuenta_entrada "
-                + "WHERE ch.fecha_entrega_cheque IS NOT NULL "
-                + "ORDER BY ch.nro_cheque DESC";
+        String query = """
+                       
+                       SELECT
+                            ch.nro_cheque AS Cheque,
+                            ch.importe_cheque AS Importe,
+                            ch.fecha_cobro_cheque AS FechaVto,
+                            ch.observacion_cheque AS Observacion,
+                            ti.nom_razon_social AS Titular,
+                            cu.nom_concepto AS Cuenta,
+                            ch.id_cheque AS ID
+                            FROM cheque_tercero ch
+                            JOIN cliente_proveedores ti ON
+                            ti.id_cliente_proveedor = ch.titular_cheque
+                            JOIN cuentas cu ON ch.id_cuenta_entrada = cu.id_cuenta 
+                            WHERE ch.fecha_entrega_cheque is null
+                            ORDER BY ch.nro_cheque DESC;
+                       
+                       """;
 
         try (
                 Statement st = con.createStatement(); ResultSet rs = st.executeQuery(query)) {
@@ -79,7 +82,7 @@ public class FrmChequesTerceroEnviados extends javax.swing.JFrame {
 
             // Configurar nombres de columnas
             for (int i = 1; i <= columnas; i++) {
-                modelTblEnviadosTerceros.addColumn(meta.getColumnLabel(i));
+                modelTblTercerosEnCartera.addColumn(meta.getColumnLabel(i));
             }
 
             // Cargar filas
@@ -88,7 +91,7 @@ public class FrmChequesTerceroEnviados extends javax.swing.JFrame {
                 for (int i = 0; i < columnas; i++) {
                     fila[i] = rs.getObject(i + 1);
                 }
-                modelTblEnviadosTerceros.addRow(fila);
+                modelTblTercerosEnCartera.addRow(fila);
             }
 
         } catch (SQLException ex) {
@@ -110,14 +113,13 @@ public class FrmChequesTerceroEnviados extends javax.swing.JFrame {
     private void initComponents() {
 
         jScrollPane1 = new javax.swing.JScrollPane();
-        TblChequesTerceroEnviados = new javax.swing.JTable();
+        TblChequesTerceroCartera = new javax.swing.JTable();
         BtnSalir = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setTitle("CHEQUE TERCEROS ENVIADOS");
+        setTitle("CHEQUES TERCEROS EN CARTERA");
 
-        TblChequesTerceroEnviados.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
-        TblChequesTerceroEnviados.setModel(new javax.swing.table.DefaultTableModel(
+        TblChequesTerceroCartera.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
                 {null, null, null, null},
@@ -128,7 +130,7 @@ public class FrmChequesTerceroEnviados extends javax.swing.JFrame {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
-        jScrollPane1.setViewportView(TblChequesTerceroEnviados);
+        jScrollPane1.setViewportView(TblChequesTerceroCartera);
 
         BtnSalir.setText("SALIR");
         BtnSalir.addActionListener(new java.awt.event.ActionListener() {
@@ -142,23 +144,22 @@ public class FrmChequesTerceroEnviados extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(325, 325, 325)
-                        .addComponent(BtnSalir))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(18, 18, 18)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 693, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(23, Short.MAX_VALUE))
+                .addGap(20, 20, 20)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 689, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(25, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(BtnSalir)
+                .addGap(325, 325, 325))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(30, 30, 30)
+                .addGap(19, 19, 19)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(BtnSalir)
-                .addContainerGap(14, Short.MAX_VALUE))
+                .addContainerGap(12, Short.MAX_VALUE))
         );
 
         pack();
@@ -193,28 +194,27 @@ public class FrmChequesTerceroEnviados extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(FrmChequesTerceroEnviados.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(FrmChequeTerceroCartera.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(FrmChequesTerceroEnviados.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(FrmChequeTerceroCartera.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(FrmChequesTerceroEnviados.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(FrmChequeTerceroCartera.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(FrmChequesTerceroEnviados.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(FrmChequeTerceroCartera.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
-        //</editor-fold>
         //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new FrmChequesTerceroEnviados().setVisible(true);
+                new FrmChequeTerceroCartera().setVisible(true);
             }
         });
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton BtnSalir;
-    private javax.swing.JTable TblChequesTerceroEnviados;
+    private javax.swing.JTable TblChequesTerceroCartera;
     private javax.swing.JScrollPane jScrollPane1;
     // End of variables declaration//GEN-END:variables
 }
