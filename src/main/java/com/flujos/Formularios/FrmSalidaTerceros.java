@@ -211,7 +211,7 @@ public class FrmSalidaTerceros extends javax.swing.JFrame {
     private void seleccionarResultado() {
         
         if (TblSalidasChequeTerceros.getSelectedRow() != -1) {
-            TxtIdChequeTercero.setText(TblSalidasChequeTerceros.getValueAt(TblSalidasChequeTerceros.getSelectedRow(), 5).toString());
+            TxtIdChequeTercero.setText(TblSalidasChequeTerceros.getValueAt(TblSalidasChequeTerceros.getSelectedRow(), 6).toString());
         }
         
         if(!TxtIdChequeTercero.equals("")){

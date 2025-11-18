@@ -11,6 +11,9 @@ import com.flujos.Entidades.ClienteProveedor;
 import com.flujos.Entidades.Cuenta;
 import com.flujos.Utilidades.Conexion;
 import com.flujos.Utilidades.Utilidades;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -118,6 +121,11 @@ public class FrmConfirmacionSalidaChequeTercero extends javax.swing.JFrame {
         });
 
         btnConfirmar.setText("CONFIRMAR");
+        btnConfirmar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnConfirmarActionPerformed(evt);
+            }
+        });
 
         btnSalir.setText("SALIR");
         btnSalir.addActionListener(new java.awt.event.ActionListener() {
@@ -231,7 +239,7 @@ public class FrmConfirmacionSalidaChequeTercero extends javax.swing.JFrame {
     }//GEN-LAST:event_comboTitularDestinoItemStateChanged
 
     private void btnSalirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalirActionPerformed
-        
+
         try {
             con.cerrarConexion();
         } catch (SQLException ex) {
@@ -240,8 +248,50 @@ public class FrmConfirmacionSalidaChequeTercero extends javax.swing.JFrame {
         }
 
         this.dispose();
-        
+
     }//GEN-LAST:event_btnSalirActionPerformed
+
+    private void btnConfirmarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConfirmarActionPerformed
+
+        if (TxtIdChequeTercero.getText().trim().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Debe seleccionar un cheque.");
+            return;
+        }
+
+        int idCheque;
+
+        try {
+            idCheque = Integer.parseInt(TxtIdChequeTercero.getText());
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "ID inválido.");
+            return;
+        }
+
+        try {
+            Conexion c = new Conexion();
+            Connection con = c.getConexion();
+
+            String sql
+                    = "UPDATE cheque_tercero "
+                    + "SET fecha_entrega_cheque = CURDATE() "
+                    + "WHERE id_cheque = ? AND fecha_entrega_cheque IS NULL";
+
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setInt(1, idCheque);
+
+            int filas = ps.executeUpdate();
+
+            if (filas > 0) {
+                JOptionPane.showMessageDialog(this, "Cheque confirmado correctamente.");
+            } else {
+                JOptionPane.showMessageDialog(this, "No se pudo confirmar (ya enviado o ID inválido).");
+            }
+
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Error: " + e.getMessage());
+        }
+
+    }//GEN-LAST:event_btnConfirmarActionPerformed
 
     /**
      * @param args the command line arguments
