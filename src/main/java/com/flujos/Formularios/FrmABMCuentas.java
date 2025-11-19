@@ -269,16 +269,24 @@ public class FrmABMCuentas extends javax.swing.JFrame {
             txtConcepto.requestFocus();
             return;
         }
+        
         if (comboClasificacion.getSelectedItem().equals("--")) {
             Utilidades.msg(null, "La clasificacion no puede estar vacia");
             comboClasificacion.requestFocus();
             return;
+            
         }
+        if (comboMovimiento.getSelectedItem().equals("--")) {
+            Utilidades.msg(null, "El movimiento no puede estar vacio");
+            comboMovimiento.requestFocus();
+            return;}
+        
         if (comboIngresoegreso.getSelectedItem().equals("--")) {
             Utilidades.msg(null, "El ingreso/egreso no puede estar vacio");
             comboIngresoegreso.requestFocus();
             return;
         }
+        
         Cuenta cuenta = new Cuenta();
         cuenta.setCodConcepto(txtCodigo.getText());
         cuenta.setNombreConcepto(txtConcepto.getText());

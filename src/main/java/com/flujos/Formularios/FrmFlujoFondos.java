@@ -156,6 +156,11 @@ public class FrmFlujoFondos extends javax.swing.JFrame {
         });
 
         menuItemFFnMensual.setText("FFn Mensuales");
+        menuItemFFnMensual.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuItemFFnMensualActionPerformed(evt);
+            }
+        });
         menuReportes.add(menuItemFFnMensual);
 
         menuBarPrincipal.add(menuReportes);
@@ -259,6 +264,13 @@ public class FrmFlujoFondos extends javax.swing.JFrame {
         ventanaFrmTercerosCartera.setLocationRelativeTo(null);
 
     }//GEN-LAST:event_menuItemEnCarteraActionPerformed
+
+    private void menuItemFFnMensualActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemFFnMensualActionPerformed
+        FrmReporteFFnMensuales ventanaReporteMensuales = new FrmReporteFFnMensuales();
+        ventanaReporteMensuales.setVisible(true);
+        ventanaReporteMensuales.setLocationRelativeTo(null);
+       
+    }//GEN-LAST:event_menuItemFFnMensualActionPerformed
 
    
     /**
