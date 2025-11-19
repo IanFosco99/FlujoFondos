@@ -25,6 +25,50 @@ public class DAOMovimiento {
         }    
     }
     
+    public String obtenerDescripcionMovimiento(Long idMovimiento, Connection con) {
+    String descripcion = null;
+
+    String sql = "SELECT desc_movimiento FROM movimiento WHERE id_movimiento = ?";
+
+    try (PreparedStatement ps = con.prepareStatement(sql)) {
+        ps.setLong(1, idMovimiento);
+        ResultSet rs = ps.executeQuery();
+
+        if (rs.next()) {
+            descripcion = rs.getString("desc_movimiento");
+        }
+
+        rs.close();
+    } catch (SQLException e) {
+        descripcion = null;
+    }
+
+    return descripcion;
+}
+public Movimiento obtenerDatosMovimiento(String descripcion, Connection con) {
+
+    Movimiento movimiento = null;
+
+    String sql = "SELECT * FROM movimiento WHERE desc_movimiento = ?";
+
+    try (PreparedStatement ps = con.prepareStatement(sql)) {
+        ps.setString(1, descripcion);
+        ResultSet rs = ps.executeQuery();
+
+        if (rs.next()) {
+            movimiento = new Movimiento();
+            movimiento.setIdMovimiento(rs.getLong("id_movimiento"));
+            movimiento.setDescripcionMovimiento(rs.getString("desc_movimiento"));
+        }
+
+        rs.close();
+    } catch (SQLException e) {
+        movimiento = null;
+    }
+
+    return movimiento;
+}
+
     public Movimiento obtenerDatos(String descripcion, Connection con) {
 
         Statement st = null;
@@ -66,6 +110,7 @@ public class DAOMovimiento {
 
         return movimiento;
     }
+    
 
     public void actualizar(Movimiento movimiento, Connection con) throws SQLException {
         
@@ -95,5 +140,9 @@ public class DAOMovimiento {
             ps.setLong(1, id);
             ps.executeUpdate();
         }   
+    }
+
+    public Movimiento obtenerDatosMovimieto(String movimiento, Connection conexion) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 }

@@ -6,6 +6,7 @@ package com.flujos.Formularios;
 
 import com.flujos.DAOs.DAOCuenta;
 import com.flujos.DAOs.DAOFlujosMov;
+import com.flujos.DAOs.DAOMovimiento;
 import com.flujos.Entidades.Cuenta;
 import com.flujos.Entidades.Movimiento;
 import com.flujos.Utilidades.Conexion;
@@ -30,6 +31,10 @@ public class FrmABMCuentas extends javax.swing.JFrame {
 
     private DAOCuenta daoCuenta;
     private DAOFlujosMov daoFlujosMov;
+    DAOMovimiento daoMovimiento = new DAOMovimiento();
+
+
+    
     /**
      * Creates new form FrmABMCuentas
      */
@@ -48,6 +53,7 @@ public class FrmABMCuentas extends javax.swing.JFrame {
     
        private void inicializar() throws SQLException {
         txtIdcuenta.setText("");
+
         txtIdMovimiento.setText("");
         txtIdcuenta.setVisible(false);
         txtIdMovimiento.setVisible(false);
@@ -156,11 +162,6 @@ public class FrmABMCuentas extends javax.swing.JFrame {
         comboMovimiento.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
                 comboMovimientoItemStateChanged(evt);
-            }
-        });
-        comboMovimiento.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                comboMovimientoActionPerformed(evt);
             }
         });
 
@@ -295,15 +296,22 @@ public class FrmABMCuentas extends javax.swing.JFrame {
 
     private void btnEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarActionPerformed
 
-        daoCuenta.eliminar(Long.valueOf(txtCodigo.getText()), con.getConexion());
-        Utilidades.msg(null, "Se elimino el codigo correctamente");
-        txtCodigo.setText("");
-        txtConcepto.setText("");
-        comboClasificacion.setSelectedIndex(0);
-        comboIngresoegreso.setSelectedIndex(0);
-        btnAgregar.setEnabled(true);
-        btnModificar.setEnabled(false);
-        btnEliminar.setEnabled(false);
+        try {
+            daoCuenta.eliminar(Long.valueOf(txtIdcuenta.getText()), con.getConexion());
+            Utilidades.msg(null, "Se elimino el codigo correctamente");
+            txtCodigo.setText("");
+            txtConcepto.setText("");
+            txtIdMovimiento.setText("");
+            txtIdcuenta.setText("");
+            comboMovimiento.setSelectedIndex(0);
+            comboClasificacion.setSelectedIndex(0);
+            comboIngresoegreso.setSelectedIndex(0);
+            btnAgregar.setEnabled(true);
+            btnModificar.setEnabled(false);
+            btnEliminar.setEnabled(false);
+        } catch (SQLException ex) {
+            Logger.getLogger(FrmABMCuentas.class.getName()).log(Level.SEVERE, null, ex);
+        }
 
     }//GEN-LAST:event_btnEliminarActionPerformed
 
@@ -398,74 +406,76 @@ public class FrmABMCuentas extends javax.swing.JFrame {
     }//GEN-LAST:event_btnAgregarActionPerformed
 
     private void btnBuscarCuentaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuscarCuentaActionPerformed
+ String dato = JOptionPane.showInputDialog("Concepto: ");
 
-        btnAgregar.setEnabled(false);
-        btnModificar.setEnabled(true);
-        btnEliminar.setEnabled(true);
+    if (dato != null && !dato.trim().equals("")) {
 
-        String dato = JOptionPane.showInputDialog("Concepto: ");
+        Cuenta cuenta = daoCuenta.obtenerDatos(dato, con.getConexion());
 
-        if (dato != null && !dato.equals("")){
-            Cuenta cuenta = daoCuenta.obtenerDatos(dato, con.getConexion());
+        if (cuenta != null) {
 
-            if (cuenta != null) {
-                txtCodigo.setText(String.valueOf(cuenta.getCodConcepto()));
-                txtConcepto.setText(cuenta.getNombreConcepto());
-                comboClasificacion.setSelectedItem(cuenta.getClaseConcepto());
-                comboIngresoegreso.setSelectedItem(cuenta.getIngreso());
+            // Completar campos
+            txtCodigo.setText(cuenta.getCodConcepto());
+            txtConcepto.setText(cuenta.getNombreConcepto());
+            comboClasificacion.setSelectedItem(cuenta.getClaseConcepto());
+           
+            // Ingreso / Egreso
+            comboIngresoegreso.setSelectedItem(
+                    cuenta.getIngreso() == 1 ? "Ingreso" : "Egreso"
+            );
 
+            // Movimiento
+            String nombreMovimiento =
+                    daoMovimiento.obtenerDescripcionMovimiento(
+                            cuenta.getIdMovimiento(),
+                            con.getConexion()
+                    );
 
-            } else 
-                Utilidades.msg(null, "No existe concepto o se produjo un error");
-                btnAgregar.setEnabled(true);
-                btnModificar.setEnabled(false);
-                btnEliminar.setEnabled(false);
+            comboMovimiento.setSelectedItem(nombreMovimiento);
+            txtIdcuenta.setText(cuenta.getIdCuenta().toString());
+            // Habilitar botones correctos
+            btnAgregar.setEnabled(false);
+            btnModificar.setEnabled(true);
+            btnEliminar.setEnabled(true);
 
-            }
+        } else {
+
+            Utilidades.msg(null, "No existe concepto o se produjo un error");
+
+            btnAgregar.setEnabled(true);
+            btnModificar.setEnabled(false);
+            btnEliminar.setEnabled(false);
+        }
+    }
 
     }//GEN-LAST:event_btnBuscarCuentaActionPerformed
 
     private void comboMovimientoItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_comboMovimientoItemStateChanged
         txtIdMovimiento.setText("");
-        try {
-            String movimiento = comboMovimiento.getSelectedItem() != null ? comboMovimiento.getSelectedItem().toString():null;
-            if (movimiento == null || movimiento.equals("--")){
-                txtIdMovimiento.setText("");
+    try {
+        String movimiento = comboMovimiento.getSelectedItem() != null 
+                ? comboMovimiento.getSelectedItem().toString() 
+                : null;
+
+        if (movimiento == null || movimiento.equals("--")) {
+            txtIdMovimiento.setText("");
+        } else {
+            Movimiento movimientoSeleccionado =
+                    daoMovimiento.obtenerDatos(movimiento, con.getConexion());
+
+            if (movimientoSeleccionado != null) {
+                txtIdMovimiento.setText(String.valueOf(movimientoSeleccionado.getIdMovimiento()));
             } else {
-                Movimiento movimientoSeleccionado = daoCuenta.obtenerDatosMovimieto(movimiento,con.getConexion());
-                if (movimientoSeleccionado != null){
-                    txtIdMovimiento.setText(String.valueOf(movimientoSeleccionado.getIdMovimiento()));
-                } else {
-                    txtIdMovimiento.setText("");
-                }
+                txtIdMovimiento.setText("");
             }
-
-        } catch (Exception e) {
-            Utilidades.msg(null,"se produjo un error en la seleccion del combo movimiento, ingrese nuevamente");
-            this.dispose();
         }
+
+    }       catch (Exception e) {
+                Utilidades.msg(null,
+                "Se produjo un error en la selección del combo movimiento, ingrese nuevamente");
+        this.dispose();
+    }
     }//GEN-LAST:event_comboMovimientoItemStateChanged
-
-    private void comboMovimientoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboMovimientoActionPerformed
-    txtIdMovimiento.setText("");
-            try {
-                String movimiento = comboMovimiento.getSelectedItem() != null ? comboMovimiento.getSelectedItem().toString():null;
-                if (movimiento == null || movimiento.equals("--")){
-                    txtIdMovimiento.setText("");
-                } else {
-                    Movimiento movimientoSeleccionado = daoFlujosMov.obtenerDatosMovimieto(movimiento,con.getConexion());
-                    if (movimientoSeleccionado != null){
-                        txtIdMovimiento.setText(String.valueOf(movimientoSeleccionado.getIdMovimiento()));
-                    } else {
-                        txtIdMovimiento.setText("");
-                    }
-                }
-
-            } catch (Exception e) {
-                Utilidades.msg(null,"se produjo un error en la seleccion del combo movimiento, ingrese nuevamente");
-                this.dispose();
-            }        // TODO add your handling code here:
-    }//GEN-LAST:event_comboMovimientoActionPerformed
 
     /**
      * @param args the command line arguments
@@ -483,19 +493,16 @@ public class FrmABMCuentas extends javax.swing.JFrame {
                     break;
                 }
             }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(FrmABMCuentas.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(FrmABMCuentas.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(FrmABMCuentas.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | javax.swing.UnsupportedLookAndFeelException ex) {
             java.util.logging.Logger.getLogger(FrmABMCuentas.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+    //</editor-fold>
+    
         //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
+            @Override
             public void run() {
                 new FrmABMCuentas().setVisible(true);
             }

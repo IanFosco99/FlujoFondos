@@ -25,43 +25,48 @@ public class DAOCuenta {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
-    public void eliminar(Long valueOf, Connection conexion) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    public void eliminar(Long idCuenta, Connection con) throws SQLException {
+        String sql = "DELETE FROM cuentas WHERE id_cuenta = ?";
+        try (PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setLong(1, idCuenta);
+            ps.executeUpdate();
+        }
     }
 
     public Cuenta obtenerDatos(String dato, Connection con) {
 
-    Cuenta cuenta = null;
-        String consulta = "SELECT id_cuenta FROM cuentas WHERE nom_concepto = '" + dato + "'";
-        Statement st = null;
-        ResultSet rs = null;
-    
-        try {
-            st = con.createStatement();
-            rs = st.executeQuery(consulta);
-            if (rs.next()) {
-                cuenta = new Cuenta();
-                cuenta.setIdCuenta(rs.getLong("id_cuenta"));
-            } else {
-                cuenta = null;
-            }
-        } catch (Exception e) {
-            cuenta = null;
-        } finally {
-            try {
+     Cuenta cuenta = null;
+    String consulta = "SELECT id_cuenta, cod_concepto, nom_concepto, clas_concepto, id_movimiento, ingreso "
+                    + "FROM cuentas WHERE nom_concepto = ?";
 
-                if (rs != null) {
-                    rs.close();
-                }
-                if (st != null) {
+    PreparedStatement ps = null;
+    ResultSet rs = null;
 
-                    st.close();
-                }
-            } catch (SQLException ex) {
-                cuenta = null;
-            }
+    try {
+        ps = con.prepareStatement(consulta);
+        ps.setString(1, dato);
+
+        rs = ps.executeQuery();
+
+        if (rs.next()) {
+            cuenta = new Cuenta();
+            cuenta.setIdCuenta(rs.getLong("id_cuenta"));
+            cuenta.setCodConcepto(rs.getString("cod_concepto"));
+            cuenta.setNombreConcepto(rs.getString("nom_concepto"));
+            cuenta.setClaseConcepto(rs.getString("clas_concepto"));
+            cuenta.setIdMovimiento(rs.getLong("id_movimiento"));
+            cuenta.setIngreso(rs.getInt("ingreso"));
         }
-        return cuenta;
+    } catch (Exception e) {
+        cuenta = null;
+    } finally {
+        try {
+            if (rs != null) rs.close();
+            if (ps != null) ps.close();
+        } catch (SQLException ex) {}
+    }
+
+    return cuenta;
 
     }
 
