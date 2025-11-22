@@ -7,10 +7,13 @@ package com.flujos.Formularios;
 import com.flujos.Utilidades.Conexion;
 import com.flujos.Utilidades.Utilidades;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
@@ -21,7 +24,7 @@ import javax.swing.table.DefaultTableModel;
 public class FrmSalidaPropio extends javax.swing.JFrame {
 
         private Conexion con;
-        private DefaultTableModel modelTblSalidasChequePropio ;
+        private DefaultTableModel modelTblSalidasChequePropio;
     
     /**
      * Creates new form FrmSalidaPropio
@@ -35,9 +38,7 @@ public class FrmSalidaPropio extends javax.swing.JFrame {
     private void crearModeloTabla (){   
         modelTblSalidasChequePropio = (new DefaultTableModel (){
         
-            public void testMethod() {
-                
-            }
+        @Override
         public boolean isCellEditable (int rowIndex, int colIndex ){
             return false;
         }
@@ -218,14 +219,17 @@ String query = """
     private void BtnConfimarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnConfimarActionPerformed
 
         if (TxtIdChequePropio.getText().equals("")) {
-        Utilidades.msg(null, "OCURRIO UN ERROR, Seleccione nuevamente el cheque a confirmar");
+        Utilidades.msg(null, "OCURRIO UN ERROR! Seleccione nuevamente el cheque a confirmar");
         TxtIdChequePropio.requestFocus();
         return;
         }
 
-        else{
-        
+        try {
+            confirmarSalida();
+        } catch (SQLException ex) {
+            Logger.getLogger(FrmSalidaPropio.class.getName()).log(Level.SEVERE, null, ex);
         }
+        
     }//GEN-LAST:event_BtnConfimarActionPerformed
 
      private void seleccionarResultado() {
@@ -233,6 +237,39 @@ String query = """
         if (TblSalidasChequePropio.getSelectedRow() != -1) {
             TxtIdChequePropio.setText(TblSalidasChequePropio.getValueAt(TblSalidasChequePropio.getSelectedRow(), 6).toString());
         }
+        
+       
+        
+        
+       //DTOSalidaCheque = new dtoSalidaCheque
+    }
+     
+    private void confirmarSalida() throws SQLException{
+        
+        Connection cn = con.getConexion();
+    
+        String query = """
+                       UPDATE cheque_propio
+                       SET fecha_entrega_cheque = CURRENT_DATE, estado_cheque = 1
+                       WHERE id_cheque = ?
+                       """;
+        
+        try (PreparedStatement ps = cn.prepareStatement(query)){
+        
+            ps.setInt (1, Integer.parseInt(TxtIdChequePropio.getText()));
+            int actualizado = ps.executeUpdate();
+            
+            if (actualizado > 0){
+                Utilidades.msg(null, "Salida de Cheque Propio registrada correctamente");
+                cargarDatos(con.getConexion());
+                
+            }else{
+                Utilidades.msg(null, "ERROR AL ACTUALIZAR CHEQUE. Intente nuevamente.");               
+            }
+            
+        }catch (SQLException ex){
+                JOptionPane.showMessageDialog(null, "Error al confirmar salida: \n" + ex.getMessage());               
+            }
     }
      
    
