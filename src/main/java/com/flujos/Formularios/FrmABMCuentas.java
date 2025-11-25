@@ -258,48 +258,75 @@ public class FrmABMCuentas extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnModificarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnModificarActionPerformed
+        // Validaciones
+    if (txtCodigo.getText().trim().equals("")) {
+        Utilidades.msg(null, "El código no puede estar vacío");
+        txtCodigo.requestFocus();
+        return;
+    }
 
-        if (txtCodigo.getText().equals("")) {
-            Utilidades.msg(null, "El codigo no puede estar vacio");
-            txtCodigo.requestFocus();
-            return;
-        }
-        if (txtConcepto.getText().equals("")) {
-            Utilidades.msg(null, "El concepto no puede estar vacio");
-            txtConcepto.requestFocus();
-            return;
-        }
-        
-        if (comboClasificacion.getSelectedItem().equals("--")) {
-            Utilidades.msg(null, "La clasificacion no puede estar vacia");
-            comboClasificacion.requestFocus();
-            return;
-            
-        }
-        if (comboMovimiento.getSelectedItem().equals("--")) {
-            Utilidades.msg(null, "El movimiento no puede estar vacio");
-            comboMovimiento.requestFocus();
-            return;}
-        
-        if (comboIngresoegreso.getSelectedItem().equals("--")) {
-            Utilidades.msg(null, "El ingreso/egreso no puede estar vacio");
-            comboIngresoegreso.requestFocus();
-            return;
-        }
-        
+    if (txtConcepto.getText().trim().equals("")) {
+        Utilidades.msg(null, "El concepto no puede estar vacío");
+        txtConcepto.requestFocus();
+        return;
+    }
+
+    if (comboClasificacion.getSelectedItem().equals("--")) {
+        Utilidades.msg(null, "La clasificación no puede estar vacía");
+        comboClasificacion.requestFocus();
+        return;
+    }
+
+    if (comboMovimiento.getSelectedItem().equals("--")) {
+        Utilidades.msg(null, "El movimiento no puede estar vacío");
+        comboMovimiento.requestFocus();
+        return;
+    }
+
+    if (comboIngresoegreso.getSelectedItem().equals("--")) {
+        Utilidades.msg(null, "El ingreso/egreso no puede estar vacío");
+        comboIngresoegreso.requestFocus();
+        return;
+    }
+
+    try {
+
         Cuenta cuenta = new Cuenta();
+
+        // Campos principales
         cuenta.setCodConcepto(txtCodigo.getText());
         cuenta.setNombreConcepto(txtConcepto.getText());
         cuenta.setClaseConcepto(comboClasificacion.getSelectedItem().toString());
-        cuenta.setIngreso(Integer.parseInt(comboIngresoegreso.getSelectedItem().toString()));
+
+        // id_movimiento = BIGINT
+        cuenta.setIdMovimiento(Long.parseLong(txtIdMovimiento.getText()));
+
+        // Conversión Ingreso/Egreso a número
+        String tipo = comboIngresoegreso.getSelectedItem().toString();
+        int ingreso = tipo.equals("Ingreso") ? 1 : 0;
+        cuenta.setIngreso(ingreso);
+
+        // Guardar actualización
         daoCuenta.actualizar(cuenta, con.getConexion());
-        Utilidades.msg(null, "Cuentas actualizado corrrectamente");
+
+        Utilidades.msg(null, "Cuenta actualizada correctamente");
+
+        // Limpiar pantalla / UI
         txtCodigo.setText("");
         txtConcepto.setText("");
+        txtIdMovimiento.setText("");
+
         comboClasificacion.setSelectedIndex(0);
+        comboMovimiento.setSelectedIndex(0);
+        comboIngresoegreso.setSelectedIndex(0);
+
         btnAgregar.setEnabled(true);
         btnModificar.setEnabled(false);
         btnEliminar.setEnabled(false);
+
+    } catch (SQLException ex) {
+        Utilidades.msg(null, "Error al actualizar la cuenta:\n" + ex.getMessage());
+    }
     }//GEN-LAST:event_btnModificarActionPerformed
 
     private void btnEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarActionPerformed

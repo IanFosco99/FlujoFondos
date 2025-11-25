@@ -7,6 +7,7 @@ package com.flujos.DAOs;
 import com.flujos.Entidades.Cuenta;
 import com.flujos.Entidades.Movimiento;
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -21,9 +22,26 @@ import javax.swing.DefaultComboBoxModel;
  */
 public class DAOCuenta {
 
-    public void actualizar(Cuenta cuenta, Connection conexion) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
+    public void actualizar(Cuenta cuenta, Connection con) throws SQLException {
+          String sql = "UPDATE cuentas SET "
+               + "nom_concepto = ?, "
+               + "clas_concepto = ?, "
+               + "id_movimiento = ?, "
+               + "ingreso = ? "
+               + "WHERE cod_concepto = ?";
+
+    PreparedStatement ps = con.prepareStatement(sql);
+
+    ps.setString(1, cuenta.getNombreConcepto());
+    ps.setString(2, cuenta.getClaseConcepto());
+    ps.setLong(3, cuenta.getIdMovimiento()); // BIGINT → long
+    ps.setInt(4, cuenta.getIngreso());
+    ps.setString(5, cuenta.getCodConcepto());
+
+    ps.executeUpdate();
+    ps.close();
+        
+}
 
     public void eliminar(Long idCuenta, Connection con) throws SQLException {
         String sql = "DELETE FROM cuentas WHERE id_cuenta = ?";
