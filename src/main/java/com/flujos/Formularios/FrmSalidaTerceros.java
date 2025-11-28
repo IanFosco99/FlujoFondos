@@ -83,6 +83,8 @@ public class FrmSalidaTerceros extends javax.swing.JFrame {
                             WHERE ch.fecha_entrega_cheque is null
                             ORDER BY ch.nro_cheque DESC;
                        
+                       
+                       
                        """;
 
         try (

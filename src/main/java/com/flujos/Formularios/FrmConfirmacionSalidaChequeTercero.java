@@ -33,6 +33,13 @@ public class FrmConfirmacionSalidaChequeTercero extends javax.swing.JFrame {
     private DAOCheque daoCheque;
     private DAOChequeTercero daoChequeTercero;
     private DAOCuenta daoCuenta;
+    private String fecha_mov;
+    private int id_movimiento;
+    private int id_cuenta;
+    private double importe;
+    private String observaciones_mov;
+    private int id_cheque_tercero;
+    private int id_cheque;
 
     /**
      * Creates new form FrmConfirmacionSalidaChequeTercero
@@ -279,6 +286,29 @@ public class FrmConfirmacionSalidaChequeTercero extends javax.swing.JFrame {
             PreparedStatement ps = con.prepareStatement(sql);
             ps.setInt(1, idCheque);
 
+            ps.executeUpdate();
+
+           /* 
+            String sql_insert
+                    = "INSERT INTO flujos_mov "
+                    + "(fecha_mov, id_movimiento, id_cuenta, importe, observaciones_mov, id_cheque,id_cheque_tercero) "
+                    + "VALUES (?, ?, ?, ?, ?, ?,?)";
+
+            PreparedStatement ps_insert = con.prepareStatement(sql_insert);
+
+            // FECHA DE HOY
+            java.sql.Date hoy = new java.sql.Date(System.currentTimeMillis());
+            ps_insert.setDate(1, hoy);
+            ps_insert.setInt(2, id_movimiento);         // id_movimiento
+            ps_insert.setInt(3, id_cuenta);             // id_cuenta
+            ps_insert.setDouble(4, importe);            // importe
+            ps_insert.setString(5, observaciones_mov);  // observaciones_mov
+            ps_insert.setInt(6, id_cheque);              // id_cheque
+            ps_insert.setInt(7, id_cheque_tercero);     // id_cheque_tercero
+
+            ps_insert.execute();
+            */
+
             int filas = ps.executeUpdate();
 
             if (filas > 0) {
@@ -289,7 +319,6 @@ public class FrmConfirmacionSalidaChequeTercero extends javax.swing.JFrame {
 
                 // CERRAMOS LA VENTANA
                 this.dispose();
-                
 
             } else {
                 JOptionPane.showMessageDialog(this, "No se pudo confirmar (ya enviado o ID inválido).");
