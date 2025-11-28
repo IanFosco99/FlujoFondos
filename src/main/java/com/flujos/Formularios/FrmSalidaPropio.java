@@ -112,6 +112,66 @@ String query = """
 
         }
     }
+
+
+    private long obtenerIdMovimiento(Connection cn, long idCuentaSalida) throws SQLException {
+
+        String q = """
+            SELECT movimiento.id_movimiento
+            FROM movimiento 
+            JOIN cuentas ON cuentas.id_movimiento = movimiento.id_movimiento
+            WHERE cuentas.id_cuenta = ?
+        """;
+
+        try (PreparedStatement ps = cn.prepareStatement(q)) {
+
+            ps.setLong(1, idCuentaSalida);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getLong(1);
+                } else {
+                    throw new SQLException("No se encontró id_movimiento para la cuenta " + idCuentaSalida);
+                }
+            }
+        }
+    }
+
+
+    private DatosCheque obtenerDatosCheque(Connection cn, int idCheque) throws SQLException {
+
+        String q = """
+            SELECT id_cuenta_salida, importe_cheque
+            FROM cheque_propio
+            WHERE id_cheque = ?
+        """;
+
+        try (PreparedStatement ps = cn.prepareStatement(q)) {
+
+            ps.setInt(1, idCheque);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return new DatosCheque(
+                        rs.getLong("id_cuenta_salida"),
+                        rs.getDouble("importe_cheque")
+                    );
+                } else {
+                    throw new SQLException("No se encontró el cheque con ID=" + idCheque);
+                }
+            }
+        }
+    }
+
+    class DatosCheque {
+        long idCuenta;
+        double importe;
+        DatosCheque(long idCuenta, double importe) {
+            this.idCuenta = idCuenta;
+            this.importe = importe;
+        }
+    }
+
     
     /**
      * This method is called from within the constructor to initialize the form.
@@ -224,12 +284,11 @@ String query = """
         return;
         }
 
-        try {
-            confirmarSalida();
-        } catch (SQLException ex) {
-            Logger.getLogger(FrmSalidaPropio.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        
+            try {
+                confirmarSalida();
+            } catch (SQLException ex) {
+                Logger.getLogger(FrmSalidaPropio.class.getName()).log(Level.SEVERE, null, ex);
+            }
     }//GEN-LAST:event_BtnConfimarActionPerformed
 
      private void seleccionarResultado() {
@@ -244,34 +303,79 @@ String query = """
        //DTOSalidaCheque = new dtoSalidaCheque
     }
      
-    private void confirmarSalida() throws SQLException{
-        
-        Connection cn = con.getConexion();
-    
-        String query = """
-                       UPDATE cheque_propio
-                       SET fecha_entrega_cheque = CURRENT_DATE, estado_cheque = 1
-                       WHERE id_cheque = ?
-                       """;
-        
-        try (PreparedStatement ps = cn.prepareStatement(query)){
-        
-            ps.setInt (1, Integer.parseInt(TxtIdChequePropio.getText()));
+    private void confirmarSalida() throws SQLException {
+
+    Connection cn = con.getConexion();
+
+    String updateQuery = """
+        UPDATE cheque_propio
+        SET fecha_entrega_cheque = CURRENT_DATE, estado_cheque = 1
+        WHERE id_cheque = ?
+    """;
+
+    String insertQuery = """
+        INSERT INTO flujos_mov (fecha_mov, id_movimiento, id_cuenta, importe, observaciones_mov, id_cheque)
+        VALUES (CURRENT_DATE, ?, ?, ?, ?, ?)
+    """;
+
+    try {
+        cn.setAutoCommit(false);
+
+        int idCheque = Integer.parseInt(TxtIdChequePropio.getText().trim());
+
+        // ----------------------------------------
+        // 1) UPDATE del cheque
+        // ----------------------------------------
+        try (PreparedStatement ps = cn.prepareStatement(updateQuery)) {
+            ps.setInt(1, idCheque);
             int actualizado = ps.executeUpdate();
-            
-            if (actualizado > 0){
-                Utilidades.msg(null, "Salida de Cheque Propio registrada correctamente");
-                cargarDatos(con.getConexion());
-                
-            }else{
-                Utilidades.msg(null, "ERROR AL ACTUALIZAR CHEQUE. Intente nuevamente.");               
+
+            if (actualizado <= 0) {
+                Utilidades.msg(null, "ERROR AL ACTUALIZAR CHEQUE.");
+                cn.rollback();
+                return;
             }
-            
-        }catch (SQLException ex){
-                JOptionPane.showMessageDialog(null, "Error al confirmar salida: \n" + ex.getMessage());               
-            }
+        }
+
+        // ----------------------------------------
+        // 2) Obtener datos del cheque (ID cuenta + importe)
+        // ----------------------------------------
+        DatosCheque datos = obtenerDatosCheque(cn, idCheque);
+
+        long idCuenta = datos.idCuenta;
+        double importe = datos.importe;
+
+        // ----------------------------------------
+        // 3) Obtener id_movimiento según tu consulta
+        // ----------------------------------------
+        long idMovimiento = obtenerIdMovimiento(cn, idCuenta);
+
+        // ----------------------------------------
+        // 4) INSERT en flujos_mov
+        // ----------------------------------------
+        try (PreparedStatement ps = cn.prepareStatement(insertQuery)) {
+
+            ps.setLong(1, idMovimiento);
+            ps.setLong(2, idCuenta);
+            ps.setDouble(3, importe);
+            ps.setString(4, "Salida de cheque propio");
+            ps.setLong(5, idCheque);
+
+            ps.executeUpdate();
+        }
+
+        cn.commit();
+
+        Utilidades.msg(null, "Salida registrada y movimiento creado correctamente.");
+        cargarDatos(con.getConexion());
+
+    } catch (Exception e) {
+        cn.rollback();
+        throw e;
+    } finally {
+        cn.setAutoCommit(true);
     }
-     
+}
    
      
     
