@@ -11,6 +11,7 @@ import com.flujos.Entidades.ClienteProveedor;
 import com.flujos.Entidades.Cuenta;
 import com.flujos.Utilidades.Conexion;
 import com.flujos.Utilidades.Utilidades;
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -278,46 +279,39 @@ public class FrmConfirmacionSalidaChequeTercero extends javax.swing.JFrame {
             Conexion c = new Conexion();
             Connection con = c.getConexion();
 
-            String sql
-                    = "UPDATE cheque_tercero "
-                    + "SET fecha_entrega_cheque = CURDATE() "
-                    + "WHERE id_cheque = ? AND fecha_entrega_cheque IS NULL";
+            // -------- UPDATE --------
+            String sql = """
+        UPDATE cheque_tercero
+        SET fecha_entrega_cheque = CURDATE()
+        WHERE id_cheque = ? AND fecha_entrega_cheque IS NULL
+    """;
 
             PreparedStatement ps = con.prepareStatement(sql);
             ps.setInt(1, idCheque);
 
-            ps.executeUpdate();
-
-           /* 
-            String sql_insert
-                    = "INSERT INTO flujos_mov "
-                    + "(fecha_mov, id_movimiento, id_cuenta, importe, observaciones_mov, id_cheque,id_cheque_tercero) "
-                    + "VALUES (?, ?, ?, ?, ?, ?,?)";
-
-            PreparedStatement ps_insert = con.prepareStatement(sql_insert);
-
-            // FECHA DE HOY
-            java.sql.Date hoy = new java.sql.Date(System.currentTimeMillis());
-            ps_insert.setDate(1, hoy);
-            ps_insert.setInt(2, id_movimiento);         // id_movimiento
-            ps_insert.setInt(3, id_cuenta);             // id_cuenta
-            ps_insert.setDouble(4, importe);            // importe
-            ps_insert.setString(5, observaciones_mov);  // observaciones_mov
-            ps_insert.setInt(6, id_cheque);              // id_cheque
-            ps_insert.setInt(7, id_cheque_tercero);     // id_cheque_tercero
-
-            ps_insert.execute();
-            */
-
-            int filas = ps.executeUpdate();
+            int filas = ps.executeUpdate();  // filas del UPDATE
 
             if (filas > 0) {
+
+                // -------- INSERT --------
+                String insertQuery = """
+            INSERT INTO flujos_mov 
+            (fecha_mov, id_movimiento, id_cuenta, importe, observaciones_mov, id_cheque, id_cheque_tercero)
+            VALUES (CURRENT_DATE, ?, ?, ?, ?, 0, ?)
+        """;
+
+                PreparedStatement psInsert = con.prepareStatement(insertQuery);
+                psInsert.setInt(1, 1);             // id_movimiento (poné el tuyo)
+                psInsert.setInt(2, 1);             // id_cuenta (poné el tuyo)
+                psInsert.setBigDecimal(3, new BigDecimal("0"));  // importe si lo tenés
+                psInsert.setString(4, "");         // observaciones
+                psInsert.setInt(5, idCheque);      // id_cheque_tercero
+
+                psInsert.executeUpdate();
+
                 JOptionPane.showMessageDialog(this, "Cheque confirmado correctamente.");
 
-                // LIMPIAR CAMPOS
                 TxtIdChequeTercero.setText("");
-
-                // CERRAMOS LA VENTANA
                 this.dispose();
 
             } else {
