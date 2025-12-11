@@ -239,12 +239,12 @@ String query = """
                         .addComponent(BtnConfimar)
                         .addGap(234, 234, 234)
                         .addComponent(BtnSalir)))
-                .addContainerGap(20, Short.MAX_VALUE))
+                .addContainerGap(21, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(54, Short.MAX_VALUE)
+                .addContainerGap(51, Short.MAX_VALUE)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 223, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -357,7 +357,7 @@ String query = """
 
             ps.setLong(1, idMovimiento);
             ps.setLong(2, idCuenta);
-            ps.setDouble(3, importe);
+            ps.setDouble(3, importe * (-1));
             ps.setString(4, "Salida de cheque propio");
             ps.setLong(5, idCheque);
 

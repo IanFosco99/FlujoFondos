@@ -35,6 +35,7 @@ public class FrmFlujoFondos extends javax.swing.JFrame {
         menuItemCargaChequePropio = new javax.swing.JMenuItem();
         menuItemCargaChequeTerceros = new javax.swing.JMenuItem();
         menuItemSalidaPropio = new javax.swing.JMenuItem();
+        menuItemSalidosPropios = new javax.swing.JMenuItem();
         menuItemSalidaTerceros = new javax.swing.JMenuItem();
         menuItemEnviadosTerceros = new javax.swing.JMenuItem();
         menuItemEnCartera = new javax.swing.JMenuItem();
@@ -101,6 +102,14 @@ public class FrmFlujoFondos extends javax.swing.JFrame {
             }
         });
         menuCheque.add(menuItemSalidaPropio);
+
+        menuItemSalidosPropios.setText("Cheques Propios Salidos");
+        menuItemSalidosPropios.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuItemSalidosPropiosActionPerformed(evt);
+            }
+        });
+        menuCheque.add(menuItemSalidosPropios);
 
         menuItemSalidaTerceros.setText("Salida Terceros");
         menuItemSalidaTerceros.addActionListener(new java.awt.event.ActionListener() {
@@ -272,6 +281,14 @@ public class FrmFlujoFondos extends javax.swing.JFrame {
        
     }//GEN-LAST:event_menuItemFFnMensualActionPerformed
 
+    private void menuItemSalidosPropiosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuItemSalidosPropiosActionPerformed
+        
+        FrmChequesPropiosEnviados ventanaFrmChequesPropiosEnviados = new FrmChequesPropiosEnviados();
+        ventanaFrmChequesPropiosEnviados.setVisible(true);
+        ventanaFrmChequesPropiosEnviados.setLocationRelativeTo(null);
+        
+    }//GEN-LAST:event_menuItemSalidosPropiosActionPerformed
+
    
     /**
      * @param args the command line arguments
@@ -325,6 +342,7 @@ public class FrmFlujoFondos extends javax.swing.JFrame {
     private javax.swing.JMenuItem menuItemFlujosMov;
     private javax.swing.JMenuItem menuItemSalidaPropio;
     private javax.swing.JMenuItem menuItemSalidaTerceros;
+    private javax.swing.JMenuItem menuItemSalidosPropios;
     private javax.swing.JMenu menuReportes;
     // End of variables declaration//GEN-END:variables
 }
