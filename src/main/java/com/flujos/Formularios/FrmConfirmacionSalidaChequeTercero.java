@@ -80,6 +80,65 @@ public class FrmConfirmacionSalidaChequeTercero extends javax.swing.JFrame {
 
     }
 
+    private long obtenerIdMovimiento(Connection cn, long idCuentaSalida) throws SQLException {
+
+        String q = """
+            SELECT movimiento.id_movimiento
+            FROM movimiento 
+            JOIN cuentas ON cuentas.id_movimiento = movimiento.id_movimiento
+            WHERE cuentas.id_cuenta = ?
+        """;
+
+        try (PreparedStatement ps = cn.prepareStatement(q)) {
+
+            ps.setLong(1, idCuentaSalida);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getLong(1);
+                } else {
+                    throw new SQLException("No se encontró id_movimiento para la cuenta " + idCuentaSalida);
+                }
+            }
+        }
+    }
+
+    private DatosCheque obtenerDatosCheque(Connection con, int idCheque) throws SQLException {
+
+        String q = """
+            SELECT id_cuenta_entrada, importe_cheque
+            FROM cheque_tercero
+            WHERE id_cheque = ?
+        """;
+
+        try (PreparedStatement ps = con.prepareStatement(q)) {
+
+            ps.setInt(1, idCheque);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return new FrmConfirmacionSalidaChequeTercero.DatosCheque(
+                            rs.getLong("id_cuenta_salida"),
+                            rs.getDouble("importe_cheque")
+                    );
+                } else {
+                    throw new SQLException("No se encontró el cheque con ID=" + idCheque);
+                }
+            }
+        }
+    }
+
+    class DatosCheque {
+
+        long idCuenta;
+        double importe;
+
+        DatosCheque(long idCuenta, double importe) {
+            this.idCuenta = idCuenta;
+            this.importe = importe;
+        }
+    }
+
     public FrmConfirmacionSalidaChequeTercero(String id) {
         initComponents();
         comboCuentaSalida.setModel(modeloCuentaSalida);
@@ -282,12 +341,18 @@ public class FrmConfirmacionSalidaChequeTercero extends javax.swing.JFrame {
             // -------- UPDATE --------
             String sql = """
         UPDATE cheque_tercero
-        SET fecha_entrega_cheque = CURDATE()
+        SET 
+                         fecha_entrega_cheque = CURDATE(),
+                         id_cuenta_salida = ?,
+                         titular_destino = ?,
+                         estado_cheque = 1
         WHERE id_cheque = ? AND fecha_entrega_cheque IS NULL
     """;
 
             PreparedStatement ps = con.prepareStatement(sql);
-            ps.setInt(1, idCheque);
+            ps.setLong(1, Long.parseLong(TxtIdCuenta.getText()));
+            ps.setLong(2, Long.parseLong(TxtIdTitular.getText()));
+            ps.setLong(3, Long.parseLong(TxtIdChequeTercero.getText()));
 
             int filas = ps.executeUpdate();  // filas del UPDATE
 
@@ -296,19 +361,44 @@ public class FrmConfirmacionSalidaChequeTercero extends javax.swing.JFrame {
                 // -------- INSERT --------
                 String insertQuery = """
             INSERT INTO flujos_mov 
-            (fecha_mov, id_movimiento, id_cuenta, importe, observaciones_mov, id_cheque, id_cheque_tercero)
-            VALUES (CURRENT_DATE, ?, ?, ?, ?, 0, ?)
+            (fecha_mov, id_movimiento, id_cuenta_entrada, importe, observaciones_mov, id_cheque_tercero)
+            VALUES (CURRENT_DATE, ?, ?, ?, ?, ?)
         """;
+                DatosCheque datos = obtenerDatosCheque(con, idCheque);
+
+                long idMovimiento = obtenerIdMovimiento(con, Long.parseLong(TxtIdCuenta.getText()));
+                long idCuenta = datos.idCuenta;
+                double importe = datos.importe;
 
                 PreparedStatement psInsert = con.prepareStatement(insertQuery);
-                psInsert.setInt(1, 1);             // id_movimiento (poné el tuyo)
-                psInsert.setInt(2, 1);             // id_cuenta (poné el tuyo)
-                psInsert.setBigDecimal(3, new BigDecimal("0"));  // importe si lo tenés
-                psInsert.setString(4, "");         // observaciones
-                psInsert.setInt(5, idCheque);      // id_cheque_tercero
+                psInsert.setLong(1, idMovimiento);             // id_movimiento (poné el tuyo)
+                psInsert.setLong(2, idCuenta);             // id_cuenta (poné el tuyo)
+                psInsert.setDouble(3, importe);  // importe si lo tenés
+                psInsert.setString(4, "-");         // observaciones
+                psInsert.setLong(5, Long.parseLong(TxtIdChequeTercero.getText()));      // id_cheque_tercero
 
                 psInsert.executeUpdate();
 
+                
+                
+                
+                // -------- INSERT EN NEGETIVO--------
+                String insertQueryNegative = """
+            INSERT INTO flujos_mov 
+            (fecha_mov, id_movimiento,id_cuenta_salida, importe, observaciones_mov, id_cheque_tercero)
+            VALUES (CURRENT_DATE, ?, ?, ?, ?, ?)
+        """;
+                
+                PreparedStatement psInsertNegative = con.prepareStatement(insertQueryNegative);
+                psInsertNegative.setLong(1, idMovimiento);             // id_movimiento (poné el tuyo)
+                psInsertNegative.setLong(2, Long.parseLong(TxtIdCuenta.getText()));             // id_cuenta (poné el tuyo)
+                psInsertNegative.setDouble(3, importe*-1);  // importe si lo tenés
+                psInsertNegative.setString(4, "-");         // observaciones
+                psInsertNegative.setLong(5, Long.parseLong(TxtIdChequeTercero.getText()));      // id_cheque_tercero
+
+                psInsertNegative.executeUpdate();
+
+                
                 JOptionPane.showMessageDialog(this, "Cheque confirmado correctamente.");
 
                 TxtIdChequeTercero.setText("");
@@ -321,6 +411,7 @@ public class FrmConfirmacionSalidaChequeTercero extends javax.swing.JFrame {
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Error: " + e.getMessage());
         }
+
 
     }//GEN-LAST:event_btnConfirmarActionPerformed
 
