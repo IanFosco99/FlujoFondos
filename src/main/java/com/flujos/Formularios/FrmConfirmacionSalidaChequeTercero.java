@@ -108,9 +108,9 @@ public class FrmConfirmacionSalidaChequeTercero extends javax.swing.JFrame {
         System.out.println(">>> obtenerDatosCheque idCheque = " + idCheque);
 
         String q = """
-        SELECT id_cuenta_entrada, importe_cheque
-        FROM cheque_tercero
-        WHERE id_cheque = ?
+            SELECT id_cuenta_entrada, importe_cheque, observacion_cheque
+            FROM cheque_tercero
+            WHERE id_cheque = ?
     """;
 
         try (PreparedStatement ps = con.prepareStatement(q)) {
@@ -120,7 +120,8 @@ public class FrmConfirmacionSalidaChequeTercero extends javax.swing.JFrame {
                 if (rs.next()) {
                     return new DatosCheque(
                             rs.getLong("id_cuenta_entrada"),
-                            rs.getDouble("importe_cheque")
+                            rs.getDouble("importe_cheque"),
+                            rs.getString("observacion_cheque")
                     );
                 } else {
                     throw new SQLException("No se encontró el cheque con ID=" + idCheque);
@@ -133,10 +134,16 @@ public class FrmConfirmacionSalidaChequeTercero extends javax.swing.JFrame {
 
         long idCuenta;
         double importe;
+        String observacion;
 
-        DatosCheque(long idCuenta, double importe) {
+        DatosCheque(long idCuenta, double importe, String observacion) {
             this.idCuenta = idCuenta;
             this.importe = importe;
+            this.observacion = observacion;
+        }
+
+        public String getObservacion() {
+            return observacion;
         }
     }
 
@@ -370,6 +377,7 @@ public class FrmConfirmacionSalidaChequeTercero extends javax.swing.JFrame {
 
                 long idCuentaEntrada = datos.idCuenta;
                 double importe = datos.importe;
+                String observacion = datos.observacion;
 
                 long idMovimiento = obtenerIdMovimiento(con, idCuentaSalida);
 
@@ -384,7 +392,7 @@ public class FrmConfirmacionSalidaChequeTercero extends javax.swing.JFrame {
                 psInsert.setLong(1, idMovimiento);
                 psInsert.setLong(2, idCuentaEntrada);
                 psInsert.setDouble(3, importe);
-                psInsert.setString(4, "-");
+                psInsert.setString(4, observacion);
                 psInsert.setLong(5, 0);           // id_cheque (propio), acá es 0
                 psInsert.setLong(6, idCheque);    // id_cheque_tercero
 
@@ -401,7 +409,7 @@ public class FrmConfirmacionSalidaChequeTercero extends javax.swing.JFrame {
                 psInsertNegative.setLong(1, idMovimiento);
                 psInsertNegative.setLong(2, idCuentaSalida);
                 psInsertNegative.setDouble(3, importe * -1);
-                psInsertNegative.setString(4, "-");
+                psInsertNegative.setString(4, observacion);
                 psInsertNegative.setLong(5, 0);
                 psInsertNegative.setLong(6, idCheque);
 
@@ -410,6 +418,7 @@ public class FrmConfirmacionSalidaChequeTercero extends javax.swing.JFrame {
 
                 TxtIdChequeTercero.setText("");
                 this.dispose();
+
             } else {
                 JOptionPane.showMessageDialog(this, "No se pudo confirmar (ya enviado o ID inválido).");
             }
