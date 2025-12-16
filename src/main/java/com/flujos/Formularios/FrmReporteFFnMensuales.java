@@ -3,6 +3,11 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 package com.flujos.Formularios;
+import com.flujos.Utilidades.Conexion;
+import javax.swing.table.DefaultTableModel;
+import java.text.SimpleDateFormat;
+import java.sql.*;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -10,15 +15,39 @@ package com.flujos.Formularios;
  */
 public class FrmReporteFFnMensuales extends javax.swing.JFrame {
     
-    private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(FrmReporteFFnMensuales.class.getName());
+     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(FrmReporteFFnMensuales.class.getName());
+
+    // 🔥 AGREGAR ESTA LÍNEA JUSTO AQUÍ
+    private Conexion con = new Conexion();
 
     /**
      * Creates new form FrmReporteFFnMensuales
      */
     public FrmReporteFFnMensuales() {
         initComponents();
+        Inicializar();
     }
+private void Inicializar() {
+    DefaultTableModel modelo = new DefaultTableModel() {
+        @Override
+        public boolean isCellEditable(int row, int column) {
+            return false; // 🔒 BLOQUEAMOS LA EDICIÓN
+        }
+    };
 
+    modelo.addColumn("Fecha");
+    modelo.addColumn("Concepto");
+    modelo.addColumn("Movimiento");
+    modelo.addColumn("Ingreso");
+    modelo.addColumn("Egreso");
+    modelo.addColumn("Saldo");
+    modelo.addColumn("Observaciones");
+
+    tablaReporte.setModel(modelo);
+
+    // 🔒 BLOQUEA REORDENAR COLUMNAS
+    tablaReporte.getTableHeader().setReorderingAllowed(false);
+}
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -28,22 +57,123 @@ public class FrmReporteFFnMensuales extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jLabel1 = new javax.swing.JLabel();
+        dateChooserFecha = new com.toedter.calendar.JDateChooser();
+        jButton1 = new javax.swing.JButton();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        tablaReporte = new javax.swing.JTable();
+
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Flujos movimientos mensuales");
+
+        jLabel1.setText("fecha");
+
+        jButton1.setText("Buscar");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
+        tablaReporte.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        jScrollPane1.setViewportView(tablaReporte);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 783, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(192, 192, 192)
+                        .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(dateChooserFecha, javax.swing.GroupLayout.PREFERRED_SIZE, 134, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(40, 40, 40)
+                        .addComponent(jButton1))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(25, 25, 25)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 693, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(65, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 604, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(40, 40, 40)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jButton1)
+                    .addComponent(dateChooserFecha, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel1))
+                .addGap(37, 37, 37)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 481, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(23, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+if (dateChooserFecha.getDate() == null) {
+        JOptionPane.showMessageDialog(this, "Seleccione una fecha.");
+        return;
+    }
+
+    DefaultTableModel model = (DefaultTableModel) tablaReporte.getModel();
+    model.setRowCount(0);
+    model.setColumnCount(0);
+
+    String fecha = new SimpleDateFormat("yyyy-MM-dd").format(dateChooserFecha.getDate());
+
+    String query = """
+        SELECT fecha_mov AS Fecha,
+               cuentas.nom_concepto AS Concepto,
+               movimiento.desc_movimiento AS Movimiento,
+               CASE WHEN importe >= 0 THEN importe ELSE ' ' END AS Ingreso,
+               CASE WHEN importe < 0 THEN ABS(importe) ELSE ' ' END AS Egreso,
+               SUM(importe) OVER (ORDER BY fecha_mov, id_flujo_mov) AS Saldo,
+               observaciones_mov AS Observaciones
+        FROM flujos_mov 
+        JOIN cuentas ON flujos_mov.id_cuenta = cuentas.id_cuenta 
+        JOIN movimiento ON flujos_mov.id_movimiento = movimiento.id_movimiento 
+        WHERE fecha_mov = ?
+    """;
+
+    try (PreparedStatement ps = con.getConexion().prepareStatement(query)) {
+
+        ps.setString(1, fecha);
+        ResultSet rs = ps.executeQuery();
+        ResultSetMetaData meta = rs.getMetaData();
+
+        int columnas = meta.getColumnCount();
+
+        // Crear encabezados
+        for (int i = 1; i <= columnas; i++) {
+            model.addColumn(meta.getColumnLabel(i));
+        }
+
+        // Cargar filas
+        while (rs.next()) {
+            Object[] fila = new Object[columnas];
+            for (int i = 0; i < columnas; i++) {
+                fila[i] = rs.getObject(i + 1);
+            }
+            model.addRow(fila);
+        }
+
+    } catch (SQLException e) {
+        JOptionPane.showMessageDialog(this, "Error al cargar reporte:\n" + e.getMessage());
+    }
+    }//GEN-LAST:event_jButton1ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -71,5 +201,10 @@ public class FrmReporteFFnMensuales extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private com.toedter.calendar.JDateChooser dateChooserFecha;
+    private javax.swing.JButton jButton1;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTable tablaReporte;
     // End of variables declaration//GEN-END:variables
 }

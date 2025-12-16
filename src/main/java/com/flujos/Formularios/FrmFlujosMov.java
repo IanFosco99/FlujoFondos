@@ -260,12 +260,28 @@ public class FrmFlujosMov extends javax.swing.JFrame {
         
         
         FlujosMov flujoMov = new FlujosMov();
-        flujoMov.setFechaMovimiento(dateFecha.getDate());
-        flujoMov.setIdMovimiento(Long.valueOf(txtIdMovimiento.getText()));
-        flujoMov.setIdCuenta(Long.valueOf(txtIdConcepto.getText()));
-        flujoMov.setImporte(new BigDecimal(txtImporte.getText()));
-        flujoMov.setObservacionesMovimiento(txtObservaciones.getText());
-        
+flujoMov.setFechaMovimiento(dateFecha.getDate());
+flujoMov.setIdMovimiento(Long.valueOf(txtIdMovimiento.getText()));
+flujoMov.setIdCuenta(Long.valueOf(txtIdConcepto.getText()));
+
+// 1) Tomo el importe ingresado
+BigDecimal importe = new BigDecimal(txtImporte.getText());
+
+// 2) Busco la cuenta usando el ID REAL del formulario (txtIdConcepto)
+Cuenta cuenta = daoCuenta.obtenerDatosPorId(
+        Long.parseLong(txtIdConcepto.getText()),
+        con.getConexion()
+);
+
+// 3) Si ingreso == 0 → es egreso → importe negativo
+if (cuenta != null && cuenta.getIngreso() == 0) {
+    importe = importe.negate();
+}
+
+// 4) Seteo el importe final
+flujoMov.setImporte(importe);
+
+flujoMov.setObservacionesMovimiento(txtObservaciones.getText());
         
         
         try {

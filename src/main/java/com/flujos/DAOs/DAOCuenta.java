@@ -50,7 +50,42 @@ public class DAOCuenta {
             ps.executeUpdate();
         }
     }
+public Cuenta obtenerDatosPorId(Long idCuenta, Connection con) {
 
+    Cuenta cuenta = null;
+    String consulta = "SELECT id_cuenta, cod_concepto, nom_concepto, clas_concepto, " +
+                      "id_movimiento, ingreso FROM cuentas WHERE id_cuenta = ?";
+
+    PreparedStatement ps = null;
+    ResultSet rs = null;
+
+    try {
+        ps = con.prepareStatement(consulta);
+        ps.setLong(1, idCuenta);
+        rs = ps.executeQuery();
+
+        if (rs.next()) {
+            cuenta = new Cuenta();
+            cuenta.setIdCuenta(rs.getLong("id_cuenta"));
+            cuenta.setCodConcepto(rs.getString("cod_concepto"));
+            cuenta.setNombreConcepto(rs.getString("nom_concepto"));
+            cuenta.setClaseConcepto(rs.getString("clas_concepto"));
+            cuenta.setIdMovimiento(rs.getLong("id_movimiento"));
+            cuenta.setIngreso(rs.getInt("ingreso"));
+        }
+
+    } catch (SQLException ex) {
+        ex.printStackTrace();
+    } finally {
+        try {
+            if (rs != null) rs.close();
+            if (ps != null) ps.close();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    return cuenta;}
     public Cuenta obtenerDatos(String dato, Connection con) {
 
      Cuenta cuenta = null;
@@ -59,6 +94,7 @@ public class DAOCuenta {
 
     PreparedStatement ps = null;
     ResultSet rs = null;
+
 
     try {
         ps = con.prepareStatement(consulta);
