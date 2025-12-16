@@ -39,10 +39,10 @@ public class FrmBajaFlujosMov extends javax.swing.JFrame {
     private void crearModeloTabla() {
         modelTblResultado = (new DefaultTableModel(null,
                 //Títulos    
-                new String[]{"Movimiento", "Concepto", "Importe", "Observaciones", "ID"}) {
+                new String[]{"Movimiento", "Concepto", "Importe", "Observaciones", "ID","Ref Cheque Propio","Ref Cheque tercero"}) {
 
             //Celdas editables
-            boolean[] canEdit = new boolean[]{false, false, false, false, false};
+            boolean[] canEdit = new boolean[]{false, false, false, false, false,false,false};
 
             @Override
             public boolean isCellEditable(int rowIndex, int colIndex) {
@@ -82,13 +82,13 @@ public class FrmBajaFlujosMov extends javax.swing.JFrame {
     
     private void llenarTablaResultados(Connection con) throws SQLException {
     String consulta = "SELECT mov.desc_movimiento, cue.nom_concepto, flujo.importe, "
-            + "flujo.observaciones_mov, flujo.id_flujo_mov "
+            + "flujo.observaciones_mov, flujo.id_flujo_mov, flujo.id_cheque, flujo.id_cheque_tercero "
             + "FROM flujos_mov flujo "
             + "INNER JOIN movimiento mov ON (mov.id_movimiento = flujo.id_movimiento) "
             + "INNER JOIN cuentas cue ON (cue.id_cuenta = flujo.id_cuenta) "
             + "WHERE flujo.fecha_mov = ?";
 
-    int nroColumnas = 5;
+    int nroColumnas = 7;
 
     modelTblResultado.setRowCount(0); // Limpia la tabla antes de llenarla
 
@@ -164,8 +164,8 @@ public class FrmBajaFlujosMov extends javax.swing.JFrame {
             panelResultadosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(panelResultadosLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 491, Short.MAX_VALUE)
-                .addContainerGap())
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 780, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         panelResultadosLayout.setVerticalGroup(
             panelResultadosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -193,14 +193,6 @@ public class FrmBajaFlujosMov extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(lblFecha, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(dateChooserFechaBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 155, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(btnBuscar)
-                .addGap(118, 118, 118))
             .addGroup(layout.createSequentialGroup()
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -214,23 +206,31 @@ public class FrmBajaFlujosMov extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(panelResultados, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(lblFecha, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(dateChooserFechaBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 155, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(btnBuscar)
+                .addGap(249, 249, 249))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(25, 25, 25)
+                .addGap(28, 28, 28)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(btnBuscar)
                     .addComponent(dateChooserFechaBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(lblFecha))
-                .addGap(21, 21, 21)
+                .addGap(18, 18, 18)
                 .addComponent(panelResultados, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnSalir)
                     .addComponent(btnEliminar)
                     .addComponent(txtIDFlujoMov, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(18, Short.MAX_VALUE))
+                .addContainerGap(15, Short.MAX_VALUE))
         );
 
         pack();
