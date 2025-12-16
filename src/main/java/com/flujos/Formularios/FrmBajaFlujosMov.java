@@ -54,6 +54,9 @@ public class FrmBajaFlujosMov extends javax.swing.JFrame {
     
     private void limpiarTabla() {
         txtIDFlujoMov.setText("");
+        txtIdChequePropio.setText("");
+        txtIdChequeTercero.setText("");
+        
         for (int i = 0; i < tblResultados.getRowCount(); i++) {
             modelTblResultado.removeRow(i);
             i -= 1;
@@ -64,6 +67,8 @@ public class FrmBajaFlujosMov extends javax.swing.JFrame {
         
         if (tblResultados.getSelectedRow() != -1) {
             txtIDFlujoMov.setText(tblResultados.getValueAt(tblResultados.getSelectedRow(), 4).toString());
+            txtIdChequePropio.setText(tblResultados.getValueAt(tblResultados.getSelectedRow(), 5).toString());
+            txtIdChequeTercero.setText(tblResultados.getValueAt(tblResultados.getSelectedRow(), 6).toString());
         }
         
     }
@@ -74,7 +79,12 @@ public class FrmBajaFlujosMov extends javax.swing.JFrame {
         daoFlujosMov = new DAOFlujosMov();
         txtIDFlujoMov.setText("");
         txtIDFlujoMov.setVisible(false);
+        txtIdChequePropio.setText("");
+        txtIdChequePropio.setVisible(false);
+        txtIdChequeTercero.setText("");
+        txtIdChequeTercero.setVisible(false);
         dateChooserFechaBuscar.setDate(null);
+        
                 
         tblResultados.setModel(modelTblResultado);
         tblResultados.getTableHeader().setReorderingAllowed(false);
@@ -125,6 +135,8 @@ public class FrmBajaFlujosMov extends javax.swing.JFrame {
         btnSalir = new javax.swing.JButton();
         btnEliminar = new javax.swing.JButton();
         txtIDFlujoMov = new javax.swing.JTextField();
+        txtIdChequePropio = new javax.swing.JTextField();
+        txtIdChequeTercero = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Baja de Flujos Movimientos");
@@ -198,6 +210,10 @@ public class FrmBajaFlujosMov extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(txtIDFlujoMov, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(txtIdChequePropio, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(txtIdChequeTercero, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(btnEliminar, javax.swing.GroupLayout.PREFERRED_SIZE, 144, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(89, 89, 89)
@@ -229,7 +245,9 @@ public class FrmBajaFlujosMov extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnSalir)
                     .addComponent(btnEliminar)
-                    .addComponent(txtIDFlujoMov, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtIDFlujoMov, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtIdChequePropio, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtIdChequeTercero, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(15, Short.MAX_VALUE))
         );
 
@@ -272,9 +290,11 @@ public class FrmBajaFlujosMov extends javax.swing.JFrame {
     }//GEN-LAST:event_btnBuscarActionPerformed
 
     private void tblResultadosMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblResultadosMousePressed
-        
+        txtIdChequePropio.setText("");
+        txtIdChequeTercero.setText("");
         txtIDFlujoMov.setText("");
         seleccionarResultado();
+        
         
     }//GEN-LAST:event_tblResultadosMousePressed
 
@@ -290,6 +310,14 @@ public class FrmBajaFlujosMov extends javax.swing.JFrame {
             try {
                 daoFlujosMov.eliminarFlujoMov(Long.parseLong(txtIDFlujoMov.getText()), con.getConexion());
                 
+                if(!txtIdChequePropio.equals("") && !txtIdChequePropio.equals("0")){
+                    //hacer update en cheque propio
+                }
+                
+                if(!txtIdChequeTercero.equals("") && !txtIdChequeTercero.equals("0")){
+                    //hacer update en cheque tercero
+                }
+               
                 JOptionPane.showMessageDialog(null, "Se eliminó el flujo movimiento correctamente");
                 
                 txtIDFlujoMov.setText("");
@@ -342,5 +370,7 @@ public class FrmBajaFlujosMov extends javax.swing.JFrame {
     private javax.swing.JPanel panelResultados;
     private javax.swing.JTable tblResultados;
     private javax.swing.JTextField txtIDFlujoMov;
+    private javax.swing.JTextField txtIdChequePropio;
+    private javax.swing.JTextField txtIdChequeTercero;
     // End of variables declaration//GEN-END:variables
 }

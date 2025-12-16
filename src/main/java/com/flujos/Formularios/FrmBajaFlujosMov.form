@@ -29,6 +29,10 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" attributes="0">
                       <Component id="txtIDFlujoMov" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                      <Component id="txtIdChequePropio" min="-2" pref="71" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="txtIdChequeTercero" min="-2" pref="71" max="-2" attributes="0"/>
                       <EmptySpace max="32767" attributes="0"/>
                       <Component id="btnEliminar" min="-2" pref="144" max="-2" attributes="0"/>
                       <EmptySpace min="-2" pref="89" max="-2" attributes="0"/>
@@ -68,6 +72,8 @@
                   <Component id="btnSalir" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="btnEliminar" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="txtIDFlujoMov" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="txtIdChequePropio" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="txtIdChequeTercero" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace pref="15" max="32767" attributes="0"/>
           </Group>
@@ -163,6 +169,10 @@
       </Events>
     </Component>
     <Component class="javax.swing.JTextField" name="txtIDFlujoMov">
+    </Component>
+    <Component class="javax.swing.JTextField" name="txtIdChequePropio">
+    </Component>
+    <Component class="javax.swing.JTextField" name="txtIdChequeTercero">
     </Component>
   </SubComponents>
 </Form>
