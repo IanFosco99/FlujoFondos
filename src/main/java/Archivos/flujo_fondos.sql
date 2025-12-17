@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 11-12-2025 a las 22:26:44
+-- Tiempo de generación: 16-12-2025 a las 21:23:29
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -126,10 +126,11 @@ CREATE TABLE `cuentas` (
 --
 
 INSERT INTO `cuentas` (`id_cuenta`, `cod_concepto`, `nom_concepto`, `clas_concepto`, `id_movimiento`, `ingreso`) VALUES
-(1, '1.01', 'Venta de Contado', 'Operativo', 1, '1'),
-(2, '1.02', 'Ventas en Cta.Cte.', 'Operativo', 2, '1'),
-(3, '1.03', 'Proveedores', 'Operativo', 3, '0'),
-(4, '1.04', 'Sueldos y Cs. Sociales', 'Operativo', 2, '0'),
+(1, '0', 'Saldo Anterior', NULL, 1, '0'),
+(2, '1.01', 'Venta de Contado', 'Operativo', 1, '1'),
+(3, '1.02', 'Ventas en Cta.Cte.', 'Operativo', 2, '1'),
+(4, '1.03', 'Proveedores', 'Operativo', 3, '0'),
+(5, '1.04', 'Sueldos y Cs. Sociales', 'Operativo', 2, '0'),
 (6, '2.01', 'Inversion en Bienes de Uso', 'Inversion', 4, '0'),
 (7, '3.01', 'Prestamos Recibidos', 'Financiacion', 1, '1');
 
@@ -155,8 +156,9 @@ CREATE TABLE `flujos_mov` (
 --
 
 INSERT INTO `flujos_mov` (`id_flujo_mov`, `fecha_mov`, `id_movimiento`, `id_cuenta`, `importe`, `observaciones_mov`, `id_cheque`, `id_cheque_tercero`) VALUES
-(1, '2025-12-10', 1, 1, 158000.00, 'Venta de Mercaderias', 0, 0),
-(2, '2025-12-10', 2, 2, 250000.00, 'Mercaderia en CtaCte', 0, 0),
+(1, '0000-00-00', 1, 1, 0.00, '0', 0, 0),
+(2, '2025-12-10', 1, 1, 158000.00, 'Venta de Mercaderias', 0, 0),
+(3, '2025-12-10', 2, 2, 250000.00, 'Mercaderia en CtaCte', 0, 0),
 (4, '2025-12-10', 1, 7, 500000.00, 'MUFC', 0, 0),
 (5, '2025-12-11', 4, 3, -356000.00, 'Impuestos diciembre', 0, 0),
 (6, '2025-12-10', 4, 3, 875000.00, 'Compra AA', 0, 0);
@@ -177,10 +179,11 @@ CREATE TABLE `movimiento` (
 --
 
 INSERT INTO `movimiento` (`id_movimiento`, `desc_movimiento`) VALUES
-(1, 'Caja'),
-(2, 'Banco El Tornillo Cta Cte'),
-(3, 'Cheques a Cobrar'),
-(4, 'Cheques Emitidos');
+(1, 'Saldo Anterior'),
+(2, 'Caja'),
+(3, 'Banco El Tornillo Cta Cte'),
+(4, 'Cheques a Cobrar'),
+(5, 'Cheques Emitidos');
 
 --
 -- Índices para tablas volcadas
@@ -253,7 +256,7 @@ ALTER TABLE `cliente_proveedores`
 -- AUTO_INCREMENT de la tabla `cuentas`
 --
 ALTER TABLE `cuentas`
-  MODIFY `id_cuenta` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id_cuenta` bigint(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT de la tabla `flujos_mov`

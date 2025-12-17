@@ -3,6 +3,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 package com.flujos.Formularios;
+
 import com.flujos.Utilidades.Conexion;
 import javax.swing.table.DefaultTableModel;
 import java.text.SimpleDateFormat;
@@ -14,8 +15,8 @@ import javax.swing.JOptionPane;
  * @author Marcos
  */
 public class FrmReporteFFnMensuales extends javax.swing.JFrame {
-    
-     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(FrmReporteFFnMensuales.class.getName());
+
+    private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(FrmReporteFFnMensuales.class.getName());
 
     // 🔥 AGREGAR ESTA LÍNEA JUSTO AQUÍ
     private Conexion con = new Conexion();
@@ -27,27 +28,29 @@ public class FrmReporteFFnMensuales extends javax.swing.JFrame {
         initComponents();
         Inicializar();
     }
-private void Inicializar() {
-    DefaultTableModel modelo = new DefaultTableModel() {
-        @Override
-        public boolean isCellEditable(int row, int column) {
-            return false; // 🔒 BLOQUEAMOS LA EDICIÓN
-        }
-    };
 
-    modelo.addColumn("Fecha");
-    modelo.addColumn("Concepto");
-    modelo.addColumn("Movimiento");
-    modelo.addColumn("Ingreso");
-    modelo.addColumn("Egreso");
-    modelo.addColumn("Saldo");
-    modelo.addColumn("Observaciones");
+    private void Inicializar() {
+        DefaultTableModel modelo = new DefaultTableModel() {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false; // 🔒 BLOQUEAMOS LA EDICIÓN
+            }
+        };
 
-    tablaReporte.setModel(modelo);
+        modelo.addColumn("Fecha");
+        modelo.addColumn("Concepto");
+        modelo.addColumn("Movimiento");
+        modelo.addColumn("Ingreso");
+        modelo.addColumn("Egreso");
+        modelo.addColumn("Saldo");
+        modelo.addColumn("Observaciones");
 
-    // 🔒 BLOQUEA REORDENAR COLUMNAS
-    tablaReporte.getTableHeader().setReorderingAllowed(false);
-}
+        tablaReporte.setModel(modelo);
+
+        // 🔒 BLOQUEA REORDENAR COLUMNAS
+        tablaReporte.getTableHeader().setReorderingAllowed(false);
+    }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -123,56 +126,63 @@ private void Inicializar() {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-if (dateChooserFecha.getDate() == null) {
-        JOptionPane.showMessageDialog(this, "Seleccione una fecha.");
-        return;
-    }
+        if (dateChooserFecha.getDate() == null) {
+            JOptionPane.showMessageDialog(this, "Seleccione una fecha.");
+            return;
+        }
 
-    DefaultTableModel model = (DefaultTableModel) tablaReporte.getModel();
-    model.setRowCount(0);
-    model.setColumnCount(0);
+        DefaultTableModel model = (DefaultTableModel) tablaReporte.getModel();
+        model.setRowCount(0);
 
-    String fecha = new SimpleDateFormat("yyyy-MM-dd").format(dateChooserFecha.getDate());
+        String fecha = new SimpleDateFormat("yyyy-MM-dd").format(dateChooserFecha.getDate());
 
-    String query = """
+        String sqlUpdateSaldo = "UPDATE flujos_mov SET fecha_mov = ?, "
+                + "importe = (SELECT COALESCE(SUM(importe), 0) FROM (SELECT importe FROM flujos_mov WHERE fecha_mov < ? AND id_flujo_mov <> 1) AS sub) "
+                + "WHERE id_flujo_mov = 1";
+
+        String sqlSelect = """
         SELECT fecha_mov AS Fecha,
                cuentas.nom_concepto AS Concepto,
                movimiento.desc_movimiento AS Movimiento,
-               CASE WHEN importe >= 0 THEN importe ELSE ' ' END AS Ingreso,
-               CASE WHEN importe < 0 THEN ABS(importe) ELSE ' ' END AS Egreso,
-               SUM(importe) OVER (ORDER BY fecha_mov, id_flujo_mov) AS Saldo,
+               CASE WHEN importe >= 0 THEN importe ELSE 0 END AS Ingreso,
+               CASE WHEN importe < 0 THEN ABS(importe) ELSE 0 END AS Egreso,
+               SUM(importe) OVER (ORDER BY id_flujo_mov) AS Saldo,
                observaciones_mov AS Observaciones
         FROM flujos_mov 
         JOIN cuentas ON flujos_mov.id_cuenta = cuentas.id_cuenta 
         JOIN movimiento ON flujos_mov.id_movimiento = movimiento.id_movimiento 
         WHERE fecha_mov = ?
+        ORDER BY id_flujo_mov
     """;
 
-    try (PreparedStatement ps = con.getConexion().prepareStatement(query)) {
+        try {
+            Connection conexion = con.getConexion();
 
-        ps.setString(1, fecha);
-        ResultSet rs = ps.executeQuery();
-        ResultSetMetaData meta = rs.getMetaData();
-
-        int columnas = meta.getColumnCount();
-
-        // Crear encabezados
-        for (int i = 1; i <= columnas; i++) {
-            model.addColumn(meta.getColumnLabel(i));
-        }
-
-        // Cargar filas
-        while (rs.next()) {
-            Object[] fila = new Object[columnas];
-            for (int i = 0; i < columnas; i++) {
-                fila[i] = rs.getObject(i + 1);
+            try (PreparedStatement psUpd = conexion.prepareStatement(sqlUpdateSaldo)) {
+                psUpd.setString(1, fecha);
+                psUpd.setString(2, fecha);
+                psUpd.executeUpdate();
             }
-            model.addRow(fila);
-        }
 
-    } catch (SQLException e) {
-        JOptionPane.showMessageDialog(this, "Error al cargar reporte:\n" + e.getMessage());
-    }
+            try (PreparedStatement psSel = conexion.prepareStatement(sqlSelect)) {
+                psSel.setString(1, fecha);
+                ResultSet rs = psSel.executeQuery();
+
+                int columnas = rs.getMetaData().getColumnCount();
+
+                
+                while (rs.next()) {
+                    Object[] fila = new Object[columnas];
+                    for (int i = 0; i < columnas; i++) {
+                        fila[i] = rs.getObject(i + 1);
+                    }
+                    model.addRow(fila);
+                }
+            }
+
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(this, "Error al procesar reporte:\n" + e.getMessage());
+        }
     }//GEN-LAST:event_jButton1ActionPerformed
 
     /**
