@@ -332,6 +332,7 @@ public class FrmConfirmacionSalidaChequeTercero extends javax.swing.JFrame {
         if (TxtIdChequeTercero.getText().trim().isEmpty()) {
             JOptionPane.showMessageDialog(this, "Debe seleccionar un cheque.");
             return;
+            
         }
 
         //PARSEAMOS UNA VEZ
@@ -426,7 +427,6 @@ public class FrmConfirmacionSalidaChequeTercero extends javax.swing.JFrame {
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Error: " + e.getMessage());
         }
-
 
     }//GEN-LAST:event_btnConfirmarActionPerformed
 
