@@ -24,7 +24,7 @@ public class DAOFlujosMov {
 
 
 public void llenarComboMovimiento(DefaultComboBoxModel<String> modeloComboMovimiento, Connection con) throws SQLException {
-        String consulta = "SELECT desc_movimiento FROM movimiento";
+        String consulta = "SELECT desc_movimiento FROM movimiento WHERE id_movimiento <> 1";
         Statement st = null;
         ResultSet rs = null;
         try {

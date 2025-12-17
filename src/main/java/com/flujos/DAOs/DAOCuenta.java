@@ -125,7 +125,7 @@ public Cuenta obtenerDatosPorId(Long idCuenta, Connection con) {
     }
 
     public void llenarComboCuenta(DefaultComboBoxModel<String> modeloComboConcepto, Connection con) throws SQLException {
-        String consulta = "SELECT nom_concepto FROM cuentas";
+        String consulta = "SELECT nom_concepto FROM cuentas WHERE id_cuenta <> 1";
         Statement st = null;
         ResultSet rs = null;
         try {
