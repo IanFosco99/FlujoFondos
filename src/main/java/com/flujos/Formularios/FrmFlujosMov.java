@@ -227,81 +227,81 @@ public class FrmFlujosMov extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnAgregarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAgregarActionPerformed
-        if (dateFecha.getDate() == null){
-            Utilidades.msg(null, "La fecha no puede ser nula");
-            dateFecha.requestFocus();
-            return;
-        } 
-        if (comboMovimiento.getSelectedItem().equals("--")){
-            Utilidades.msg(null, "El movimiento no puede estar vacio");
-            comboMovimiento.requestFocus();
-            return;
-        }
-        if (comboConcepto.getSelectedItem().equals("--")){
-            Utilidades.msg(null, "El concepto no puede estar vacio");
-            comboConcepto.requestFocus();
-            return;
-        }
-    
-        if (txtImporte.getText().equals("")) {
-            Utilidades.msg(null, "El Importe no puede estar vacio");
-            txtImporte.requestFocus();
-            return;
-          
-        }
-        
-        if (!Utilidades.isValidBigDecimal(txtImporte.getText())) {
-            Utilidades.msg(null, "Importe incorrecto");
-            txtImporte.setText("");
-            txtImporte.requestFocus();
-            return;
-        }
-        
-        
-        
-        FlujosMov flujoMov = new FlujosMov();
-flujoMov.setFechaMovimiento(dateFecha.getDate());
-flujoMov.setIdMovimiento(Long.valueOf(txtIdMovimiento.getText()));
-flujoMov.setIdCuenta(Long.valueOf(txtIdConcepto.getText()));
-
-// 1) Tomo el importe ingresado
-BigDecimal importe = new BigDecimal(txtImporte.getText());
-
-// 2) Busco la cuenta usando el ID REAL del formulario (txtIdConcepto)
-Cuenta cuenta = daoCuenta.obtenerDatosPorId(
-        Long.parseLong(txtIdConcepto.getText()),
-        con.getConexion()
-);
-
-// 3) Si ingreso == 0 → es egreso → importe negativo
-if (cuenta != null && cuenta.getIngreso() == 0) {
-    importe = importe.negate();
+        // 1. VALIDACIONES DE INTERFAZ
+if (dateFecha.getDate() == null) {
+    Utilidades.msg(null, "La fecha no puede ser nula");
+    dateFecha.requestFocus();
+    return;
+}
+if (comboMovimiento.getSelectedItem().equals("--")) {
+    Utilidades.msg(null, "El movimiento no puede estar vacio");
+    comboMovimiento.requestFocus();
+    return;
+}
+if (comboConcepto.getSelectedItem().equals("--")) {
+    Utilidades.msg(null, "El concepto no puede estar vacio");
+    comboConcepto.requestFocus();
+    return;
+}
+if (txtImporte.getText().isEmpty()) {
+    Utilidades.msg(null, "El Importe no puede estar vacio");
+    txtImporte.requestFocus();
+    return;
+}
+if (!Utilidades.isValidBigDecimal(txtImporte.getText())) {
+    Utilidades.msg(null, "Importe incorrecto");
+    txtImporte.setText("");
+    txtImporte.requestFocus();
+    return;
 }
 
-// 4) Seteo el importe final
-flujoMov.setImporte(importe);
+// 2. PROCESAMIENTO Y GUARDADO
+try {
+    FlujosMov flujoMov = new FlujosMov();
+    flujoMov.setFechaMovimiento(dateFecha.getDate());
+    flujoMov.setIdMovimiento(Long.valueOf(txtIdMovimiento.getText()));
+    flujoMov.setIdCuenta(Long.valueOf(txtIdConcepto.getText()));
 
-flujoMov.setObservacionesMovimiento(txtObservaciones.getText());
-        
-        
-        try {
-                daoFlujosMov.ingresarFlujomov(flujoMov, con.getConexion());
-            } catch (SQLException ex) {
-                Utilidades.msg(null, "ocurrio un error");
+    // Tomo el importe ingresado
+    BigDecimal importe = new BigDecimal(txtImporte.getText());
 
-            }
-            
-            Utilidades.msg(null, "Concepto ingresado correctamente");
-            
-            
-            dateFecha.setDate(null);
-            comboConcepto.setSelectedIndex(0);
-            comboMovimiento.setSelectedIndex(0);
-            txtImporte.setText("");
-            txtObservaciones.setText("");
-            txtIdConcepto.setVisible(false);
-            txtIdMovimiento.setVisible(false);
-            
+    // Busco la cuenta usando el ID para determinar si es ingreso o egreso
+    Cuenta cuenta = daoCuenta.obtenerDatosPorId(
+            Long.parseLong(txtIdConcepto.getText()),
+            con.getConexion()
+    );
+
+    // Si la cuenta es de tipo egreso (ingreso == 0), convertimos el importe a negativo
+    if (cuenta != null && cuenta.getIngreso() == 0) {
+        importe = importe.negate();
+    }
+
+    flujoMov.setImporte(importe);
+    flujoMov.setObservacionesMovimiento(txtObservaciones.getText());
+
+    // Intento guardar en la base de datos
+    daoFlujosMov.ingresarFlujomov(flujoMov, con.getConexion());
+
+    // 3. ÉXITO: Si llegamos aquí, la base de datos aceptó el registro
+    Utilidades.msg(null, "Movimiento ingresado correctamente");
+
+    // Limpiamos los campos solo después del éxito
+    dateFecha.setDate(null);
+    comboConcepto.setSelectedIndex(0);
+    comboMovimiento.setSelectedIndex(0);
+    txtImporte.setText("");
+    txtObservaciones.setText("");
+    txtIdConcepto.setText("");
+    txtIdMovimiento.setText("");
+
+} catch (SQLException ex) {
+    // Si hay error de SQL, el usuario mantiene los datos en pantalla para corregir o reintentar
+    Utilidades.msg(null, "Error de base de datos: " + ex.getMessage());
+} catch (NumberFormatException ex) {
+    Utilidades.msg(null, "Error numérico: Verifique los IDs de concepto y movimiento");
+} catch (Exception ex) {
+    Utilidades.msg(null, "Ocurrió un error inesperado: " + ex.getMessage());
+}
     }//GEN-LAST:event_btnAgregarActionPerformed
     
     private void btnLimpiarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLimpiarActionPerformed

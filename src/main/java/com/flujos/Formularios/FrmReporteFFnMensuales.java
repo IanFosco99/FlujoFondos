@@ -149,16 +149,17 @@ public class FrmReporteFFnMensuales extends javax.swing.JFrame {
             movimiento.desc_movimiento AS Movimiento,
             CASE WHEN importe >= 0 THEN importe ELSE 0 END AS Ingreso,
             CASE WHEN importe < 0 THEN ABS(importe) ELSE 0 END AS Egreso,
+            -- Cálculo del saldo acumulado incluyendo la fila 1
             SUM(importe) OVER (ORDER BY id_flujo_mov) AS Saldo,
             observaciones_mov AS Observaciones,
-            flujos_mov.id_flujo_mov
+            id_flujo_mov
         FROM flujos_mov 
         JOIN cuentas ON flujos_mov.id_cuenta = cuentas.id_cuenta 
         JOIN movimiento ON flujos_mov.id_movimiento = movimiento.id_movimiento 
+        -- Filtramos: O es el movimiento del día O es el ID 1 (Saldo Anterior)
         WHERE fecha_mov = ? OR id_flujo_mov = 1
     ) AS subconsulta
-    WHERE id_flujo_mov <> 1
-    ORDER BY id_flujo_mov
+    ORDER BY id_flujo_mov ASC
     """;
 
         try {

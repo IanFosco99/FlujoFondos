@@ -96,7 +96,9 @@ public class FrmBajaFlujosMov extends javax.swing.JFrame {
             + "FROM flujos_mov flujo "
             + "INNER JOIN movimiento mov ON (mov.id_movimiento = flujo.id_movimiento) "
             + "INNER JOIN cuentas cue ON (cue.id_cuenta = flujo.id_cuenta) "
-            + "WHERE flujo.fecha_mov = ?";
+            + "WHERE flujo.fecha_mov = ? "
+            + "AND mov.desc_movimiento != 'Saldo Anterior' " // Excluye por nombre de movimiento
+            + "AND cue.nom_concepto != 'Saldo Anterior'";    // Excluye por nombre de concepto
 
     int nroColumnas = 7;
 
