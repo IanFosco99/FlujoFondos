@@ -90,8 +90,7 @@ public Cuenta obtenerDatosPorId(Long idCuenta, Connection con) {
 
      Cuenta cuenta = null;
     String consulta = "SELECT id_cuenta, cod_concepto, nom_concepto, clas_concepto, id_movimiento, ingreso "
-                    + "FROM cuentas WHERE nom_concepto = ?";
-
+                + "FROM cuentas WHERE nom_concepto = ? AND id_cuenta <> 1";
     PreparedStatement ps = null;
     ResultSet rs = null;
 

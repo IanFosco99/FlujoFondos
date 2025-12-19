@@ -177,11 +177,19 @@ public class FrmReporteFFnMensuales extends javax.swing.JFrame {
 
                 int columnas = rs.getMetaData().getColumnCount();
 
-                
+                SimpleDateFormat formatoVisual = new SimpleDateFormat("dd-MM-yyyy");
+
                 while (rs.next()) {
                     Object[] fila = new Object[columnas];
                     for (int i = 0; i < columnas; i++) {
-                        fila[i] = rs.getObject(i + 1);
+                        Object valor = rs.getObject(i + 1);
+
+                        // --- CAMBIO AQUÍ: Si es la columna 0 (Fecha), formatear ---
+                        if (i == 0 && valor != null) {
+                            fila[i] = formatoVisual.format(valor);
+                        } else {
+                            fila[i] = valor;
+                        }
                     }
                     model.addRow(fila);
                 }

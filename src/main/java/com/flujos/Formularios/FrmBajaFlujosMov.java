@@ -65,11 +65,19 @@ public class FrmBajaFlujosMov extends javax.swing.JFrame {
 
     private void seleccionarResultado() {
 
-        if (tblResultados.getSelectedRow() != -1) {
-            txtIDFlujoMov.setText(tblResultados.getValueAt(tblResultados.getSelectedRow(), 4).toString());
-            txtIdChequePropio.setText(tblResultados.getValueAt(tblResultados.getSelectedRow(), 5).toString());
-            txtIdChequeTercero.setText(tblResultados.getValueAt(tblResultados.getSelectedRow(), 6).toString());
-        }
+        int fila = tblResultados.getSelectedRow();
+    
+    if (fila != -1) {
+        // Obtenemos los valores en objetos primero
+        Object idFlujo = tblResultados.getValueAt(fila, 4);
+        Object idChequeP = tblResultados.getValueAt(fila, 5);
+        Object idChequeT = tblResultados.getValueAt(fila, 6);
+
+        // Seteamos el texto, verificando que no sean nulos para que no escriba "null"
+        txtIDFlujoMov.setText(idFlujo != null ? idFlujo.toString() : "");
+        txtIdChequePropio.setText(idChequeP != null ? idChequeP.toString() : "");
+        txtIdChequeTercero.setText(idChequeT != null ? idChequeT.toString() : "");
+    }
 
     }
 
