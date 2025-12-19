@@ -208,6 +208,7 @@ public class FrmSalidaTerceros extends javax.swing.JFrame {
         
         TxtIdChequeTercero.setText(" ");
         seleccionarResultado();
+        this.dispose();
     }//GEN-LAST:event_TblSalidasChequeTercerosMousePressed
     
     private void seleccionarResultado() {

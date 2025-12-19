@@ -18,16 +18,16 @@ import javax.swing.table.DefaultTableModel;
  * @author Marcos
  */
 public class FrmBajaFlujosMov extends javax.swing.JFrame {
-    
+
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(FrmBajaFlujosMov.class.getName());
-        
+
     private Conexion con;
-    
+
     private DefaultTableModel modelTblResultado = new DefaultTableModel();
-    
+
     private DAOFlujosMov daoFlujosMov;
-    
-     /**
+
+    /**
      * Creates new form FrmBajaFlujosMov
      */
     public FrmBajaFlujosMov() {
@@ -35,14 +35,14 @@ public class FrmBajaFlujosMov extends javax.swing.JFrame {
         crearModeloTabla();
         inicializar();
     }
-    
+
     private void crearModeloTabla() {
         modelTblResultado = (new DefaultTableModel(null,
                 //Títulos    
-                new String[]{"Movimiento", "Concepto", "Importe", "Observaciones", "ID","Ref Cheque Propio","Ref Cheque tercero"}) {
+                new String[]{"Movimiento", "Concepto", "Importe", "Observaciones", "ID", "Ref Cheque Propio", "Ref Cheque tercero"}) {
 
             //Celdas editables
-            boolean[] canEdit = new boolean[]{false, false, false, false, false,false,false};
+            boolean[] canEdit = new boolean[]{false, false, false, false, false, false, false};
 
             @Override
             public boolean isCellEditable(int rowIndex, int colIndex) {
@@ -51,30 +51,30 @@ public class FrmBajaFlujosMov extends javax.swing.JFrame {
 
         });
     }
-    
+
     private void limpiarTabla() {
         txtIDFlujoMov.setText("");
         txtIdChequePropio.setText("");
         txtIdChequeTercero.setText("");
-        
+
         for (int i = 0; i < tblResultados.getRowCount(); i++) {
             modelTblResultado.removeRow(i);
             i -= 1;
         }
     }
-    
+
     private void seleccionarResultado() {
-        
+
         if (tblResultados.getSelectedRow() != -1) {
             txtIDFlujoMov.setText(tblResultados.getValueAt(tblResultados.getSelectedRow(), 4).toString());
             txtIdChequePropio.setText(tblResultados.getValueAt(tblResultados.getSelectedRow(), 5).toString());
             txtIdChequeTercero.setText(tblResultados.getValueAt(tblResultados.getSelectedRow(), 6).toString());
         }
-        
+
     }
-    
+
     private void inicializar() {
-        
+
         con = new Conexion();
         daoFlujosMov = new DAOFlujosMov();
         txtIDFlujoMov.setText("");
@@ -84,40 +84,39 @@ public class FrmBajaFlujosMov extends javax.swing.JFrame {
         txtIdChequeTercero.setText("");
         txtIdChequeTercero.setVisible(false);
         dateChooserFechaBuscar.setDate(null);
-        
-                
+
         tblResultados.setModel(modelTblResultado);
         tblResultados.getTableHeader().setReorderingAllowed(false);
     }
-    
+
     private void llenarTablaResultados(Connection con) throws SQLException {
-    String consulta = "SELECT mov.desc_movimiento, cue.nom_concepto, flujo.importe, "
-            + "flujo.observaciones_mov, flujo.id_flujo_mov, flujo.id_cheque, flujo.id_cheque_tercero "
-            + "FROM flujos_mov flujo "
-            + "INNER JOIN movimiento mov ON (mov.id_movimiento = flujo.id_movimiento) "
-            + "INNER JOIN cuentas cue ON (cue.id_cuenta = flujo.id_cuenta) "
-            + "WHERE flujo.fecha_mov = ? "
-            + "AND mov.desc_movimiento != 'Saldo Anterior' " // Excluye por nombre de movimiento
-            + "AND cue.nom_concepto != 'Saldo Anterior'";    // Excluye por nombre de concepto
+        String consulta = "SELECT mov.desc_movimiento, cue.nom_concepto, flujo.importe, "
+                + "flujo.observaciones_mov, flujo.id_flujo_mov, flujo.id_cheque, flujo.id_cheque_tercero "
+                + "FROM flujos_mov flujo "
+                + "INNER JOIN movimiento mov ON (mov.id_movimiento = flujo.id_movimiento) "
+                + "INNER JOIN cuentas cue ON (cue.id_cuenta = flujo.id_cuenta) "
+                + "WHERE flujo.fecha_mov = ? "
+                + "AND mov.desc_movimiento != 'Saldo Anterior' " // Excluye por nombre de movimiento
+                + "AND cue.nom_concepto != 'Saldo Anterior'";    // Excluye por nombre de concepto
 
-    int nroColumnas = 7;
+        int nroColumnas = 7;
 
-    modelTblResultado.setRowCount(0); // Limpia la tabla antes de llenarla
+        modelTblResultado.setRowCount(0); // Limpia la tabla antes de llenarla
 
-    try (PreparedStatement ps = con.prepareStatement(consulta)) {
-        ps.setDate(1, new java.sql.Date(dateChooserFechaBuscar.getDate().getTime()));
+        try (PreparedStatement ps = con.prepareStatement(consulta)) {
+            ps.setDate(1, new java.sql.Date(dateChooserFechaBuscar.getDate().getTime()));
 
-        try (ResultSet rs = ps.executeQuery()) {
-            while (rs.next()) {
-                Object[] fila = new Object[nroColumnas];
-                for (int i = 0; i < nroColumnas; i++) {
-                    fila[i] = rs.getObject(i + 1);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Object[] fila = new Object[nroColumnas];
+                    for (int i = 0; i < nroColumnas; i++) {
+                        fila[i] = rs.getObject(i + 1);
+                    }
+                    modelTblResultado.addRow(fila);
                 }
-                modelTblResultado.addRow(fila);
             }
         }
     }
-}
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -257,7 +256,7 @@ public class FrmBajaFlujosMov extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnSalirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalirActionPerformed
-        
+
         try {
             con.cerrarConexion();
         } catch (SQLException ex) {
@@ -265,30 +264,30 @@ public class FrmBajaFlujosMov extends javax.swing.JFrame {
             this.dispose();
         }
         this.dispose();
-        
+
     }//GEN-LAST:event_btnSalirActionPerformed
 
     private void btnBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuscarActionPerformed
-        
+
         limpiarTabla();
-        
+
         if (dateChooserFechaBuscar.getDate() != null) {
-            
+
             try {
                 llenarTablaResultados(con.getConexion());
             } catch (SQLException ex) {
                 JOptionPane.showMessageDialog(null, "Error al cargar la tabla de Resultados, ingrese nuevamente.");
                 this.dispose();
             }
-            
+
         } else {
-     
+
             JOptionPane.showMessageDialog(null, "Debe seleccionar una fecha.");
             dateChooserFechaBuscar.requestFocus();
             return;
-            
+
         }
-        
+
     }//GEN-LAST:event_btnBuscarActionPerformed
 
     private void tblResultadosMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblResultadosMousePressed
@@ -296,45 +295,58 @@ public class FrmBajaFlujosMov extends javax.swing.JFrame {
         txtIdChequeTercero.setText("");
         txtIDFlujoMov.setText("");
         seleccionarResultado();
-        
-        
+
+
     }//GEN-LAST:event_tblResultadosMousePressed
 
     private void btnEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarActionPerformed
-        
+
         if (txtIDFlujoMov.getText().equals("")) {
-            
-                JOptionPane.showMessageDialog(null, "Ocurrió un error, seleccione nuevamente el flujo movimiento a borrar de la tabla");
-                return;
-                
+
+            JOptionPane.showMessageDialog(null, "Ocurrió un error, seleccione nuevamente el flujo movimiento a borrar de la tabla");
+            return;
+
         } else {
-            
+
             try {
+                if (!txtIdChequePropio.getText().equals("") && !txtIdChequePropio.getText().equals("0")) {
+                    // UPDATE EN CHEQUE PROPIO
+                    PreparedStatement psPropio = con.getConexion().prepareStatement("UPDATE cheque_propio SET estado_cheque = 0, fecha_entrega_cheque = Null WHERE id_cheque = ?");
+                    psPropio.setLong(1, Long.parseLong(txtIdChequePropio.getText()));
+                    psPropio.executeUpdate();
+                }
+
+                if (!txtIdChequeTercero.getText().equals("") && !txtIdChequeTercero.getText().equals("0")) {
+                    // UPDATE EN CHEQUE TERCERO
+                    PreparedStatement psTercero = con.getConexion().prepareStatement("UPDATE cheque_tercero SET estado_cheque = 0, fecha_entrega_cheque = Null, id_cuenta_salida = Null, titular_destino = Null WHERE id_cheque = ?");
+                    psTercero.setLong(1, Long.parseLong(txtIdChequeTercero.getText()));
+                    psTercero.executeUpdate();
+                }
                 daoFlujosMov.eliminarFlujoMov(Long.parseLong(txtIDFlujoMov.getText()), con.getConexion());
-                
-                if(!txtIdChequePropio.equals("") && !txtIdChequePropio.equals("0")){
+
+                if (!txtIdChequePropio.equals("") && !txtIdChequePropio.equals("0")) {
                     //hacer update en cheque propio
                 }
-                
-                if(!txtIdChequeTercero.equals("") && !txtIdChequeTercero.equals("0")){
+
+                if (!txtIdChequeTercero.equals("") && !txtIdChequeTercero.equals("0")) {
                     //hacer update en cheque tercero
                 }
-               
+
                 JOptionPane.showMessageDialog(null, "Se eliminó el flujo movimiento correctamente");
-                
+
                 txtIDFlujoMov.setText("");
-                
+
                 dateChooserFechaBuscar.setDate(null);
-                
+
                 limpiarTabla();
-                
+
             } catch (SQLException ex) {
                 JOptionPane.showMessageDialog(null, "Error al eliminar el flujo movimiento seleccionado, ingrese nuevamente");
                 this.dispose();
             }
-            
+
         }
-        
+
     }//GEN-LAST:event_btnEliminarActionPerformed
 
     /**

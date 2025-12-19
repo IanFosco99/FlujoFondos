@@ -23,18 +23,14 @@ import javax.swing.JOptionPane;
  */
 public class FrmABMCuentas extends javax.swing.JFrame {
 
-    
-    
     private Conexion con;
-    
+
     DefaultComboBoxModel<String> modeloComboMovimiento = new DefaultComboBoxModel<>();
 
     private DAOCuenta daoCuenta;
     private DAOFlujosMov daoFlujosMov;
     DAOMovimiento daoMovimiento = new DAOMovimiento();
 
-
-    
     /**
      * Creates new form FrmABMCuentas
      */
@@ -47,11 +43,10 @@ public class FrmABMCuentas extends javax.swing.JFrame {
             Utilidades.msg(null, "error al inicializar la ventana");
             this.dispose();
         }
-        
+
     }
 
-    
-       private void inicializar() throws SQLException {
+    private void inicializar() throws SQLException {
         txtIdcuenta.setText("");
 
         txtIdMovimiento.setText("");
@@ -68,9 +63,9 @@ public class FrmABMCuentas extends javax.swing.JFrame {
         daoCuenta = new DAOCuenta();
         daoFlujosMov = new DAOFlujosMov();
         con = new Conexion();
-        daoFlujosMov.llenarComboMovimiento(modeloComboMovimiento,con.getConexion());
+        daoFlujosMov.llenarComboMovimiento(modeloComboMovimiento, con.getConexion());
         comboMovimiento.setSelectedIndex(0);
-        
+
     }
 
     /**
@@ -259,74 +254,74 @@ public class FrmABMCuentas extends javax.swing.JFrame {
 
     private void btnModificarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnModificarActionPerformed
         // Validaciones
-    if (txtCodigo.getText().trim().equals("")) {
-        Utilidades.msg(null, "El código no puede estar vacío");
-        txtCodigo.requestFocus();
-        return;
-    }
+        if (txtCodigo.getText().trim().equals("")) {
+            Utilidades.msg(null, "El código no puede estar vacío");
+            txtCodigo.requestFocus();
+            return;
+        }
 
-    if (txtConcepto.getText().trim().equals("")) {
-        Utilidades.msg(null, "El concepto no puede estar vacío");
-        txtConcepto.requestFocus();
-        return;
-    }
+        if (txtConcepto.getText().trim().equals("")) {
+            Utilidades.msg(null, "El concepto no puede estar vacío");
+            txtConcepto.requestFocus();
+            return;
+        }
 
-    if (comboClasificacion.getSelectedItem().equals("--")) {
-        Utilidades.msg(null, "La clasificación no puede estar vacía");
-        comboClasificacion.requestFocus();
-        return;
-    }
+        if (comboClasificacion.getSelectedItem().equals("--")) {
+            Utilidades.msg(null, "La clasificación no puede estar vacía");
+            comboClasificacion.requestFocus();
+            return;
+        }
 
-    if (comboMovimiento.getSelectedItem().equals("--")) {
-        Utilidades.msg(null, "El movimiento no puede estar vacío");
-        comboMovimiento.requestFocus();
-        return;
-    }
+        if (comboMovimiento.getSelectedItem().equals("--")) {
+            Utilidades.msg(null, "El movimiento no puede estar vacío");
+            comboMovimiento.requestFocus();
+            return;
+        }
 
-    if (comboIngresoegreso.getSelectedItem().equals("--")) {
-        Utilidades.msg(null, "El ingreso/egreso no puede estar vacío");
-        comboIngresoegreso.requestFocus();
-        return;
-    }
+        if (comboIngresoegreso.getSelectedItem().equals("--")) {
+            Utilidades.msg(null, "El ingreso/egreso no puede estar vacío");
+            comboIngresoegreso.requestFocus();
+            return;
+        }
 
-    try {
+        try {
 
-        Cuenta cuenta = new Cuenta();
+            Cuenta cuenta = new Cuenta();
 
-        // Campos principales
-        cuenta.setCodConcepto(txtCodigo.getText());
-        cuenta.setNombreConcepto(txtConcepto.getText());
-        cuenta.setClaseConcepto(comboClasificacion.getSelectedItem().toString());
+            // Campos principales
+            cuenta.setCodConcepto(txtCodigo.getText());
+            cuenta.setNombreConcepto(txtConcepto.getText());
+            cuenta.setClaseConcepto(comboClasificacion.getSelectedItem().toString());
 
-        // id_movimiento = BIGINT
-        cuenta.setIdMovimiento(Long.parseLong(txtIdMovimiento.getText()));
+            // id_movimiento = BIGINT
+            cuenta.setIdMovimiento(Long.parseLong(txtIdMovimiento.getText()));
 
-        // Conversión Ingreso/Egreso a número
-        String tipo = comboIngresoegreso.getSelectedItem().toString();
-        int ingreso = tipo.equals("Ingreso") ? 1 : 0;
-        cuenta.setIngreso(ingreso);
+            // Conversión Ingreso/Egreso a número
+            String tipo = comboIngresoegreso.getSelectedItem().toString();
+            int ingreso = tipo.equals("Ingreso") ? 1 : 0;
+            cuenta.setIngreso(ingreso);
 
-        // Guardar actualización
-        daoCuenta.actualizar(cuenta, con.getConexion());
+            // Guardar actualización
+            daoCuenta.actualizar(cuenta, con.getConexion());
 
-        Utilidades.msg(null, "Cuenta actualizada correctamente");
+            Utilidades.msg(null, "Cuenta actualizada correctamente");
 
-        // Limpiar pantalla / UI
-        txtCodigo.setText("");
-        txtConcepto.setText("");
-        txtIdMovimiento.setText("");
+            // Limpiar pantalla / UI
+            txtCodigo.setText("");
+            txtConcepto.setText("");
+            txtIdMovimiento.setText("");
 
-        comboClasificacion.setSelectedIndex(0);
-        comboMovimiento.setSelectedIndex(0);
-        comboIngresoegreso.setSelectedIndex(0);
+            comboClasificacion.setSelectedIndex(0);
+            comboMovimiento.setSelectedIndex(0);
+            comboIngresoegreso.setSelectedIndex(0);
 
-        btnAgregar.setEnabled(true);
-        btnModificar.setEnabled(false);
-        btnEliminar.setEnabled(false);
+            btnAgregar.setEnabled(true);
+            btnModificar.setEnabled(false);
+            btnEliminar.setEnabled(false);
 
-    } catch (SQLException ex) {
-        Utilidades.msg(null, "Error al actualizar la cuenta:\n" + ex.getMessage());
-    }
+        } catch (SQLException ex) {
+            Utilidades.msg(null, "Error al actualizar la cuenta:\n" + ex.getMessage());
+        }
     }//GEN-LAST:event_btnModificarActionPerformed
 
     private void btnEliminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminarActionPerformed
@@ -358,7 +353,6 @@ public class FrmABMCuentas extends javax.swing.JFrame {
         comboMovimiento.setSelectedIndex(0);
         comboClasificacion.setSelectedIndex(0);
         comboIngresoegreso.setSelectedIndex(0);
-       
 
         btnAgregar.setEnabled(true);
         btnModificar.setEnabled(false);
@@ -387,7 +381,7 @@ public class FrmABMCuentas extends javax.swing.JFrame {
             txtConcepto.requestFocus();
             return;
         }
-        
+
         if (comboClasificacion.getSelectedItem().equals("--")) {
             Utilidades.msg(null, "La clasificacion no puede estar vacia");
             comboClasificacion.requestFocus();
@@ -397,15 +391,14 @@ public class FrmABMCuentas extends javax.swing.JFrame {
             Utilidades.msg(null, "El movimiento no puede estar vacio");
             comboMovimiento.requestFocus();
             return;
-        }  
-            
+        }
+
         if (comboIngresoegreso.getSelectedItem().equals("--")) {
             Utilidades.msg(null, "El ingreso/egreso no puede estar vacio");
             comboIngresoegreso.requestFocus();
             return;
         }
-        
-        
+
         if (Utilidades.existe(con.getConexion(), "SELECT (1) FROM cuentas WHERE cod_concepto = '" + txtCodigo.getText() + "' ")) {
 
             Utilidades.msg(null, "No se puede ingresar porque el codigo ya existe");
@@ -413,7 +406,6 @@ public class FrmABMCuentas extends javax.swing.JFrame {
             txtConcepto.setText("");
             comboClasificacion.setSelectedIndex(0);
             comboIngresoegreso.setSelectedIndex(0);
-
 
         } else {
             Cuenta cuenta = new Cuenta();
@@ -427,7 +419,7 @@ public class FrmABMCuentas extends javax.swing.JFrame {
             } catch (SQLException ex) {
                 Logger.getLogger(FrmABMCuentas.class.getName()).log(Level.SEVERE, null, ex);
             }
-            
+
             Utilidades.msg(null, "Concepto ingresado correctamente");
             txtCodigo.setText("");
             txtConcepto.setText("");
@@ -441,75 +433,74 @@ public class FrmABMCuentas extends javax.swing.JFrame {
     }//GEN-LAST:event_btnAgregarActionPerformed
 
     private void btnBuscarCuentaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuscarCuentaActionPerformed
- String dato = JOptionPane.showInputDialog("Concepto: ");
+        String dato = JOptionPane.showInputDialog("Concepto: ");
 
-    if (dato != null && !dato.trim().equals("")) {
+        if (dato != null && !dato.trim().equals("")) {
 
-        Cuenta cuenta = daoCuenta.obtenerDatos(dato, con.getConexion());
+            Cuenta cuenta = daoCuenta.obtenerDatos(dato, con.getConexion());
 
-        if (cuenta != null) {
+            if (cuenta != null && cuenta.getIdCuenta() != 1 && !cuenta.getNombreConcepto().equalsIgnoreCase("Saldo Anterior")) {
+                // Completar campos
+                txtCodigo.setText(cuenta.getCodConcepto());
+                txtConcepto.setText(cuenta.getNombreConcepto());
+                comboClasificacion.setSelectedItem(cuenta.getClaseConcepto());
 
-            // Completar campos
-            txtCodigo.setText(cuenta.getCodConcepto());
-            txtConcepto.setText(cuenta.getNombreConcepto());
-            comboClasificacion.setSelectedItem(cuenta.getClaseConcepto());
-           
-            // Ingreso / Egreso
-            comboIngresoegreso.setSelectedItem(
-                    cuenta.getIngreso() == 1 ? "Ingreso" : "Egreso"
-            );
+                // Ingreso / Egreso
+                comboIngresoegreso.setSelectedItem(
+                        cuenta.getIngreso() == 1 ? "Ingreso" : "Egreso"
+                );
 
-            // Movimiento
-            String nombreMovimiento =
-                    daoMovimiento.obtenerDescripcionMovimiento(
-                            cuenta.getIdMovimiento(),
-                            con.getConexion()
-                    );
+                // Movimiento
+                String nombreMovimiento
+                        = daoMovimiento.obtenerDescripcionMovimiento(
+                                cuenta.getIdMovimiento(),
+                                con.getConexion()
+                        );
 
-            comboMovimiento.setSelectedItem(nombreMovimiento);
-            txtIdcuenta.setText(cuenta.getIdCuenta().toString());
-            // Habilitar botones correctos
-            btnAgregar.setEnabled(false);
-            btnModificar.setEnabled(true);
-            btnEliminar.setEnabled(true);
+                comboMovimiento.setSelectedItem(nombreMovimiento);
+                txtIdcuenta.setText(cuenta.getIdCuenta().toString());
+                // Habilitar botones correctos
+                btnAgregar.setEnabled(false);
+                btnModificar.setEnabled(true);
+                btnEliminar.setEnabled(true);
 
-        } else {
+            } else {
 
-            Utilidades.msg(null, "No existe concepto o se produjo un error");
+                Utilidades.msg(null, "No existe concepto o se produjo un error");
 
-            btnAgregar.setEnabled(true);
-            btnModificar.setEnabled(false);
-            btnEliminar.setEnabled(false);
+                btnAgregar.setEnabled(true);
+                btnModificar.setEnabled(false);
+                btnEliminar.setEnabled(false);
+            }
         }
-    }
 
     }//GEN-LAST:event_btnBuscarCuentaActionPerformed
 
     private void comboMovimientoItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_comboMovimientoItemStateChanged
         txtIdMovimiento.setText("");
-    try {
-        String movimiento = comboMovimiento.getSelectedItem() != null 
-                ? comboMovimiento.getSelectedItem().toString() 
-                : null;
+        try {
+            String movimiento = comboMovimiento.getSelectedItem() != null
+                    ? comboMovimiento.getSelectedItem().toString()
+                    : null;
 
-        if (movimiento == null || movimiento.equals("--")) {
-            txtIdMovimiento.setText("");
-        } else {
-            Movimiento movimientoSeleccionado =
-                    daoMovimiento.obtenerDatos(movimiento, con.getConexion());
-
-            if (movimientoSeleccionado != null) {
-                txtIdMovimiento.setText(String.valueOf(movimientoSeleccionado.getIdMovimiento()));
-            } else {
+            if (movimiento == null || movimiento.equals("--")) {
                 txtIdMovimiento.setText("");
-            }
-        }
+            } else {
+                Movimiento movimientoSeleccionado
+                        = daoMovimiento.obtenerDatos(movimiento, con.getConexion());
 
-    }       catch (Exception e) {
-                Utilidades.msg(null,
-                "Se produjo un error en la selección del combo movimiento, ingrese nuevamente");
-        this.dispose();
-    }
+                if (movimientoSeleccionado != null) {
+                    txtIdMovimiento.setText(String.valueOf(movimientoSeleccionado.getIdMovimiento()));
+                } else {
+                    txtIdMovimiento.setText("");
+                }
+            }
+
+        } catch (Exception e) {
+            Utilidades.msg(null,
+                    "Se produjo un error en la selección del combo movimiento, ingrese nuevamente");
+            this.dispose();
+        }
     }//GEN-LAST:event_comboMovimientoItemStateChanged
 
     /**
@@ -531,8 +522,8 @@ public class FrmABMCuentas extends javax.swing.JFrame {
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | javax.swing.UnsupportedLookAndFeelException ex) {
             java.util.logging.Logger.getLogger(FrmABMCuentas.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
-    //</editor-fold>
-    
+        //</editor-fold>
+
         //</editor-fold>
 
         /* Create and display the form */

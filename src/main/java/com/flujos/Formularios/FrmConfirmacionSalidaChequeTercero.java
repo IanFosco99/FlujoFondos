@@ -328,16 +328,13 @@ public class FrmConfirmacionSalidaChequeTercero extends javax.swing.JFrame {
 
 
     private void btnConfirmarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnConfirmarActionPerformed
-
         if (TxtIdChequeTercero.getText().trim().isEmpty()) {
             JOptionPane.showMessageDialog(this, "Debe seleccionar un cheque.");
             return;
-            
         }
 
-        //PARSEAMOS UNA VEZ
+// PARSEAMOS UNA VEZ
         long idCheque;
-
         try {
             idCheque = Long.parseLong(TxtIdChequeTercero.getText().trim());
         } catch (Exception e) {
@@ -349,16 +346,16 @@ public class FrmConfirmacionSalidaChequeTercero extends javax.swing.JFrame {
             Conexion c = new Conexion();
             Connection con = c.getConexion();
 
-// -------- UPDATE --------
+            // -------- UPDATE --------
             String sql = """
-                                UPDATE cheque_tercero
-                                            SET 
-                                                fecha_entrega_cheque = CURDATE(),
-                                                id_cuenta_salida = ?,
-                                                titular_destino = ?,
-                                                estado_cheque = 1
-                                            WHERE id_cheque = ?
-    """;
+                 UPDATE cheque_tercero
+                 SET 
+                     fecha_entrega_cheque = CURDATE(),
+                     id_cuenta_salida = ?,
+                     titular_destino = ?,
+                     estado_cheque = 1
+                 WHERE id_cheque = ?
+                 """;
 
             PreparedStatement ps = con.prepareStatement(sql);
 
@@ -372,7 +369,6 @@ public class FrmConfirmacionSalidaChequeTercero extends javax.swing.JFrame {
             int filas = ps.executeUpdate();
 
             if (filas > 0) {
-
                 // ----------- OBTENER DATOS DEL CHEQUE -----------
                 DatosCheque datos = obtenerDatosCheque(con, idCheque);
 
@@ -384,44 +380,41 @@ public class FrmConfirmacionSalidaChequeTercero extends javax.swing.JFrame {
 
                 // -------- INSERT (ENTRADA) --------
                 String insertQuery = """
-            INSERT INTO flujos_mov 
-                        (fecha_mov, id_movimiento, id_cuenta, importe, observaciones_mov, id_cheque, id_cheque_tercero)
-                        VALUES (CURRENT_DATE, ?, ?, ?, ?, ?, ?)
-        """;
+                             INSERT INTO flujos_mov 
+                             (fecha_mov, id_movimiento, id_cuenta, importe, observaciones_mov, id_cheque, id_cheque_tercero)
+                             VALUES (CURRENT_DATE, ?, ?, ?, ?, ?, ?)
+                             """;
 
                 PreparedStatement psInsert = con.prepareStatement(insertQuery);
                 psInsert.setLong(1, idMovimiento);
                 psInsert.setLong(2, idCuentaEntrada);
                 psInsert.setDouble(3, importe);
                 psInsert.setString(4, observacion);
-                psInsert.setLong(5, 0);           // id_cheque (propio), acá es 0
-                psInsert.setLong(6, idCheque);    // id_cheque_tercero
-
+                psInsert.setLong(5, 0);
+                psInsert.setLong(6, idCheque);
                 psInsert.executeUpdate();
 
-// -------- INSERT EN NEGETIVO (SALIDA) --------
-                String insertQueryNegative = """
-            INSERT INTO flujos_mov 
-                        (fecha_mov, id_movimiento, id_cuenta, importe, observaciones_mov, id_cheque, id_cheque_tercero)
-                        VALUES (CURRENT_DATE, ?, ?, ?, ?, ?, ?)
-        """;
-
-                PreparedStatement psInsertNegative = con.prepareStatement(insertQueryNegative);
+                // -------- INSERT EN NEGATIVO (SALIDA) --------
+                PreparedStatement psInsertNegative = con.prepareStatement(insertQuery);
                 psInsertNegative.setLong(1, idMovimiento);
                 psInsertNegative.setLong(2, idCuentaSalida);
                 psInsertNegative.setDouble(3, importe * -1);
                 psInsertNegative.setString(4, observacion);
                 psInsertNegative.setLong(5, 0);
                 psInsertNegative.setLong(6, idCheque);
-
                 psInsertNegative.executeUpdate();
-                JOptionPane.showMessageDialog(this, "Cheque confirmado correctamente.");
 
-                TxtIdChequeTercero.setText("");
+                JOptionPane.showMessageDialog(this, "Cheque confirmado correctamente.");
                 this.dispose();
 
             } else {
                 JOptionPane.showMessageDialog(this, "No se pudo confirmar (ya enviado o ID inválido).");
+
+                // También cerramos todo en caso de error para refrescar el flujo
+                if (this.getOwner() != null) {
+                    this.getOwner().dispose();
+                }
+                this.dispose();
             }
 
         } catch (Exception e) {

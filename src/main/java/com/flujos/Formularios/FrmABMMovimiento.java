@@ -182,7 +182,7 @@ public class FrmABMMovimiento extends javax.swing.JFrame {
         if (dato != null && !dato.equals("")){
             Movimiento movimiento = daoMovimiento.obtenerDatos(dato, con.getConexion());
 
-            if (movimiento != null) {
+            if (movimiento != null && movimiento.getIdMovimiento() != 1 && !movimiento.getDescripcionMovimiento().equalsIgnoreCase("Saldo Anterior")) {
                 txtIdMovimiento.setText(String.valueOf(movimiento.getIdMovimiento()));
                 txtDescripcion.setText(movimiento.getDescripcionMovimiento());
 
