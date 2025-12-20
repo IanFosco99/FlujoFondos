@@ -67,24 +67,19 @@ public class FrmSalidaTerceros extends javax.swing.JFrame {
         modelTblSalidasTerceros.setColumnCount(0);
 
         String query = """
-                       
                        SELECT
-                            ch.nro_cheque AS Cheque,
-                            ch.importe_cheque AS Importe,
-                            ch.fecha_cobro_cheque AS FechaVto,
-                            ch.observacion_cheque AS Observacion,
-                            ti.nom_razon_social AS Titular,
-                            cu.nom_concepto AS Cuenta,
-                            ch.id_cheque AS ID
-                            FROM cheque_tercero ch
-                            JOIN cliente_proveedores ti ON
-                            ti.id_cliente_proveedor = ch.titular_cheque
-                            JOIN cuentas cu ON ch.id_cuenta_entrada = cu.id_cuenta 
-                            WHERE ch.fecha_entrega_cheque is null
-                            ORDER BY ch.nro_cheque DESC;
-                       
-                       
-                       
+                           ch.nro_cheque AS Cheque,
+                           ch.importe_cheque AS Importe,
+                           DATE_FORMAT(ch.fecha_cobro_cheque, '%d-%m-%Y') AS FechaVto,
+                           ch.observacion_cheque AS Observacion,
+                           ti.nom_razon_social AS Titular,
+                           cu.nom_concepto AS Cuenta,
+                           ch.id_cheque AS ID
+                       FROM cheque_tercero ch
+                       JOIN cliente_proveedores ti ON ti.id_cliente_proveedor = ch.titular_cheque
+                       JOIN cuentas cu ON ch.id_cuenta_entrada = cu.id_cuenta 
+                       WHERE ch.fecha_entrega_cheque IS NULL
+                       ORDER BY ch.nro_cheque DESC;
                        """;
 
         try (
@@ -113,7 +108,7 @@ public class FrmSalidaTerceros extends javax.swing.JFrame {
             this.dispose();
 
         }
-        
+
     }
 
     /**
@@ -205,29 +200,26 @@ public class FrmSalidaTerceros extends javax.swing.JFrame {
     }//GEN-LAST:event_BtnSalirActionPerformed
 
     private void TblSalidasChequeTercerosMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_TblSalidasChequeTercerosMousePressed
-        
+
         TxtIdChequeTercero.setText(" ");
         seleccionarResultado();
         this.dispose();
     }//GEN-LAST:event_TblSalidasChequeTercerosMousePressed
-    
+
     private void seleccionarResultado() {
-        
+
         if (TblSalidasChequeTerceros.getSelectedRow() != -1) {
             TxtIdChequeTercero.setText(TblSalidasChequeTerceros.getValueAt(TblSalidasChequeTerceros.getSelectedRow(), 6).toString());
         }
-        
-        if(!TxtIdChequeTercero.equals("")){
+
+        if (!TxtIdChequeTercero.equals("")) {
             FrmConfirmacionSalidaChequeTercero ventanaFrmConfirmacionSalidaTerceros = new FrmConfirmacionSalidaChequeTercero(TxtIdChequeTercero.getText());
             ventanaFrmConfirmacionSalidaTerceros.setVisible(true);
             ventanaFrmConfirmacionSalidaTerceros.setLocationRelativeTo(null);
         }
-        
+
     }
-    
-    
-    
-    
+
     /**
      * @param args the command line arguments
      */

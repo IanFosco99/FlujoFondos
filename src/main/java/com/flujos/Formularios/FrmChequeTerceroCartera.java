@@ -56,22 +56,19 @@ public class FrmChequeTerceroCartera extends javax.swing.JFrame {
         modelTblTercerosEnCartera.setColumnCount(0);
 
         String query = """
-                       
-                       SELECT
-                            ch.nro_cheque AS Cheque,
-                            ch.importe_cheque AS Importe,
-                            ch.fecha_cobro_cheque AS FechaVto,
-                            ch.observacion_cheque AS Observacion,
-                            ti.nom_razon_social AS Titular,
-                            cu.nom_concepto AS Cuenta,
-                            ch.id_cheque AS ID
-                            FROM cheque_tercero ch
-                            JOIN cliente_proveedores ti ON
-                            ti.id_cliente_proveedor = ch.titular_cheque
-                            JOIN cuentas cu ON ch.id_cuenta_entrada = cu.id_cuenta 
-                            WHERE ch.fecha_entrega_cheque is null
-                            ORDER BY ch.nro_cheque DESC;
-                       
+                      SELECT
+                           ch.nro_cheque AS Cheque,
+                           ch.importe_cheque AS Importe,
+                           DATE_FORMAT(ch.fecha_cobro_cheque, '%d-%m-%Y') AS FechaVto,
+                           ch.observacion_cheque AS Observacion,
+                           ti.nom_razon_social AS Titular,
+                           cu.nom_concepto AS Cuenta,
+                           ch.id_cheque AS ID
+                       FROM cheque_tercero ch
+                       JOIN cliente_proveedores ti ON ti.id_cliente_proveedor = ch.titular_cheque
+                       JOIN cuentas cu ON ch.id_cuenta_entrada = cu.id_cuenta 
+                       WHERE ch.fecha_entrega_cheque IS NULL
+                       ORDER BY ch.nro_cheque DESC;
                        """;
 
         try (
