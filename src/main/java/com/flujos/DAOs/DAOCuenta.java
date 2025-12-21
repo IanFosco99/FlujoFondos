@@ -172,7 +172,7 @@ public Cuenta obtenerDatosPorId(Long idCuenta, Connection con) {
 
     public Movimiento obtenerDatosMovimieto(String movimiento, Connection con) {
         Movimiento mov = new Movimiento();
-        String consulta = "SELECT id_movimiento FROM movimiento WHERE desc_movimiento = '" + movimiento + "'";
+        String consulta = "SELECT id_movimiento FROM movimiento WHERE id_movimiento <> 1 AND desc_movimiento = '" + movimiento + "'";
         Statement st = null;
         ResultSet rs = null;
         try {
@@ -237,7 +237,7 @@ public Cuenta obtenerDatosPorId(Long idCuenta, Connection con) {
     
     
         public void llenarComboCuentaSalida(DefaultComboBoxModel<String> modeloCuentaSalida, Connection con) throws SQLException {
-        String consulta = "SELECT nom_concepto FROM cuentas";
+        String consulta = "SELECT nom_concepto FROM cuentas WHERE id_cuenta <> 1";
         Statement st = null;
         ResultSet rs = null;
         try {

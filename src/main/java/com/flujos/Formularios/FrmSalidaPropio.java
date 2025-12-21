@@ -70,7 +70,7 @@ String query = """
             SELECT
                 ch.nro_cheque AS Cheque,
                 ch.importe_cheque AS Importe,
-                ch.fecha_cobro_cheque AS Fecha,
+                DATE_FORMAT(ch.fecha_cobro_cheque, '%d-%m-%Y') AS Fecha,
                 ch.observacion_cheque AS Observacion,
                 ti.nom_razon_social AS Destino,
                 cu.nom_concepto AS Cuenta,
